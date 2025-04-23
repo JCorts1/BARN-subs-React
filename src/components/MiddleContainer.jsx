@@ -45,15 +45,10 @@ const MiddleContainer = () => {
         </div>
       </div>
 
-      {/* --- Coffee Method Selection (Conditional) --- */}
       {showCoffeeType && (
-        <div className='coffee-type-container'>
+        <div className='coffee-type-container flex flex-col justify-center justify-center items-center '>
+          <div className='recipient-buttons-container flex justify-center' >
           <h3>Time for a Brew-tiful Choice!</h3>
-          {/* --- Target container where DropdownMenu goes --- */}
-          {/* Added style to center the trigger button */}
-          <div className='recipient-buttons-container' style={{ justifyContent: 'center', alignItems: 'center', border: 'none', padding: '0' }}>
-
-            {/* --- DropdownMenu replaces the two previous divs --- */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 {/* Button that opens the dropdown */}
@@ -72,12 +67,9 @@ const MiddleContainer = () => {
                 </DropdownMenuRadioGroup>
               </DropdownMenuContent>
             </DropdownMenu>
-            {/* --- End of DropdownMenu --- */}
 
-          </div> {/* End of recipient-buttons-container */}
+          </div>
 
-          {/* --- Conditionally Render Next Container (AFTER the dropdown) --- */}
-          {/* This appears based on the selection made above */}
           {selectedMethod === 'Filter' && (
               <div className="next-step-container mt-6"> {/* Added margin-top for spacing */}
                   <h4>Filter Configuration</h4>
