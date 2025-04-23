@@ -1,0 +1,37 @@
+.middle-container {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
+.recipient-container {
+    width: 100%;
+    height: 14rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.recipient-buttons-container {
+    display: flex;
+    width: 80%;
+    height: 6rem;
+    justify-content: center;
+    padding: 10px;
+    border: 1px solid #000;
+    border-radius: 6px;
+}
+
+.recipient-button {
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.recipient-button:hover {
+    background-color: #a59c62;
+}
+
+
