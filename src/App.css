@@ -10,19 +10,15 @@
   display: flex;
 }
 
-.left-container {
-  width: 33.3%;
-  height: 100vh;
-}
 
 .function-container {
-  width: 33.3%;
+  width: 50%;
   height: 100vh;
   background-color: #626262
 }
 
 .right-container {
-  width: 33.3%;
+  width: 50%;
   height: 100vh;
   background-color: grey;
 }

@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import LeftContainer from './components/LeftContainer'
 import MiddleContainer from './components/MiddleContainer'
 import './App.css'
 
@@ -9,9 +8,6 @@ function App() {
   return (
     <div className="app-container">
 
-    <div className="left-container">
-      <LeftContainer/>
-    </div>
     <div className="function-container">
       <MiddleContainer/>
     </div>
