@@ -1,0 +1,11 @@
+{
+    "compilerOptions": {
+      "baseUrl": ".",
+      "paths": {
+        "@/*": ["./src/*"] // This defines the alias the CLI is looking for
+      },
+      "jsx": "react-jsx" // Standard for React JSX
+    },
+    "include": ["src/**/*"], // Tells the editor which files are part of your project
+    "exclude": ["node_modules", "dist"] // Excludes folders from editor processing
+  }
