@@ -14,11 +14,11 @@
 .function-container {
   width: 50%;
   height: 100vh;
-  background-color: #262626
+  background-color: #262626;
 }
 
 .right-container {
   width: 50%;
   height: 100vh;
-  background-color: #000;
+  background-color: #1e1e1e;
 }
