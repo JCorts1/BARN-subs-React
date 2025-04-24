@@ -31,7 +31,8 @@
 }
 
 .recipient-button:hover {
-    background-color: #A62C;
+    background-color: #A57C52;
+    transition: 0.9s ease-in-out;
 }
 
 
