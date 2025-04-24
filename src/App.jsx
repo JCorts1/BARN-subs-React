@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import MiddleContainer from './components/MiddleContainer'
+import RightContainer from './components/RightContainer'
 import './App.css'
 
 function App() {
@@ -11,7 +12,9 @@ function App() {
     <div className="function-container">
       <MiddleContainer/>
     </div>
-    <div className="right-container"></div>
+    <div className="result-container">
+      <RightContainer/>
+    </div>
   </div>
   )
 }
