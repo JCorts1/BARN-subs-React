@@ -4,6 +4,10 @@
   margin: 0;
 }
 
+body {
+  font-family: 'Raleway', sans-serif;
+}
+
 .app-container {
   width: 100vw;
   height: 100vh; 
