@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-// Import DropdownMenu parts, Button, and Icon
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -52,7 +51,6 @@ const regionOptions = [
 
 const MiddleContainer = () => {
 
-  // --- State and handlers remain the same ---
   const [showCoffeeType, setShowCoffeeType] = useState(false);
   const [selectedMethod, setSelectedMethod] = useState('');
   const [selectedCoffeeType, setSelectedCoffeeType] = useState('');
@@ -160,13 +158,10 @@ const MiddleContainer = () => {
              </div>
           )}
 
-          {/* Step 3 & 4: Dependent Selections */}
           {selectedCoffeeType && (
             <>
-              {/* Roasters Choice Flow */}
               {selectedCoffeeType === 'Roasters Choice' && (
                 <>
-                  {/* Step 3: Roasters Option */}
                   <div className='dropdown-row'>
                     <h3 className='dropdown-label'>Option</h3>
                     <DropdownMenu>
@@ -188,7 +183,6 @@ const MiddleContainer = () => {
                     </DropdownMenu>
                   </div>
 
-                  {/* Step 4: Quantity */}
                   {selectedSizeOption && (
                        <div className='dropdown-row'>
                            <h3 className='dropdown-label'>Quantity</h3>
@@ -216,10 +210,8 @@ const MiddleContainer = () => {
                 </>
               )}
 
-              {/* Office Flow */}
               {selectedCoffeeType === 'Office' && (
                 <>
-                  {/* Step 3: Office Size */}
                   <div className='dropdown-row'>
                     <h3 className='dropdown-label'>Size</h3>
                     <DropdownMenu>
@@ -269,7 +261,6 @@ const MiddleContainer = () => {
                 </>
               )}
 
-              {/* Regional Flow */}
               {selectedCoffeeType === 'Regional' && (
                  <>
                     {/* Step 3: Region Selection */}
