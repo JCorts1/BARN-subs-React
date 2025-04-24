@@ -111,9 +111,8 @@ const MiddleContainer = () => {
     // --- Wrapper and Recipient Container remain the same ---
     <div className="middle-content-wrapper">
       <div className='recipient-container mt-10'>
-         {/* ... recipient buttons ... */}
          <div className='recipient-buttons-container'>
-          <div className='recipient-button mt' onClick={handleSelectSelf}>
+          <div className='recipient-button' onClick={handleSelectSelf}>
             <h2>It's for me</h2>
             <p>Taking care of yourself</p>
           </div>
@@ -123,19 +122,17 @@ const MiddleContainer = () => {
           </div>
         </div>
       </div>
-
-      {/* --- Conditionally rendered dropdown area --- */}
+ 
       {showCoffeeType && (
         // This container still centers the rows vertically
-        <div className='coffee-type-container flex flex-col items-center gap-y-2 mt-6'> {/* Added gap/margin */}
+        <div className='coffee-type-container flex flex-col items-center gap-y-2 mt-6'> 
 
-           {/* --- Step 1: Method Selection (The Template) --- */}
            <div className={dropdownRowClasses}>
              <h3 className={labelClasses}>Method</h3>
              <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                     <Button variant="outline" className={buttonClasses}>
-                    {selectedMethod || "Select Method..."}
+                    {selectedMethod || "What roast style would you like?"}
                     <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                     </Button>
                 </DropdownMenuTrigger>
