@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { ChevronDown } from "lucide-react";
 import "../components/MiddleContainer.css"; // Ensure this path is correct
 
+// --- Constants remain the same ---
 const filterOptions = [
   { value: "Roasters Choice", label: "Roasters Choice" },
   { value: "Masterpiece", label: "Masterpiece" },
@@ -43,7 +44,6 @@ const quantityOptions = [
     { value: "4", label: "4" },
     { value: "5", label: "5" },
 ];
-// --- NEW: Region Options ---
 const regionOptions = [
     { value: "Brazil", label: "Brazil" },
     { value: "Ethiopia", label: "Ethiopia" },
@@ -53,24 +53,20 @@ const regionOptions = [
 
 const MiddleContainer = () => {
 
+  // --- State and handlers remain the same ---
   const [showCoffeeType, setShowCoffeeType] = useState(false);
   const [selectedMethod, setSelectedMethod] = useState('');
   const [selectedCoffeeType, setSelectedCoffeeType] = useState('');
   const [selectedRegion, setSelectedRegion] = useState('');
-  // NEW state to hold the intermediate size/option selection for Roasters/Office
   const [selectedSizeOption, setSelectedSizeOption] = useState('');
-  // finalSelectionDetail will now primarily hold the QUANTITY in most flows
   const [finalSelectionDetail, setFinalSelectionDetail] = useState('');
 
-
-  // Helper to reset subsequent selections
   const resetSelections = () => {
       setSelectedCoffeeType('');
       setSelectedRegion('');
-      setSelectedSizeOption(''); // Reset new state
+      setSelectedSizeOption('');
       setFinalSelectionDetail('');
   }
-
   const handleSelectSelf = () => {
     setShowCoffeeType(true);
     setSelectedMethod('');
@@ -81,36 +77,41 @@ const MiddleContainer = () => {
     setSelectedMethod('');
     resetSelections();
   };
-
   const handleMethodChange = (newMethod) => {
       setSelectedMethod(newMethod);
-      resetSelections(); // Reset everything after method
+      resetSelections();
   };
-
   const handleCoffeeTypeChange = (newCoffeeType) => {
       setSelectedCoffeeType(newCoffeeType);
-      setSelectedRegion(''); // Reset subsequent specific selections
+      setSelectedRegion('');
       setSelectedSizeOption('');
       setFinalSelectionDetail('');
   };
-
   const handleRegionChange = (newRegion) => {
       setSelectedRegion(newRegion);
-      // Reset only the final detail (quantity) if region changes
       setFinalSelectionDetail('');
   }
-
-  // NEW Handler for Size/Option change (Roasters/Office)
   const handleSizeOptionChange = (newSizeOption) => {
       setSelectedSizeOption(newSizeOption);
-      // Reset only the final detail (quantity) if size/option changes
       setFinalSelectionDetail('');
   }
+  // Direct handler for quantity change
+  const handleQuantityChange = (newQuantity) => {
+      setFinalSelectionDetail(newQuantity);
+  }
+
+
+  // Consistent class names for the dropdown rows
+  const dropdownRowClasses = "flex items-center justify-around gap-2 w-4/6 mb-4"; // Added margin-bottom
+  const labelClasses = "text-lg text-white font-semibold w-auto"; // Adjust width as needed, or remove for auto sizing
+  const buttonClasses = "w-3/6 justify-between"; // Button takes half the row width
+  const contentClasses = "w-[250px]"; // Fixed width content panel
 
   return (
+    // --- Wrapper and Recipient Container remain the same ---
     <div className="middle-content-wrapper">
-
-      <div className='recipient-container'>
+      <div className='recipient-container mt-10'>
+         {/* ... recipient buttons ... */}
          <div className='recipient-buttons-container'>
           <div className='recipient-button mt' onClick={handleSelectSelf}>
             <h2>It's for me</h2>
@@ -123,21 +124,22 @@ const MiddleContainer = () => {
         </div>
       </div>
 
-
+      {/* --- Conditionally rendered dropdown area --- */}
       {showCoffeeType && (
-        <div className='coffee-type-container flex flex-col items-center gap-6 mt-6'>
+        // This container still centers the rows vertically
+        <div className='coffee-type-container flex flex-col items-center gap-y-2 mt-6'> {/* Added gap/margin */}
 
-           {/* Step 1: Method Selection */}
-           <div className='flex flex-col items-center gap-2 w-[250px]'>
-             <h3 className="text-lg font-semibold mb-1">Select Method</h3>
+           {/* --- Step 1: Method Selection (The Template) --- */}
+           <div className={dropdownRowClasses}>
+             <h3 className={labelClasses}>Method</h3>
              <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                    <Button variant="outline" className="w-full justify-between">
+                    <Button variant="outline" className={buttonClasses}>
                     {selectedMethod || "Select Method..."}
                     <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                     </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-[250px]">
+                <DropdownMenuContent className={contentClasses}>
                     <DropdownMenuRadioGroup value={selectedMethod} onValueChange={handleMethodChange}>
                     <DropdownMenuRadioItem value="Filter">Filter</DropdownMenuRadioItem>
                     <DropdownMenuRadioItem value="Espresso">Espresso</DropdownMenuRadioItem>
@@ -146,18 +148,18 @@ const MiddleContainer = () => {
             </DropdownMenu>
            </div>
 
-          {/* Step 2: Coffee Type Selection (Conditional on Method) */}
+          {/* --- Step 2: Coffee Type Selection --- */}
           {selectedMethod && (
-             <div className="next-step-container w-[250px]">
-                 <h3 className="text-lg font-semibold mb-1">Select Type</h3>
+             <div className={dropdownRowClasses}>
+                 <h3 className={labelClasses}>Type</h3>
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                        <Button variant="outline" className="w-full justify-between">
+                        <Button variant="outline" className={buttonClasses}>
                             {selectedCoffeeType || (selectedMethod === 'Filter' ? "Select Filter Type..." : "Select Espresso Type...")}
                             <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                         </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent className="w-[250px]">
+                    <DropdownMenuContent className={contentClasses}>
                         <DropdownMenuRadioGroup value={selectedCoffeeType} onValueChange={handleCoffeeTypeChange}>
                             {(selectedMethod === 'Filter' ? filterOptions : espressoOptions).map((option) => (
                             <DropdownMenuRadioItem key={option.value} value={option.value}>
@@ -170,25 +172,23 @@ const MiddleContainer = () => {
              </div>
           )}
 
-          {/* Step 3 & 4: Dependent Selections based on Coffee Type */}
+          {/* --- Step 3 & 4: Dependent Selections --- */}
           {selectedCoffeeType && (
             <>
               {/* --- Roasters Choice Flow --- */}
               {selectedCoffeeType === 'Roasters Choice' && (
                 <>
                   {/* Step 3: Roasters Option */}
-                  <div className="third-step-container w-[250px]">
-                    <h3 className="text-lg font-semibold mb-1">Select Option</h3>
+                  <div className={dropdownRowClasses}>
+                    <h3 className={labelClasses}>Option</h3>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                          <Button variant="outline" className="w-full justify-between">
-                              {/* Use selectedSizeOption state here */}
-                              {selectedSizeOption || "Select Roaster Option..."}
+                          <Button variant="outline" className={buttonClasses}>
+                              {selectedSizeOption || "Select Option..."}
                               <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                           </Button>
                       </DropdownMenuTrigger>
-                       <DropdownMenuContent className="w-[250px]">
-                          {/* Use handleSizeOptionChange to update state */}
+                       <DropdownMenuContent className={contentClasses}>
                           <DropdownMenuRadioGroup value={selectedSizeOption} onValueChange={handleSizeOptionChange}>
                               {roastersChoiceOptions.map((option) => (
                                   <DropdownMenuRadioItem key={option.value} value={option.value}>
@@ -200,23 +200,21 @@ const MiddleContainer = () => {
                     </DropdownMenu>
                   </div>
 
-                  {/* Step 4: Quantity (Show only after Roaster Option selected) */}
+                  {/* Step 4: Quantity */}
                   {selectedSizeOption && (
-                       <div className="fourth-step-container w-[250px]">
-                           <h3 className="text-lg font-semibold mb-1">Select Quantity</h3>
+                       <div className={dropdownRowClasses}>
+                           <h3 className={labelClasses}>Quantity</h3>
                            <DropdownMenu>
                               <DropdownMenuTrigger asChild>
-                                  <Button variant="outline" className="w-full justify-between">
-                                      {/* Use finalSelectionDetail for quantity */}
+                                  <Button variant="outline" className={buttonClasses}>
                                       {finalSelectionDetail || "Select Quantity..."}
                                       <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                                   </Button>
                               </DropdownMenuTrigger>
-                              <DropdownMenuContent className="w-[250px]">
+                              <DropdownMenuContent className={contentClasses}>
                                   <DropdownMenuLabel>Quantity</DropdownMenuLabel>
                                   <DropdownMenuSeparator />
-                                  {/* Update finalSelectionDetail */}
-                                  <DropdownMenuRadioGroup value={finalSelectionDetail} onValueChange={setFinalSelectionDetail}>
+                                  <DropdownMenuRadioGroup value={finalSelectionDetail} onValueChange={handleQuantityChange}>
                                       {quantityOptions.map((option) => (
                                           <DropdownMenuRadioItem key={option.value} value={option.value}>
                                               {option.label}
@@ -234,18 +232,16 @@ const MiddleContainer = () => {
               {selectedCoffeeType === 'Office' && (
                 <>
                   {/* Step 3: Office Size */}
-                  <div className="third-step-container w-[250px]">
-                    <h3 className="text-lg font-semibold mb-1">Select Size</h3>
+                  <div className={dropdownRowClasses}>
+                    <h3 className={labelClasses}>Size</h3>
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                          <Button variant="outline" className="w-full justify-between">
-                              {/* Use selectedSizeOption state here */}
-                              {selectedSizeOption || "Select Office Size..."}
+                          <Button variant="outline" className={buttonClasses}>
+                              {selectedSizeOption || "Select Size..."}
                               <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                           </Button>
                       </DropdownMenuTrigger>
-                       <DropdownMenuContent className="w-[250px]">
-                          {/* Use handleSizeOptionChange to update state */}
+                       <DropdownMenuContent className={contentClasses}>
                           <DropdownMenuRadioGroup value={selectedSizeOption} onValueChange={handleSizeOptionChange}>
                               {officeSizeOptions.map((option) => (
                                   <DropdownMenuRadioItem key={option.value} value={option.value}>
@@ -257,23 +253,21 @@ const MiddleContainer = () => {
                     </DropdownMenu>
                   </div>
 
-                  {/* Step 4: Quantity (Show only after Office Size selected) */}
+                  {/* Step 4: Quantity */}
                   {selectedSizeOption && (
-                       <div className="fourth-step-container w-[250px]">
-                           <h3 className="text-lg font-semibold mb-1">Select Quantity</h3>
+                       <div className={dropdownRowClasses}>
+                           <h3 className={labelClasses}>Quantity</h3>
                            <DropdownMenu>
                               <DropdownMenuTrigger asChild>
-                                  <Button variant="outline" className="w-full justify-between">
-                                      {/* Use finalSelectionDetail for quantity */}
+                                  <Button variant="outline" className={buttonClasses}>
                                       {finalSelectionDetail || "Select Quantity..."}
                                       <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                                   </Button>
                               </DropdownMenuTrigger>
-                              <DropdownMenuContent className="w-[250px]">
+                              <DropdownMenuContent className={contentClasses}>
                                   <DropdownMenuLabel>Quantity</DropdownMenuLabel>
                                   <DropdownMenuSeparator />
-                                  {/* Update finalSelectionDetail */}
-                                  <DropdownMenuRadioGroup value={finalSelectionDetail} onValueChange={setFinalSelectionDetail}>
+                                  <DropdownMenuRadioGroup value={finalSelectionDetail} onValueChange={handleQuantityChange}>
                                       {quantityOptions.map((option) => (
                                           <DropdownMenuRadioItem key={option.value} value={option.value}>
                                               {option.label}
@@ -291,16 +285,16 @@ const MiddleContainer = () => {
               {selectedCoffeeType === 'Regional' && (
                  <>
                     {/* Step 3: Region Selection */}
-                    <div className="third-step-container w-[250px]">
-                       <h3 className="text-lg font-semibold mb-1">Select Region</h3>
+                    <div className={dropdownRowClasses}>
+                       <h3 className={labelClasses}>Region</h3>
                        <DropdownMenu>
                           <DropdownMenuTrigger asChild>
-                              <Button variant="outline" className="w-full justify-between">
+                              <Button variant="outline" className={buttonClasses}>
                                   {selectedRegion || "Select Region..."}
                                   <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                               </Button>
                           </DropdownMenuTrigger>
-                          <DropdownMenuContent className="w-[250px]">
+                          <DropdownMenuContent className={contentClasses}>
                               <DropdownMenuLabel>Region</DropdownMenuLabel>
                               <DropdownMenuSeparator />
                               <DropdownMenuRadioGroup value={selectedRegion} onValueChange={handleRegionChange}>
@@ -314,23 +308,21 @@ const MiddleContainer = () => {
                        </DropdownMenu>
                     </div>
 
-                    {/* Step 4: Quantity (Show only after Region selected) */}
+                    {/* Step 4: Quantity */}
                     {selectedRegion && (
-                         <div className="fourth-step-container w-[250px]">
-                             <h3 className="text-lg font-semibold mb-1">Select Quantity</h3>
+                         <div className={dropdownRowClasses}>
+                             <h3 className={labelClasses}>Quantity</h3>
                              <DropdownMenu>
                                 <DropdownMenuTrigger asChild>
-                                    <Button variant="outline" className="w-full justify-between">
-                                        {/* Use finalSelectionDetail for quantity */}
+                                    <Button variant="outline" className={buttonClasses}>
                                         {finalSelectionDetail || "Select Quantity..."}
                                         <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                                     </Button>
                                 </DropdownMenuTrigger>
-                                <DropdownMenuContent className="w-[250px]">
+                                <DropdownMenuContent className={contentClasses}>
                                     <DropdownMenuLabel>Quantity</DropdownMenuLabel>
                                     <DropdownMenuSeparator />
-                                    {/* Update finalSelectionDetail */}
-                                    <DropdownMenuRadioGroup value={finalSelectionDetail} onValueChange={setFinalSelectionDetail}>
+                                    <DropdownMenuRadioGroup value={finalSelectionDetail} onValueChange={handleQuantityChange}>
                                         {quantityOptions.map((option) => (
                                             <DropdownMenuRadioItem key={option.value} value={option.value}>
                                                 {option.label}
@@ -344,24 +336,21 @@ const MiddleContainer = () => {
                  </>
               )}
 
-              {/* --- Other Coffee Types Flow (e.g., Masterpiece, Low-Caf) --- */}
-              {/* Step 3: Quantity (Show directly after type selection) */}
+              {/* --- Other Coffee Types Flow --- */}
               {!['Roasters Choice', 'Office', 'Regional'].includes(selectedCoffeeType) && (
-                 <div className="third-step-container w-[250px]">
-                     <h3 className="text-lg font-semibold mb-1">Select Quantity</h3>
+                 <div className={dropdownRowClasses}>
+                     <h3 className={labelClasses}>Quantity</h3>
                      <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                            <Button variant="outline" className="w-full justify-between">
-                                {/* Use finalSelectionDetail for quantity */}
+                            <Button variant="outline" className={buttonClasses}>
                                 {finalSelectionDetail || "Select Quantity..."}
                                 <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                             </Button>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent className="w-[250px]">
+                        <DropdownMenuContent className={contentClasses}>
                             <DropdownMenuLabel>Quantity</DropdownMenuLabel>
                             <DropdownMenuSeparator />
-                            {/* Update finalSelectionDetail */}
-                            <DropdownMenuRadioGroup value={finalSelectionDetail} onValueChange={setFinalSelectionDetail}>
+                            <DropdownMenuRadioGroup value={finalSelectionDetail} onValueChange={handleQuantityChange}>
                                 {quantityOptions.map((option) => (
                                     <DropdownMenuRadioItem key={option.value} value={option.value}>
                                         {option.label}
@@ -375,16 +364,13 @@ const MiddleContainer = () => {
             </>
           )}
 
-          {/* Final Selection Display */}
-          {/* Show summary only when the final selection (usually quantity) is made */}
+          {/* --- Final Selection Display --- */}
+          {/* Using w-4/6 to align width with dropdown rows, text-center centers content */}
           {finalSelectionDetail && (
-                <div className="final-selection mt-4 p-3 border rounded-md bg-secondary text-secondary-foreground w-[250px] text-center">
+                <div className={`final-selection mt-4 p-3 border rounded-md bg-secondary text-secondary-foreground w-4/6 text-center`}>
                     Selected: {selectedMethod} - {selectedCoffeeType}
-                    {/* Conditionally add Region if selected */}
                     {selectedRegion && ` - ${selectedRegion}`}
-                    {/* Conditionally add Size/Option if selected (for Roasters/Office) */}
                     {selectedSizeOption && ` - ${selectedSizeOption}`}
-                    {/* Display the final detail, which is quantity in these flows */}
                     {' '}- Qty: {finalSelectionDetail}
                 </div>
           )}
