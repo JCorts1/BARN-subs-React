@@ -17,8 +17,11 @@
   background-color: #262626;
 }
 
-.right-container {
+.result-container {
   width: 50%;
   height: 100vh;
   background-color: #1e1e1e;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
