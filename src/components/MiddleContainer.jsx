@@ -1,3 +1,5 @@
+// src/components/MiddleContainer.jsx
+
 import React, { useState } from 'react';
 import {
   DropdownMenu,
@@ -7,11 +9,12 @@ import {
   DropdownMenuRadioItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Button } from "@/components/ui/button";
+} from "@/components/ui/dropdown-menu"; // Assuming Shadcn UI path is correct
+import { Button } from "@/components/ui/button";    // Assuming Shadcn UI path is correct
 import { ChevronDown } from "lucide-react";
-import "../components/MiddleContainer.css"; 
+import "./MiddleContainer.css"; // Styles specific to this component
 
+// --- Data Constants ---
 const filterOptions = [
   { value: "Roasters Choice", label: "Roasters Choice" },
   { value: "Masterpiece", label: "Masterpiece" },
@@ -48,53 +51,35 @@ const regionOptions = [
     { value: "Center America", label: "Center America" },
 ];
 
+// --- Component receives state and callbacks as props ---
+const MiddleContainer = ({
+  selectedMethod,
+  selectedCoffeeType,
+  selectedRegion,
+  selectedSizeOption,
+  finalSelectionDetail, // Quantity
 
-const MiddleContainer = () => {
+  onMethodChange,
+  onCoffeeTypeChange,
+  onRegionChange,
+  onSizeOptionChange,
+  onQuantityChange,
+  onResetSelections
+}) => {
 
+  // Internal state only for showing/hiding this section's dropdowns
   const [showCoffeeType, setShowCoffeeType] = useState(false);
-  const [selectedMethod, setSelectedMethod] = useState('');
-  const [selectedCoffeeType, setSelectedCoffeeType] = useState('');
-  const [selectedRegion, setSelectedRegion] = useState('');
-  const [selectedSizeOption, setSelectedSizeOption] = useState('');
-  const [finalSelectionDetail, setFinalSelectionDetail] = useState('');
 
-  const resetSelections = () => {
-      setSelectedCoffeeType('');
-      setSelectedRegion('');
-      setSelectedSizeOption('');
-      setFinalSelectionDetail('');
-  }
+  // Handlers for visibility and calling parent reset
   const handleSelectSelf = () => {
     setShowCoffeeType(true);
-    setSelectedMethod('');
-    resetSelections();
+    if (onResetSelections) onResetSelections();
   };
+
   const handleSelectGift = () => {
     setShowCoffeeType(false);
-    setSelectedMethod('');
-    resetSelections();
+     if (onResetSelections) onResetSelections();
   };
-  const handleMethodChange = (newMethod) => {
-      setSelectedMethod(newMethod);
-      resetSelections();
-  };
-  const handleCoffeeTypeChange = (newCoffeeType) => {
-      setSelectedCoffeeType(newCoffeeType);
-      setSelectedRegion('');
-      setSelectedSizeOption('');
-      setFinalSelectionDetail('');
-  };
-  const handleRegionChange = (newRegion) => {
-      setSelectedRegion(newRegion);
-      setFinalSelectionDetail('');
-  }
-  const handleSizeOptionChange = (newSizeOption) => {
-      setSelectedSizeOption(newSizeOption);
-      setFinalSelectionDetail('');
-  }
-  const handleQuantityChange = (newQuantity) => {
-      setFinalSelectionDetail(newQuantity);
-  }
 
   return (
     <div className="middle-content-wrapper flex flex-col justify-center items-center">
@@ -114,21 +99,21 @@ const MiddleContainer = () => {
 
       {showCoffeeType && (
         <div className='coffee-type-container w-5/6 rounded-md p-3 pt-5 flex flex-col items-center gap-y-2 bg-[#3a3c3d] justify-center'>
+
+           {/* Step 1: Method Selection */}
            <div className='dropdown-row'>
              <h3 className='dropdown-label'>Method</h3>
              <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                    {/* Keep Shadcn's variant, apply custom class for layout */}
                     <Button variant="outline" className='dropdown-trigger-button'>
                       {selectedMethod || "What roast style would you like?"}
                       <ChevronDown className="ml-2 h-4 w-4 shrink-0" />
                     </Button>
                 </DropdownMenuTrigger>
-                {/* Apply custom class for content panel width */}
                 <DropdownMenuContent className='dropdown-content-panel'>
-                    <DropdownMenuRadioGroup value={selectedMethod} onValueChange={handleMethodChange}>
-                    <DropdownMenuRadioItem value="Filter">Filter</DropdownMenuRadioItem>
-                    <DropdownMenuRadioItem value="Espresso">Espresso</DropdownMenuRadioItem>
+                    <DropdownMenuRadioGroup value={selectedMethod} onValueChange={onMethodChange}>
+                      <DropdownMenuRadioItem value="Filter">Filter</DropdownMenuRadioItem>
+                      <DropdownMenuRadioItem value="Espresso">Espresso</DropdownMenuRadioItem>
                     </DropdownMenuRadioGroup>
                 </DropdownMenuContent>
             </DropdownMenu>
@@ -146,7 +131,7 @@ const MiddleContainer = () => {
                         </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent className='dropdown-content-panel'>
-                        <DropdownMenuRadioGroup value={selectedCoffeeType} onValueChange={handleCoffeeTypeChange}>
+                        <DropdownMenuRadioGroup value={selectedCoffeeType} onValueChange={onCoffeeTypeChange}>
                             {(selectedMethod === 'Filter' ? filterOptions : espressoOptions).map((option) => (
                             <DropdownMenuRadioItem key={option.value} value={option.value}>
                                 {option.label}
@@ -158,8 +143,10 @@ const MiddleContainer = () => {
              </div>
           )}
 
+          {/* Step 3 & 4: Dependent Selections */}
           {selectedCoffeeType && (
             <>
+              {/* Roasters Choice Flow */}
               {selectedCoffeeType === 'Roasters Choice' && (
                 <>
                   <div className='dropdown-row'>
@@ -172,7 +159,7 @@ const MiddleContainer = () => {
                           </Button>
                       </DropdownMenuTrigger>
                        <DropdownMenuContent className='dropdown-content-panel'>
-                          <DropdownMenuRadioGroup value={selectedSizeOption} onValueChange={handleSizeOptionChange}>
+                          <DropdownMenuRadioGroup value={selectedSizeOption} onValueChange={onSizeOptionChange}>
                               {roastersChoiceOptions.map((option) => (
                                   <DropdownMenuRadioItem key={option.value} value={option.value}>
                                       {option.label}
@@ -182,7 +169,6 @@ const MiddleContainer = () => {
                        </DropdownMenuContent>
                     </DropdownMenu>
                   </div>
-
                   {selectedSizeOption && (
                        <div className='dropdown-row'>
                            <h3 className='dropdown-label'>Quantity</h3>
@@ -196,7 +182,7 @@ const MiddleContainer = () => {
                               <DropdownMenuContent className='dropdown-content-panel'>
                                   <DropdownMenuLabel>Quantity</DropdownMenuLabel>
                                   <DropdownMenuSeparator />
-                                  <DropdownMenuRadioGroup value={finalSelectionDetail} onValueChange={handleQuantityChange}>
+                                  <DropdownMenuRadioGroup value={finalSelectionDetail} onValueChange={onQuantityChange}>
                                       {quantityOptions.map((option) => (
                                           <DropdownMenuRadioItem key={option.value} value={option.value}>
                                               {option.label}
@@ -210,6 +196,7 @@ const MiddleContainer = () => {
                 </>
               )}
 
+              {/* Office Flow */}
               {selectedCoffeeType === 'Office' && (
                 <>
                   <div className='dropdown-row'>
@@ -222,7 +209,7 @@ const MiddleContainer = () => {
                           </Button>
                       </DropdownMenuTrigger>
                        <DropdownMenuContent className='dropdown-content-panel'>
-                          <DropdownMenuRadioGroup value={selectedSizeOption} onValueChange={handleSizeOptionChange}>
+                          <DropdownMenuRadioGroup value={selectedSizeOption} onValueChange={onSizeOptionChange}>
                               {officeSizeOptions.map((option) => (
                                   <DropdownMenuRadioItem key={option.value} value={option.value}>
                                       {option.label}
@@ -232,8 +219,6 @@ const MiddleContainer = () => {
                        </DropdownMenuContent>
                     </DropdownMenu>
                   </div>
-
-                  {/* Step 4: Quantity */}
                   {selectedSizeOption && (
                        <div className='dropdown-row'>
                            <h3 className='dropdown-label'>Quantity</h3>
@@ -247,7 +232,7 @@ const MiddleContainer = () => {
                               <DropdownMenuContent className='dropdown-content-panel'>
                                   <DropdownMenuLabel>Quantity</DropdownMenuLabel>
                                   <DropdownMenuSeparator />
-                                  <DropdownMenuRadioGroup value={finalSelectionDetail} onValueChange={handleQuantityChange}>
+                                  <DropdownMenuRadioGroup value={finalSelectionDetail} onValueChange={onQuantityChange}>
                                       {quantityOptions.map((option) => (
                                           <DropdownMenuRadioItem key={option.value} value={option.value}>
                                               {option.label}
@@ -261,9 +246,9 @@ const MiddleContainer = () => {
                 </>
               )}
 
+              {/* Regional Flow */}
               {selectedCoffeeType === 'Regional' && (
                  <>
-                    {/* Step 3: Region Selection */}
                     <div className='dropdown-row'>
                        <h3 className='dropdown-label'>Region</h3>
                        <DropdownMenu>
@@ -276,7 +261,7 @@ const MiddleContainer = () => {
                           <DropdownMenuContent className='dropdown-content-panel'>
                               <DropdownMenuLabel>Region</DropdownMenuLabel>
                               <DropdownMenuSeparator />
-                              <DropdownMenuRadioGroup value={selectedRegion} onValueChange={handleRegionChange}>
+                              <DropdownMenuRadioGroup value={selectedRegion} onValueChange={onRegionChange}>
                                   {regionOptions.map((option) => (
                                       <DropdownMenuRadioItem key={option.value} value={option.value}>
                                           {option.label}
@@ -286,8 +271,6 @@ const MiddleContainer = () => {
                           </DropdownMenuContent>
                        </DropdownMenu>
                     </div>
-
-                    {/* Step 4: Quantity */}
                     {selectedRegion && (
                          <div className='dropdown-row'>
                              <h3 className='dropdown-label'>Quantity</h3>
@@ -301,7 +284,7 @@ const MiddleContainer = () => {
                                 <DropdownMenuContent className='dropdown-content-panel'>
                                     <DropdownMenuLabel>Quantity</DropdownMenuLabel>
                                     <DropdownMenuSeparator />
-                                    <DropdownMenuRadioGroup value={finalSelectionDetail} onValueChange={handleQuantityChange}>
+                                    <DropdownMenuRadioGroup value={finalSelectionDetail} onValueChange={onQuantityChange}>
                                         {quantityOptions.map((option) => (
                                             <DropdownMenuRadioItem key={option.value} value={option.value}>
                                                 {option.label}
@@ -329,7 +312,7 @@ const MiddleContainer = () => {
                         <DropdownMenuContent className='dropdown-content-panel'>
                             <DropdownMenuLabel>Quantity</DropdownMenuLabel>
                             <DropdownMenuSeparator />
-                            <DropdownMenuRadioGroup value={finalSelectionDetail} onValueChange={handleQuantityChange}>
+                            <DropdownMenuRadioGroup value={finalSelectionDetail} onValueChange={onQuantityChange}>
                                 {quantityOptions.map((option) => (
                                     <DropdownMenuRadioItem key={option.value} value={option.value}>
                                         {option.label}
@@ -343,8 +326,7 @@ const MiddleContainer = () => {
             </>
           )}
 
-          {/* Final Selection Display */}
-          {/* Kept Tailwind classes for specific styling here */}
+          {/* Final Selection Display (shows state passed from parent) */}
           {finalSelectionDetail && (
                 <div className="final-selection mt-4 p-3 border rounded-md bg-secondary text-secondary-foreground w-4/6 text-center">
                     Selected: {selectedMethod} - {selectedCoffeeType}
