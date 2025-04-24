@@ -40,19 +40,19 @@
   justify-content: space-between;
   background-color: #4b4d4e;
   padding: 1rem;
-  border: 1px solid #fff;
+  border: 1px solid #555555;
   border-radius: 6px;
-  gap: 3rem; /* Corresponds to gap-2 */
+  gap: 3rem;
   width: 95%;
-  margin-bottom: 1rem; /* Corresponds to mb-4 */
+  margin-bottom: 1rem;
 }
 
-/* Styles for the label (e.g., "Method", "Type") */
+
 .dropdown-label {
-  font-size: 1.125rem; /* Corresponds to text-lg */
+  font-size: 1.125rem; 
   line-height: 1.75rem;
-  color: #fff; /* Corresponds to text-white */
-  font-weight: 600; /* Corresponds to font-semibold */
+  color: #fff; 
+  font-weight: 600; 
   width: auto; /* Let label take its natural width */
   flex-shrink: 0; /* Prevent label from shrinking if button text is long */
   margin-right: 0.5rem; /* Add specific space if justify-between is used */
@@ -73,24 +73,7 @@
 /* Styles for the dropdown content panel */
 .dropdown-content-panel {
   width: 250px;
-  /* Add other dropdown content styles if needed */
-  /* Example: */
-  /* background-color: hsl(var(--popover)); */
-  /* color: hsl(var(--popover-foreground)); */
-  /* border-radius: var(--radius); */
-  /* box-shadow: var(--shadow-md); */
-}
-
-/* Optional: Style for the final selection display area */
-/* You can keep using Tailwind or define styles here */
-.final-selection {
-    /* Example if you move styles from Tailwind */
-    /* margin-top: 1rem; */
-    /* padding: 0.75rem; */
-    /* border: 1px solid hsl(var(--border)); */
-    /* border-radius: var(--radius); */
-    /* background-color: hsl(var(--secondary)); */
-    /* color: hsl(var(--secondary-foreground)); */
-    /* width: 66.666667%; */
-    /* text-align: center; */
+  color: #fff;
+  background: #5a5c5d;
+  border: 1px solid #A57C52;
 }
