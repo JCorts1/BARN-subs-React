@@ -1,3 +1,9 @@
 .intro-list li {
     padding-bottom: 0.5rem;
 }
+
+.final-selection-display h2 {
+    font-family: "Antonio", sans-serif;
+  font-weight: 800;
+  font-size: x-large;
+}

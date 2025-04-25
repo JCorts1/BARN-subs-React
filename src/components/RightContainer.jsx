@@ -65,13 +65,13 @@ const RightContainer = ({ method, type, region, sizeOption, quantity, frequency 
 
     contentToRender = (
       <div className="final-selection-display w-[90%] flex flex-col items-center text-white text-center">
-        <h2 className="text-2xl font-semibold mb-4">Your Subscription</h2> {/* Changed title slightly */}
+        <h2 className="text-2xl font-semibold mb-4 text-[#A67C52]">Subscription Summary</h2>
         <img
           src={finalImageUrl}
           alt={`Coffee selection: ${type}${region ? ' - ' + region : ''}`}
-          style={{ width: '100%', maxWidth: '250px', height: 'auto', margin: '1rem 0', borderRadius: '8px' }}
+          style={{ width: '100%', maxWidth: '300px', height: 'auto', margin: '1rem 0', borderRadius: '8px' }}
         />
-        <p className="mb-4">{finalDescription}</p>
+        <p className="mb-4 border border-[#A67C52] rounded-md">{finalDescription}</p>
         {/* --- Updated List: Added frequency --- */}
         <ul className="selection-details-list" style={{ listStyle: 'none', padding: 0 }}>
           <li>Method: {method}</li>
