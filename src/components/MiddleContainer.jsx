@@ -57,6 +57,7 @@ const frequencyOptions = [
     { value: "3 Weeks", label: "3 Weeks" },
     { value: "4 Weeks", label: "4 Weeks" },
     { value: "5 Weeks", label: "5 Weeks" },
+    { value: "6 Weeks", label: "6 Weeks" }
 ];
 
 // --- Component receives state and callbacks as props ---
