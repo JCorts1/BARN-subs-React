@@ -9,10 +9,10 @@ import {
   DropdownMenuRadioItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"; // Assuming Shadcn UI path is correct
-import { Button } from "@/components/ui/button";    // Assuming Shadcn UI path is correct
+} from "@/components/ui/dropdown-menu"; 
+import { Button } from "@/components/ui/button";   
 import { ChevronDown } from "lucide-react";
-import "./MiddleContainer.css"; // Styles specific to this component
+import "./MiddleContainer.css"; 
 
 // --- Data Constants ---
 const filterOptions = [
