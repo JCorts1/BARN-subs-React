@@ -54,9 +54,9 @@ const RightContainer = ({ method, type, region, sizeOption, quantity }) => {
 
     // ** IMPORTANT: Replace placeholder URLs with your actual Shopify image URLs **
     if (type === 'Regional') {
-      if (region === 'Ethiopia') finalImageUrl = "YOUR_SHOPIFY_URL_FOR_ETHIOPIA_FINAL.jpg";
-      else if (region === 'Brazil') finalImageUrl = "YOUR_SHOPIFY_URL_FOR_BRAZIL_FINAL.jpg";
-      else if (region === 'Center America') finalImageUrl = "YOUR_SHOPIFY_URL_FOR_CENTERAMERICA_FINAL.jpg";
+      if (region === 'Ethiopia') finalImageUrl = "https://cdn.shopify.com/s/files/1/0831/4141/files/BAG_Chelbesa_Natural_2024.png?v=1729679115";
+      else if (region === 'Brazil') finalImageUrl = "https://cdn.shopify.com/s/files/1/0831/4141/files/Elemental_Bag_Catuai_mit_labelle.png?v=1723799712";
+      else if (region === 'Center America') finalImageUrl = " https://cdn.shopify.com/s/files/1/0831/4141/files/BAG_Volcan_Azul_Caturra_OMNI_3a40d3d4-a185-4da0-99ff-b8d0f43479b7.png?v=1743674027";
       else finalImageUrl = "YOUR_SHOPIFY_URL_FOR_GENERIC_REGIONAL_FINAL.jpg"; // Fallback regional
     }
 
