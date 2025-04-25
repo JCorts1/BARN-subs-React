@@ -29,7 +29,7 @@ const RightContainer = ({ method, type, region, sizeOption, quantity }) => {
 
   // --- Define Image Map using your Shopify URLs ---
   const typeImageMap = {
-    "Roasters Choice": "https://cdn.shopify.com/s/files/1/0831/4141/files/roasters_choice.jpg?v=1728985731",
+    "Roasters Choice": "https://cdn.shopify.com/s/files/1/0831/4141/files/Ralf-coffee_1.jpg?v=1713252187",
     "Masterpiece": "https://cdn.shopify.com/s/files/1/0831/4141/files/Aroma_Nativo_Masterpiece.jpg?v=1744711907",
     "Low-Caf": "https://cdn.shopify.com/s/files/1/0831/4141/files/BAG_Daterra_Reserve_Low_Caf_2025.png?v=1739287021",
     // Add other types if needed:
