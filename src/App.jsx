@@ -55,7 +55,6 @@ function App() {
   return (
     <div className="app-container">
 
-      {/* Left Side: Pass state values & callbacks down */}
       <div className="function-container">
         <MiddleContainer
           // State values
