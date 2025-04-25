@@ -3,7 +3,8 @@
 import React from 'react';
 import './RightContainer.css'; // Styles specific to this component
 
-const RightContainer = ({ method, type, region, sizeOption, quantity }) => {
+// --- Updated Props: Added frequency ---
+const RightContainer = ({ method, type, region, sizeOption, quantity, frequency }) => {
 
   // --- Define Default/Introductory Content ---
   const DefaultIntroContent = () => {
@@ -38,7 +39,8 @@ const RightContainer = ({ method, type, region, sizeOption, quantity }) => {
   // --- End Image Map ---
 
   // --- Determine Display Logic ---
-  const fullSelectionMade = method && type && quantity;
+  // --- Updated Condition: Added frequency check ---
+  const fullSelectionMade = method && type && quantity && frequency;
   const showTypeImageOnly = type && type !== 'Regional' && typeImageMap[type] && !fullSelectionMade;
 
   let contentToRender;
@@ -46,11 +48,12 @@ const RightContainer = ({ method, type, region, sizeOption, quantity }) => {
   if (fullSelectionMade) {
     // --- STATE 1: FINAL SELECTION MADE ---
     let finalImageUrl = typeImageMap[type] || "YOUR_SHOPIFY_URL_FOR_FALLBACK_IMAGE.jpg"; // Provide a fallback Shopify URL
+    // --- Updated Description: Added frequency ---
     let finalDescription = `You've chosen ${method} style ${type} coffee`;
 
     if (region) finalDescription += ` from ${region}`;
     if (sizeOption) finalDescription += ` (${sizeOption})`;
-    finalDescription += `. Quantity: ${quantity}.`;
+    finalDescription += `. Quantity: ${quantity}. Delivered every ${frequency}.`; // <-- Added frequency here
 
     // ** IMPORTANT: Replace placeholder URLs with your actual Shopify image URLs **
     if (type === 'Regional') {
@@ -62,19 +65,21 @@ const RightContainer = ({ method, type, region, sizeOption, quantity }) => {
 
     contentToRender = (
       <div className="final-selection-display w-[90%] flex flex-col items-center text-white text-center">
-        <h2 className="text-2xl font-semibold mb-4">Your Selection</h2>
+        <h2 className="text-2xl font-semibold mb-4">Your Subscription</h2> {/* Changed title slightly */}
         <img
           src={finalImageUrl}
           alt={`Coffee selection: ${type}${region ? ' - ' + region : ''}`}
           style={{ width: '100%', maxWidth: '250px', height: 'auto', margin: '1rem 0', borderRadius: '8px' }}
         />
         <p className="mb-4">{finalDescription}</p>
+        {/* --- Updated List: Added frequency --- */}
         <ul className="selection-details-list" style={{ listStyle: 'none', padding: 0 }}>
           <li>Method: {method}</li>
           <li>Type: {type}</li>
           {region && <li>Region: {region}</li>}
           {sizeOption && <li>Option/Size: {sizeOption}</li>}
           <li>Quantity: {quantity}</li>
+          <li>Frequency: Every {frequency}</li> {/* <-- Added frequency list item */}
         </ul>
       </div>
     );

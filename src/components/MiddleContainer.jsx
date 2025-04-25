@@ -9,10 +9,10 @@ import {
   DropdownMenuRadioItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"; 
-import { Button } from "@/components/ui/button";   
+} from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
 import { ChevronDown } from "lucide-react";
-import "./MiddleContainer.css"; 
+import "./MiddleContainer.css";
 
 // --- Data Constants ---
 const filterOptions = [
@@ -50,6 +50,14 @@ const regionOptions = [
     { value: "Ethiopia", label: "Ethiopia" },
     { value: "Center America", label: "Center America" },
 ];
+// --- NEW: Frequency Options ---
+const frequencyOptions = [
+    { value: "1 Week", label: "1 Week" },
+    { value: "2 Weeks", label: "2 Weeks" },
+    { value: "3 Weeks", label: "3 Weeks" },
+    { value: "4 Weeks", label: "4 Weeks" },
+    { value: "5 Weeks", label: "5 Weeks" },
+];
 
 // --- Component receives state and callbacks as props ---
 const MiddleContainer = ({
@@ -58,12 +66,13 @@ const MiddleContainer = ({
   selectedRegion,
   selectedSizeOption,
   finalSelectionDetail, // Quantity
-
+  selectedFrequency,    // <-- NEW PROP for selected frequency
   onMethodChange,
   onCoffeeTypeChange,
   onRegionChange,
   onSizeOptionChange,
   onQuantityChange,
+  onFrequencyChange,    // <-- NEW PROP for handling frequency change
   onResetSelections
 }) => {
 
@@ -180,8 +189,7 @@ const MiddleContainer = ({
                                   </Button>
                               </DropdownMenuTrigger>
                               <DropdownMenuContent className='dropdown-content-panel'>
-                                  <DropdownMenuLabel>Quantity</DropdownMenuLabel>
-                                  <DropdownMenuSeparator />
+                                  {/* Removed Label/Separator for consistency, can add back if needed */}
                                   <DropdownMenuRadioGroup value={finalSelectionDetail} onValueChange={onQuantityChange}>
                                       {quantityOptions.map((option) => (
                                           <DropdownMenuRadioItem key={option.value} value={option.value}>
@@ -230,8 +238,6 @@ const MiddleContainer = ({
                                   </Button>
                               </DropdownMenuTrigger>
                               <DropdownMenuContent className='dropdown-content-panel'>
-                                  <DropdownMenuLabel>Quantity</DropdownMenuLabel>
-                                  <DropdownMenuSeparator />
                                   <DropdownMenuRadioGroup value={finalSelectionDetail} onValueChange={onQuantityChange}>
                                       {quantityOptions.map((option) => (
                                           <DropdownMenuRadioItem key={option.value} value={option.value}>
@@ -259,8 +265,7 @@ const MiddleContainer = ({
                               </Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent className='dropdown-content-panel'>
-                              <DropdownMenuLabel>Region</DropdownMenuLabel>
-                              <DropdownMenuSeparator />
+                              {/* Removed Label/Separator for consistency */}
                               <DropdownMenuRadioGroup value={selectedRegion} onValueChange={onRegionChange}>
                                   {regionOptions.map((option) => (
                                       <DropdownMenuRadioItem key={option.value} value={option.value}>
@@ -282,8 +287,6 @@ const MiddleContainer = ({
                                     </Button>
                                 </DropdownMenuTrigger>
                                 <DropdownMenuContent className='dropdown-content-panel'>
-                                    <DropdownMenuLabel>Quantity</DropdownMenuLabel>
-                                    <DropdownMenuSeparator />
                                     <DropdownMenuRadioGroup value={finalSelectionDetail} onValueChange={onQuantityChange}>
                                         {quantityOptions.map((option) => (
                                             <DropdownMenuRadioItem key={option.value} value={option.value}>
@@ -298,7 +301,7 @@ const MiddleContainer = ({
                  </>
               )}
 
-              {/* Other Coffee Types Flow */}
+              {/* Other Coffee Types Flow (e.g., Masterpiece, Low-Caf) */}
               {!['Roasters Choice', 'Office', 'Regional'].includes(selectedCoffeeType) && (
                  <div className='dropdown-row'>
                      <h3 className='dropdown-label'>Quantity</h3>
@@ -310,8 +313,6 @@ const MiddleContainer = ({
                             </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent className='dropdown-content-panel'>
-                            <DropdownMenuLabel>Quantity</DropdownMenuLabel>
-                            <DropdownMenuSeparator />
                             <DropdownMenuRadioGroup value={finalSelectionDetail} onValueChange={onQuantityChange}>
                                 {quantityOptions.map((option) => (
                                     <DropdownMenuRadioItem key={option.value} value={option.value}>
@@ -326,13 +327,42 @@ const MiddleContainer = ({
             </>
           )}
 
+           {/* --- NEW: Frequency Selection --- */}
+           {/* Render frequency dropdown only after quantity (or equivalent) is selected */}
+           {finalSelectionDetail && (
+                <div className='dropdown-row'>
+                     <h3 className='dropdown-label'>Frequency</h3>
+                     <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button variant="outline" className='dropdown-trigger-button'>
+                                {selectedFrequency || "Select Frequency..."}
+                                <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent className='dropdown-content-panel'>
+                            <DropdownMenuRadioGroup value={selectedFrequency} onValueChange={onFrequencyChange}>
+                                {frequencyOptions.map((option) => (
+                                    <DropdownMenuRadioItem key={option.value} value={option.value}>
+                                        {option.label}
+                                    </DropdownMenuRadioItem>
+                                ))}
+                            </DropdownMenuRadioGroup>
+                        </DropdownMenuContent>
+                     </DropdownMenu>
+                 </div>
+            )}
+
+
           {/* Final Selection Display (shows state passed from parent) */}
-          {finalSelectionDetail && (
+          {/* Updated to show frequency if selected */}
+          {finalSelectionDetail && selectedFrequency && (
                 <div className="final-selection mt-4 p-3 border rounded-md bg-secondary text-secondary-foreground w-4/6 text-center">
                     Selected: {selectedMethod} - {selectedCoffeeType}
                     {selectedRegion && ` - ${selectedRegion}`}
                     {selectedSizeOption && ` - ${selectedSizeOption}`}
                     {' '}- Qty: {finalSelectionDetail}
+                    {/* --- NEW: Display selected frequency --- */}
+                    {selectedFrequency && ` - Every ${selectedFrequency}`}
                 </div>
           )}
         </div>
