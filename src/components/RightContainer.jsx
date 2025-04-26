@@ -13,7 +13,7 @@ const RightContainer = ({ method, type, region, sizeOption, quantity, frequency 
     return (
       <div className='default-intro-content text-white w-[90%] h-full flex flex-col items-center'>
         <div>
-          <img src={defaultImageUrl} alt="Select your coffee subscription" style={{ width: '100%', maxWidth: '300px', height: 'auto', margin: '1rem 0' }} />
+          <img src={defaultImageUrl} alt="Select your coffee subscription" style={{ width: '100%', maxWidth: '350px', height: 'auto', margin: '1rem 0' }} />
         </div>
         <div className='p-5 border border-[#A57C62] rounded-md mt-8'>
           <ul className="intro-list text-2xl" style={{ listStyle: 'none', padding: 0 }}>
@@ -65,15 +65,13 @@ const RightContainer = ({ method, type, region, sizeOption, quantity, frequency 
 
     contentToRender = (
       <div className="final-selection-display w-[90%] flex flex-col items-center text-white text-center">
-        <h2 className="text-2xl font-semibold mb-4 text-[#A67C52]">Subscription Summary</h2>
+        <h2 className="summary-init text-2xl font-semibold mb-4 text-[#A67C52]">Subscription Summary</h2>
         <img
           src={finalImageUrl}
           alt={`Coffee selection: ${type}${region ? ' - ' + region : ''}`}
           style={{ width: '100%', maxWidth: '300px', height: 'auto', margin: '1rem 0', borderRadius: '8px' }}
         />
-        <p className="mb-4 border border-[#A67C52] rounded-md">{finalDescription}</p>
-        {/* --- Updated List: Added frequency --- */}
-        <ul className="selection-details-list" style={{ listStyle: 'none', padding: 0 }}>
+        <ul className="selection-details-list rounded-md">
           <li>Method: {method}</li>
           <li>Type: {type}</li>
           {region && <li>Region: {region}</li>}

@@ -3,7 +3,24 @@
 }
 
 .final-selection-display h2 {
-    font-family: "Antonio", sans-serif;
-  font-weight: 800;
+  margin: 1rem;
+  font-family: "Antonio", sans-serif;
+  font-weight: 900;
+  font-size: 2rem;
+}
+
+.selection-details-list {
+  width: 80%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: baseline;
+  border: 1px solid #A67C52;
+  padding: 2rem;
+}
+
+.selection-details-list li {
+  font-family: "Raleway", sans-serif;
+  font-weight: 500;
   font-size: x-large;
 }
