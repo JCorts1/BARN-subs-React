@@ -1,7 +1,7 @@
 // src/components/RightContainer.jsx
 
 import React from 'react';
-import '../components/RightContainer.css'; // Styles specific to this component
+import './RightContainer.css';
 
 // --- Updated Props: Added frequency ---
 const RightContainer = ({ method, type, region, sizeOption, quantity, frequency }) => {
