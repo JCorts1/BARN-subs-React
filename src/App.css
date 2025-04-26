@@ -6,42 +6,40 @@
 
 body {
   font-family: 'Raleway', sans-serif;
-  margin: 0; /* Add this to ensure no default body margin */
-  padding: 0; /* Add this */
-  overflow-x: hidden; /* Good practice to prevent horizontal scroll on responsive layouts */
+  margin: 0; 
+  padding: 0; 
+  overflow-x: hidden; 
 }
 
 .app-container {
   width: 100vw;
-  min-height: 100vh; /* Use min-height on parent to ensure it fills viewport if children are short on large screens */
-  height: auto; /* Allow height to adjust based on content when stacked */
+  min-height: 100vh; 
+  height: auto; 
   display: flex;
-  flex-direction: row; /* Default side-by-side for larger screens */
+  flex-direction: row; 
 }
 
 .function-container {
-  width: 50%; /* Base width */
-  height: 100vh; /* Base height for side-by-side layout */
+  width: 50%; 
+  height: 100vh; 
   background-color: #262626;
-  /* Add padding/margin as needed */
-  box-sizing: border-box; /* Include padding in width */
-   overflow-y: auto; /* Add if content might exceed 100vh on large screens */
+  
+  box-sizing: border-box; 
+   overflow-y: auto; 
 }
 
 .result-container {
-  width: 50%; /* Base width */
-  height: 100vh; /* Base height for side-by-side layout */
+  width: 50%;
+  height: 100vh; 
   background-color: #1e1e1e;
   display: flex;
   justify-content: center;
-  align-items: flex-start; /* Changed alignment suitable for potentially stacking content */
-  /* Add padding/margin as needed */
-  box-sizing: border-box; /* Include padding in width */
-  overflow-y: auto; /* Add if content might exceed 100vh on large screens */
+  align-items: flex-start; 
+ 
+  box-sizing: border-box; 
+  overflow-y: auto; 
 }
 
-
-/* Media Query for phone screens (720px or less) */
 @media screen and (max-width: 720px) {
   .app-container {
     flex-direction: column; /* Stack containers vertically */

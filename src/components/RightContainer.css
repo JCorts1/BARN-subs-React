@@ -24,3 +24,7 @@
   font-weight: 500;
   font-size: x-large;
 }
+
+@media screen and (max-width: 720px) {
+  
+}
