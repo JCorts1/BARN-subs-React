@@ -65,20 +65,31 @@ const RightContainer = ({ method, type, region, sizeOption, quantity, frequency 
 
     contentToRender = (
       <div className="final-selection-display w-[90%] flex flex-col items-center text-white text-center">
-        <h2 className="summary-init text-2xl font-semibold mb-4 text-[#A67C52]">Subscription Summary</h2>
+        <h2 className="summary-init text-2xl font-semibold text-[#A67C52]">Subscription Summary</h2>
         <img
           src={finalImageUrl}
           alt={`Coffee selection: ${type}${region ? ' - ' + region : ''}`}
           style={{ width: '100%', maxWidth: '300px', height: 'auto', margin: '1rem 0', borderRadius: '8px' }}
         />
         <ul className="selection-details-list rounded-md">
-          <li>Method: {method}</li>
-          <li>Type: {type}</li>
-          {region && <li>Region: {region}</li>}
-          {sizeOption && <li>Option/Size: {sizeOption}</li>}
-          <li>Quantity: {quantity}</li>
-          <li>Frequency: Every {frequency}</li> {/* <-- Added frequency list item */}
+          <li><img className='w-12' src="https://cdn.shopify.com/s/files/1/0831/4141/files/Coffee_Holder.png?v=1745751140" alt="MethodIcon" />Method: <span className='selection-span'>{method}</span></li>
+          <li><img className='w-12' src="https://cdn.shopify.com/s/files/1/0831/4141/files/Coffee_Beans.png?v=1745751373" alt="" />Type: <span className='selection-span'>{type}</span> </li>
+          {region && <li>Region: <span className='selection-span'>{region}</span></li>}
+          {sizeOption && <li><img className='w-12' src="https://cdn.shopify.com/s/files/1/0831/4141/files/Coffee_Pack.png?v=1745751291" alt="bag of coffee" />Option/Size: <span className='selection-span'>{sizeOption}</span></li>}
+          <li>Quantity: <span className='selection-span'>{quantity}</span></li>
+          <li> Frequency: Every <span className='selection-span'>{frequency}</span></li>
         </ul>
+        <div className="cart-btn">
+  <button className="
+    bg-[#A67C52] p-3 rounded-sm border-[1.5px] border-[#3a3c3d]
+    hover:brightness-110
+    hover:scale-105
+    transition-all duration-300 ease-in-out
+    transform
+    text-white">
+    ADD TO CART
+  </button>
+</div>  
       </div>
     );
 
