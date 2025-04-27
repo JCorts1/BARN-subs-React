@@ -36,7 +36,7 @@ const officeSizeOptions = [
     { value: "2 x 250g", label: "2 x 250g" },
     { value: "1 x 1kg", label: "1 x 1kg" },
     { value: "2 x 1kg", label: "2 x 1kg" },
-    { value: "5 kilos", label: "5 kilos" },
+    { value: "5 kg", label: "5 kg" },
 ];
 const quantityOptions = [
     { value: "1", label: "1" },
