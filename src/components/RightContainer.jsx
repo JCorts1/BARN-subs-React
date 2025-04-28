@@ -168,7 +168,7 @@ const RightContainer = ({ method, type, region, sizeOption, quantity, frequency 
 
 
     contentToRender = (
-      <div className="final-selection-display w-[90%] flex flex-col items-center text-white text-center">
+      <div className="final-selection-display w-[100%] flex flex-col items-center text-white text-center">
         <h2 className="summary-init text-2xl font-semibold text-[#A67C52] mb-4">Subscription Summary</h2>
         {/* Coffee Image */}
         <img
@@ -178,35 +178,32 @@ const RightContainer = ({ method, type, region, sizeOption, quantity, frequency 
         />
 
         {/* --- NEW: Subscription Description Section --- */}
-        {currentDescriptionData && ( // Only render if description data exists
-          <div className="subscription-description text-sm text-gray-300 my-4 px-2 text-left w-full max-w-md"> {/* Left aligned text */}
+        {currentDescriptionData && ( 
+          <div className="subscription-description text-white my-4 px-2 text-left w-[#80%] flex items-center justify-center"> 
             {/* Display the main description */}
-            <p className="mb-3">{currentDescriptionData.description}</p>
+            
             {/* Display the current/upcoming offering if available */}
             {currentDescriptionData.currentOffering && (
-              <div className="bg-black bg-opacity-20 p-3 rounded-md border border-gray-600"> {/* Added div container */}
-                <p className="whitespace-pre-wrap"> {/* Use pre-wrap for line breaks */}
+              <div className="bg-[#3a3c3d] p-3 rounded-md border border-[#A67C52] text-lg w-[90%]"> 
+                <p className="whitespace-pre-wrap"> 
+                <p className="mb-3">{currentDescriptionData.description}</p>
                   {currentDescriptionData.currentOffering}
                 </p>
               </div>
             )}
           </div>
         )}
-        {/* --- End Subscription Description Section --- */}
 
-
-        {/* Summary Paragraph: Render the array of elements */}
-        <p className="summary-sentence text-lg leading-relaxed mt-0 mb-4 px-4 min-h-[3em]"> {/* Adjusted margin */}
+        <p className="summary-sentence text-lg leading-relaxed mt-0 mb-4 px-4 w-[90%] min-h-[3em]"> 
           {sentenceParts}
         </p>
 
-        {/* Add to Cart Button (logic remains the same) */}
-        <div className="cart-btn mt-4">
+        <div className="cart-btn mt-2 w-[100%] flex justify-end">
           <button
             className={`
-              bg-[#A67C52] p-3 px-6 rounded-md border-[1.5px] border-[#3a3c3d]
+              bg-[#A67C52] p-2 px-3 rounded-md border-[1.5px] border-[#3a3c3d]
               transition-all duration-300 ease-in-out transform
-              text-white font-semibold text-lg
+              text-white font-semibold text-md mb-2
               disabled:opacity-50 disabled:cursor-not-allowed enabled:hover:brightness-110 enabled:hover:scale-105
             `}
             disabled={!canAddToCart}
