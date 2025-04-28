@@ -54,8 +54,7 @@ body {
     background-color: #262626; /* Keep original or set blue for testing */
     /* Adjust padding/margin for mobile */
     padding: 20px; /* Example padding */
-    box-sizing: border-box; /* Ensure padding doesn't add to width */
-     /* Align content within function-container if needed, e.g. text-align: center; */
+    box-sizing: border-box; 
   }
 
   .result-container {
@@ -63,10 +62,8 @@ body {
     height: auto; /* Height adjusts to content */
     min-height: 50vh; /* Give result container a minimum height so it's scrollable */
     background-color: #1e1e1e;
-    /* Adjust padding/margin for mobile */
-    padding: 20px; /* Example padding */
-    box-sizing: border-box; /* Ensure padding doesn't add to width */
-    align-items: center; /* Re-center content horizontally if needed */
-    justify-content: flex-start; /* Align content to top within the container */
+    box-sizing: border-box; 
+    align-items: center; 
+    justify-content: flex-start; 
   }
 }
