@@ -55,7 +55,6 @@ body {
     /* Adjust padding/margin for mobile */
     padding: 20px; /* Example padding */
     box-sizing: border-box; 
-     /* Align content within function-container if needed, e.g. text-align: center; */
   }
 
   .result-container {
