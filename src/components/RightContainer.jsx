@@ -6,15 +6,15 @@ import './RightContainer.css'; // Make sure this CSS file exists or remove if no
 // --- Props remain the same ---
 const RightContainer = ({ method, type, region, sizeOption, quantity, frequency }) => {
 
-  // --- Define Default/Introductory Content (Using the original UL as per your code) ---
+  // --- Define Default/Introductory Content (Remains the same) ---
   const DefaultIntroContent = () => {
+    // ... (DefaultIntroContent implementation remains unchanged)
     const defaultImageUrl = "https://cdn.shopify.com/s/files/1/0831/4141/files/LOGO-NAME.png?v=1710576883";
     return (
       <div className='default-intro-content text-white w-[90%] h-full flex flex-col items-center'>
         <div>
           <img src={defaultImageUrl} alt="Select your coffee subscription" style={{ width: '100%', maxWidth: '350px', height: 'auto', margin: '1rem 0' }} />
         </div>
-        {/* This introductory list remains as you provided it */}
         <div className='p-5 border border-[#A57C62] rounded-md mt-8'>
           <ul className="intro-list text-2xl" style={{ listStyle: 'none', padding: 0 }}>
             <li>🌱 Sustainably sourced from top farms</li>
@@ -29,49 +29,97 @@ const RightContainer = ({ method, type, region, sizeOption, quantity, frequency 
   // --- End Default/Introductory Content ---
 
 
-  // --- Image Map ---
+  // --- Image Map (Remains the same) ---
   const typeImageMap = {
-    "Roasters Choice": "https://cdn.shopify.com/s/files/1/0831/4141/files/Ralf-coffee_1.jpg?v=1713252187",
-    "Masterpiece": "https://cdn.shopify.com/s/files/1/0831/4141/files/Aroma_Nativo_Masterpiece.jpg?v=1744711907",
-    "Low-Caf": "https://cdn.shopify.com/s/files/1/0831/4141/files/BAG_Daterra_Reserve_Low_Caf_2025.png?v=1739287021",
-    "Office": "https://cdn.shopify.com/s/files/1/1657/3941/files/volcan_azul_1kg.webp?v=1743027540",
-    // "Office": "YOUR_SHOPIFY_URL_FOR_OFFICE_IMAGE.jpg",
+        "Roasters Choice": "https://cdn.shopify.com/s/files/1/0831/4141/files/Ralf-coffee_1.jpg?v=1713252187",
+        "Masterpiece": "https://cdn.shopify.com/s/files/1/0831/4141/files/Aroma_Nativo_Masterpiece.jpg?v=1744711907",
+        "Low-Caf": "https://cdn.shopify.com/s/files/1/0831/4141/files/BAG_Daterra_Reserve_Low_Caf_2025.png?v=1739287021",
+        "Office": "https://cdn.shopify.com/s/files/1/1657/3941/files/volcan_azul_1kg.webp?v=1743027540",
   };
   // --- End Image Map ---
 
 
-  // --- Determine Display Logic ---
-  const fullSelectionMade = method && type && quantity && frequency;
-  const showTypeImageOnly = type && type !== 'Regional' && typeImageMap[type] && !fullSelectionMade;
+  // --- Determine Display Logic (Remains the same) ---
+  const showSummaryLayout = method && type;
+  const canAddToCart = method && type && quantity && frequency &&
+    (type !== 'Regional' || region) &&
+    (type !== 'Roasters Choice' || sizeOption) &&
+    (type !== 'Office' || sizeOption);
 
   let contentToRender;
 
-  if (fullSelectionMade) {
-    // --- STATE 1: FINAL SELECTION MADE ---
+  // --- Show Summary Layout Logic ---
+  if (showSummaryLayout) {
+    // --- STATE 1: Display Summary (Dynamically Updating) ---
     let finalImageUrl = typeImageMap[type] || "YOUR_SHOPIFY_URL_FOR_FALLBACK_IMAGE.jpg";
 
-    // ** IMPORTANT: Replace placeholder URLs with your actual Shopify image URLs **
+    // Image selection logic based on region (remains the same)
     if (type === 'Regional') {
-      if (region === 'Ethiopia') finalImageUrl = "https://cdn.shopify.com/s/files/1/0831/4141/files/BAG_Chelbesa_Natural_2024.png?v=1729679115";
-      else if (region === 'Brazil') finalImageUrl = "https://cdn.shopify.com/s/files/1/0831/4141/files/Elemental_Bag_Catuai_mit_labelle.png?v=1723799712";
-      else if (region === 'Center America') finalImageUrl = " https://cdn.shopify.com/s/files/1/0831/4141/files/BAG_Volcan_Azul_Caturra_OMNI_3a40d3d4-a185-4da0-99ff-b8d0f43479b7.png?v=1743674027";
-      else finalImageUrl = "YOUR_SHOPIFY_URL_FOR_GENERIC_REGIONAL_FINAL.jpg"; // Fallback regional
+          if (region === 'Ethiopia') finalImageUrl = "https://cdn.shopify.com/s/files/1/0831/4141/files/BAG_Chelbesa_Natural_2024.png?v=1729679115";
+          else if (region === 'Brazil') finalImageUrl = "https://cdn.shopify.com/s/files/1/0831/4141/files/Elemental_Bag_Catuai_mit_labelle.png?v=1723799712";
+          else if (region === 'Center America') finalImageUrl = " https://cdn.shopify.com/s/files/1/0831/4141/files/BAG_Volcan_Azul_Caturra_OMNI_3a40d3d4-a185-4da0-99ff-b8d0f43479b7.png?v=1743674027";
+          else if (region) {
+            finalImageUrl = "YOUR_SHOPIFY_URL_FOR_GENERIC_REGIONAL_FINAL.jpg";
+          } else {
+            finalImageUrl = typeImageMap[type] || "YOUR_SHOPIFY_URL_FOR_FALLBACK_IMAGE.jpg";
+          }
     }
 
-    // --- Construct the concise summary sentence ---
-    const coffeeDescription = `${method} ${type}${region ? ` from ${region}` : ''} coffee`;
-    const amountText = sizeOption ? `${sizeOption} ` : ''; // Amount per delivery, with trailing space if present. Example: "2 x 1kg " or "250g " or ""
-    const quantityPlural = quantity > 1 ? 'times' : 'time'; // Handle singular 'time'
-    const frequencyText = frequency ? `, delivered every ${frequency}`: ''; // Delivery frequency part
+    // --- Construct the dynamic summary sentence with highlighted values ---
+    const highlightClass = "text-[#A67C52] font-semibold"; // Tailwind classes for highlighting
+    const sentenceParts = []; // Array to hold strings and JSX elements
 
-    // Combine: "You will receive [Amount] [Coffee Type] [Quantity] times, delivered every [Frequency]."
-    const summarySentence = `You will receive ${amountText}${coffeeDescription} ${quantity} ${quantityPlural}${frequencyText}.`;
-    // Example Output (sizeOption = "2 x 1kg", quantity = 4, frequency = "5 Weeks"):
-    // "You will receive 2 x 1kg Espresso Office coffee 4 times, delivered every 5 Weeks."
-    // Example Output (sizeOption = "250g", quantity = 1, frequency = "6 weeks"):
-    // "You will receive 250g Filter Masterpiece coffee 1 time, delivered every 6 weeks."
-    // Example Output (sizeOption = null, quantity = 3, frequency = "4 weeks"):
-    // "You will receive Filter Regional from Ethiopia coffee 3 times, delivered every 4 weeks."
+    sentenceParts.push('Your selection: '); // Start of sentence
+
+    // Amount (sizeOption) - Highlight if present
+    if (sizeOption) {
+      sentenceParts.push(<span key="amount" className={highlightClass}>{sizeOption}</span>);
+      sentenceParts.push(' '); // Add space after
+    } else if (type === 'Roasters Choice' || type === 'Office') {
+      // Show placeholder if size/option is required but missing
+      sentenceParts.push('(select size/option) ');
+    }
+
+    // Method (Always present here) - Highlight
+    sentenceParts.push(<span key="method" className={highlightClass}>{method}</span>);
+    sentenceParts.push(' '); // Add space after
+
+    // Type (Always present here) - Highlight
+    sentenceParts.push(<span key="type" className={highlightClass}>{type}</span>);
+
+    // Region - Highlight if present
+    if (region) {
+      sentenceParts.push(' from ');
+      sentenceParts.push(<span key="region" className={highlightClass}>{region}</span>);
+    } else if (type === 'Regional') {
+      // Show placeholder if region is required but missing
+      sentenceParts.push(' (select region)');
+    }
+
+    sentenceParts.push(' coffee'); // Static word "coffee"
+
+    // Quantity - Highlight value and "time(s)" if present
+    if (quantity) {
+      sentenceParts.push(' '); // Space before quantity
+      sentenceParts.push(<span key="qty-val" className={highlightClass}>{quantity}</span>);
+      sentenceParts.push(' '); // Space between value and word
+      // Highlight the word "time" or "times" as well
+      sentenceParts.push(<span key="qty-word" className={highlightClass}>{quantity > 1 ? 'times' : 'time'}</span>);
+    } else {
+      // Show placeholder if quantity is missing
+      sentenceParts.push(' (select quantity)');
+    }
+
+    // Frequency - Highlight if present
+    if (frequency) {
+      sentenceParts.push(', delivered every ');
+      sentenceParts.push(<span key="freq" className={highlightClass}>{frequency}</span>);
+    } else {
+      // Show placeholder if frequency is missing
+      sentenceParts.push(' (select frequency)');
+    }
+
+    sentenceParts.push('.'); // End punctuation
     // --- End sentence construction ---
 
 
@@ -83,49 +131,35 @@ const RightContainer = ({ method, type, region, sizeOption, quantity, frequency 
           alt={`Coffee selection: ${type}${region ? ' - ' + region : ''}`}
           style={{ width: '100%', maxWidth: '300px', height: 'auto', margin: '1rem 0', borderRadius: '8px' }}
         />
-
-        {/* --- Display the concise summary sentence paragraph --- */}
-        <p className="summary-sentence text-lg leading-relaxed my-4 px-4"> {/* Added margin, padding and line-height */}
-          {summarySentence}
+        {/* Summary Paragraph: Render the array of elements */}
+        <p className="summary-sentence text-lg leading-relaxed my-4 px-4 min-h-[3em]">
+          {sentenceParts} {/* React can render arrays */}
         </p>
-        {/* --- End Summary Paragraph --- */}
-
-        <div className="cart-btn mt-4"> {/* Adjusted margin if needed */}
-          <button className="
-            bg-[#A67C52] p-3 px-6 rounded-md border-[1.5px] border-[#3a3c3d]
-            hover:brightness-110
-            hover:scale-105
-            transition-all duration-300 ease-in-out
-            transform
-            text-white font-semibold text-lg">
+        {/* Add to Cart Button (logic remains the same) */}
+        <div className="cart-btn mt-4">
+          <button
+            className={`
+              bg-[#A67C52] p-3 px-6 rounded-md border-[1.5px] border-[#3a3c3d]
+              transition-all duration-300 ease-in-out transform
+              text-white font-semibold text-lg
+              disabled:opacity-50 disabled:cursor-not-allowed enabled:hover:brightness-110 enabled:hover:scale-105
+            `}
+            disabled={!canAddToCart}
+          >
             ADD TO CART
           </button>
         </div>
       </div>
     );
 
-  } else if (showTypeImageOnly) {
-    // --- STATE 2: INTERMEDIATE - TYPE SELECTED (NOT REGIONAL) ---
-    contentToRender = (
-      <div className="intermediate-selection-display w-[90%] flex flex-col items-center">
-        <img
-          src={typeImageMap[type]} // Use Shopify URL from map
-          alt={type}
-          style={{ width: '100%', maxWidth: '300px', height: 'auto', margin: '1rem 0', borderRadius: '8px' }}
-        />
-        <p className="text-gray-400 mt-4 italic">Complete your selection...</p>
-      </div>
-    );
-
   } else {
-    // --- STATE 3: DEFAULT / INITIAL ---
-    // Renders the DefaultIntroContent with the original UL
+    // --- STATE 2: DEFAULT / INITIAL (Remains the same) ---
     contentToRender = <DefaultIntroContent />;
   }
   // --- End Display Logic ---
 
 
-  // --- Render the Component ---
+  // --- Render the Component (Remains the same) ---
   return (
     <div className="right-container pt-10 flex justify-center items-start w-full min-h-screen bg-[#1a1a1a]"> {/* Example background */}
       {contentToRender}
