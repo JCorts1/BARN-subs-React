@@ -35,8 +35,6 @@ const RightContainer = ({ method, type, region, sizeOption, quantity, frequency 
         "Masterpiece": "https://cdn.shopify.com/s/files/1/0831/4141/files/Aroma_Nativo_Masterpiece.jpg?v=1744711907",
         "Low-Caf": "https://cdn.shopify.com/s/files/1/0831/4141/files/BAG_Daterra_Reserve_Low_Caf_2025.png?v=1739287021",
         "Office": "https://cdn.shopify.com/s/files/1/1657/3941/files/volcan_azul_1kg.webp?v=1743027540",
-        // Add placeholder for Regional type if needed, though handled below now
-        // "Regional": "OPTIONAL_BASE_REGIONAL_IMAGE_URL",
   };
   // --- End Image Map ---
 
@@ -93,12 +91,10 @@ const RightContainer = ({ method, type, region, sizeOption, quantity, frequency 
   if (showSummaryLayout) {
     // --- STATE 1: Display Summary (Dynamically Updating) ---
 
-    // Initialize with base type image or fallback
     let finalImageUrl = typeImageMap[type] || "YOUR_SHOPIFY_URL_FOR_FALLBACK_IMAGE.jpg";
 
-    // --- UPDATED: Image selection logic for Regional ---
+    // Image selection logic including placeholder map
     if (type === 'Regional') {
-      // Check for specific selected regions first
       if (region === 'Ethiopia') {
         finalImageUrl = "https://cdn.shopify.com/s/files/1/0831/4141/files/BAG_Chelbesa_Natural_2024.png?v=1729679115";
       } else if (region === 'Brazil') {
@@ -106,26 +102,21 @@ const RightContainer = ({ method, type, region, sizeOption, quantity, frequency 
       } else if (region === 'Center America') {
         finalImageUrl = " https://cdn.shopify.com/s/files/1/0831/4141/files/BAG_Volcan_Azul_Caturra_OMNI_3a40d3d4-a185-4da0-99ff-b8d0f43479b7.png?v=1743674027";
       } else if (region) {
-        // Handle case where a region is selected but not specifically mapped above
-        finalImageUrl = "YOUR_SHOPIFY_URL_FOR_GENERIC_REGIONAL_FINAL.jpg"; // Or maybe keep the map? Your choice.
+        finalImageUrl = "YOUR_SHOPIFY_URL_FOR_GENERIC_REGIONAL_FINAL.jpg";
       } else {
-        // *** NEW: If type is Regional BUT no region is selected yet, show the map ***
-        finalImageUrl = "https://cdn.shopify.com/s/files/1/0831/4141/files/map.png?v=1745847536";
+        finalImageUrl = "https://cdn.shopify.com/s/files/1/0831/4141/files/map.png?v=1745847536"; // Map Placeholder
       }
     }
-    // --- End Image selection logic ---
 
-    // --- Get Subscription Description Text (remains the same) ---
+    // Get Subscription Description Text (remains the same)
     let currentDescriptionData = null;
     if (type === 'Regional') {
       currentDescriptionData = subscriptionDescriptions.Regional[region] || subscriptionDescriptions.Regional._default;
     } else {
       currentDescriptionData = subscriptionDescriptions[type] || null;
     }
-    // --- End Get Description Text ---
 
-
-    // --- Construct summary sentence (remains the same) ---
+    // Construct summary sentence with highlights (remains the same)
     const highlightClass = "text-[#A67C52] font-semibold";
     const sentenceParts = [];
     // ... (sentenceParts construction logic is unchanged) ...
@@ -165,18 +156,20 @@ const RightContainer = ({ method, type, region, sizeOption, quantity, frequency 
 
 
     contentToRender = (
+      // Parent container centers its children horizontally
       <div className="final-selection-display w-[100%] flex flex-col items-center text-white text-center">
         <h2 className="summary-init text-2xl font-semibold text-[#A67C52] mb-4">Subscription Summary</h2>
-        {/* Coffee Image: Will now show map placeholder when appropriate */}
+        {/* Coffee Image */}
         <img
           src={finalImageUrl}
-          alt={type === 'Regional' && !region ? "Select a coffee region" : `Coffee selection: ${type}${region ? ' - ' + region : ''}`} // Updated Alt Text
+          alt={type === 'Regional' && !region ? "Select a coffee region" : `Coffee selection: ${type}${region ? ' - ' + region : ''}`}
           style={{ width: '100%', maxWidth: '300px', height: 'auto', margin: '1rem 0', borderRadius: '8px' }}
         />
 
-        {/* Subscription Description Section (remains the same) */}
+        {/* Subscription Description Section - Outer container uses w-[80%] */}
         {currentDescriptionData && (
           <div className="subscription-description text-white my-4 px-2 text-left w-[#80%] flex items-center justify-center">
+            {/* Offering Section - Inner div is w-[90%] of the 80% width */}
             {currentDescriptionData.currentOffering && (
               <div className="bg-[#3a3c3d] p-3 rounded-md border border-[#A67C52] text-lg w-[90%]">
                 <p className="whitespace-pre-wrap">
@@ -188,13 +181,13 @@ const RightContainer = ({ method, type, region, sizeOption, quantity, frequency 
           </div>
         )}
 
-        {/* Summary Paragraph (remains the same) */}
+        {/* Summary Sentence - Uses w-[90%] */}
         <p className="summary-sentence text-lg leading-relaxed mt-0 mb-4 px-4 w-[90%] min-h-[3em]">
           {sentenceParts}
         </p>
 
-        {/* Add to Cart Button (remains the same) */}
-        <div className="cart-btn mt-2 w-[100%] flex justify-end">
+        {/* Add to Cart Button Container - Adjusted width to match description container */}
+        <div className="cart-btn mt-2 w-[#80%] flex justify-end"> {/* CHANGED: w-[90%] to w-[80%] */}
           <button
             className={`
               bg-[#A67C52] p-2 px-3 rounded-md border-[1.5px] border-[#3a3c3d]
@@ -211,10 +204,13 @@ const RightContainer = ({ method, type, region, sizeOption, quantity, frequency 
     );
 
   } else {
-
+    // --- STATE 2: DEFAULT / INITIAL (Remains the same) ---
     contentToRender = <DefaultIntroContent />;
   }
+  // --- End Display Logic ---
 
+
+  // --- Render the Component (Remains the same) ---
   return (
     <div className="right-container pt-10 flex justify-center items-start w-full min-h-screen bg-[#1a1a1a]"> {/* Example background */}
       {contentToRender}
