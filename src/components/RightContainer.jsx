@@ -1,20 +1,20 @@
 // src/components/RightContainer.jsx
 
 import React from 'react';
-import './RightContainer.css';
+import './RightContainer.css'; // Make sure this CSS file exists or remove if not needed
 
-// --- Updated Props: Added frequency ---
+// --- Props remain the same ---
 const RightContainer = ({ method, type, region, sizeOption, quantity, frequency }) => {
 
-  // --- Define Default/Introductory Content ---
+  // --- Define Default/Introductory Content (Using the original UL as per your code) ---
   const DefaultIntroContent = () => {
-    // Use the Shopify URL for your default image/logo
     const defaultImageUrl = "https://cdn.shopify.com/s/files/1/0831/4141/files/LOGO-NAME.png?v=1710576883";
     return (
       <div className='default-intro-content text-white w-[90%] h-full flex flex-col items-center'>
         <div>
           <img src={defaultImageUrl} alt="Select your coffee subscription" style={{ width: '100%', maxWidth: '350px', height: 'auto', margin: '1rem 0' }} />
         </div>
+        {/* This introductory list remains as you provided it */}
         <div className='p-5 border border-[#A57C62] rounded-md mt-8'>
           <ul className="intro-list text-2xl" style={{ listStyle: 'none', padding: 0 }}>
             <li>🌱 Sustainably sourced from top farms</li>
@@ -26,21 +26,21 @@ const RightContainer = ({ method, type, region, sizeOption, quantity, frequency 
       </div>
     );
   };
+  // --- End Default/Introductory Content ---
 
 
-
+  // --- Image Map ---
   const typeImageMap = {
     "Roasters Choice": "https://cdn.shopify.com/s/files/1/0831/4141/files/Ralf-coffee_1.jpg?v=1713252187",
     "Masterpiece": "https://cdn.shopify.com/s/files/1/0831/4141/files/Aroma_Nativo_Masterpiece.jpg?v=1744711907",
     "Low-Caf": "https://cdn.shopify.com/s/files/1/0831/4141/files/BAG_Daterra_Reserve_Low_Caf_2025.png?v=1739287021",
     "Office": "https://cdn.shopify.com/s/files/1/1657/3941/files/volcan_azul_1kg.webp?v=1743027540",
-
     // "Office": "YOUR_SHOPIFY_URL_FOR_OFFICE_IMAGE.jpg",
   };
   // --- End Image Map ---
 
+
   // --- Determine Display Logic ---
-  // --- Updated Condition: Added frequency check ---
   const fullSelectionMade = method && type && quantity && frequency;
   const showTypeImageOnly = type && type !== 'Regional' && typeImageMap[type] && !fullSelectionMade;
 
@@ -48,13 +48,7 @@ const RightContainer = ({ method, type, region, sizeOption, quantity, frequency 
 
   if (fullSelectionMade) {
     // --- STATE 1: FINAL SELECTION MADE ---
-    let finalImageUrl = typeImageMap[type] || "YOUR_SHOPIFY_URL_FOR_FALLBACK_IMAGE.jpg"; // Provide a fallback Shopify URL
-    // --- Updated Description: Added frequency ---
-    let finalDescription = `You've chosen ${method} style ${type} coffee`;
-
-    if (region) finalDescription += ` from ${region}`;
-    if (sizeOption) finalDescription += ` (${sizeOption})`;
-    finalDescription += `. Quantity: ${quantity}. Delivered every ${frequency}.`; // <-- Added frequency here
+    let finalImageUrl = typeImageMap[type] || "YOUR_SHOPIFY_URL_FOR_FALLBACK_IMAGE.jpg";
 
     // ** IMPORTANT: Replace placeholder URLs with your actual Shopify image URLs **
     if (type === 'Regional') {
@@ -64,33 +58,49 @@ const RightContainer = ({ method, type, region, sizeOption, quantity, frequency 
       else finalImageUrl = "YOUR_SHOPIFY_URL_FOR_GENERIC_REGIONAL_FINAL.jpg"; // Fallback regional
     }
 
+    // --- Construct the concise summary sentence ---
+    const coffeeDescription = `${method} ${type}${region ? ` from ${region}` : ''} coffee`;
+    const amountText = sizeOption ? `${sizeOption} ` : ''; // Amount per delivery, with trailing space if present. Example: "2 x 1kg " or "250g " or ""
+    const quantityPlural = quantity > 1 ? 'times' : 'time'; // Handle singular 'time'
+    const frequencyText = frequency ? `, delivered every ${frequency}`: ''; // Delivery frequency part
+
+    // Combine: "You will receive [Amount] [Coffee Type] [Quantity] times, delivered every [Frequency]."
+    const summarySentence = `You will receive ${amountText}${coffeeDescription} ${quantity} ${quantityPlural}${frequencyText}.`;
+    // Example Output (sizeOption = "2 x 1kg", quantity = 4, frequency = "5 Weeks"):
+    // "You will receive 2 x 1kg Espresso Office coffee 4 times, delivered every 5 Weeks."
+    // Example Output (sizeOption = "250g", quantity = 1, frequency = "6 weeks"):
+    // "You will receive 250g Filter Masterpiece coffee 1 time, delivered every 6 weeks."
+    // Example Output (sizeOption = null, quantity = 3, frequency = "4 weeks"):
+    // "You will receive Filter Regional from Ethiopia coffee 3 times, delivered every 4 weeks."
+    // --- End sentence construction ---
+
+
     contentToRender = (
       <div className="final-selection-display w-[90%] flex flex-col items-center text-white text-center">
-        <h2 className="summary-init text-2xl font-semibold text-[#A67C52]">Subscription Summary</h2>
+        <h2 className="summary-init text-2xl font-semibold text-[#A67C52] mb-4">Subscription Summary</h2>
         <img
           src={finalImageUrl}
           alt={`Coffee selection: ${type}${region ? ' - ' + region : ''}`}
           style={{ width: '100%', maxWidth: '300px', height: 'auto', margin: '1rem 0', borderRadius: '8px' }}
         />
-        <ul className="selection-details-list rounded-md">
-          <li><img className='w-12' src="https://cdn.shopify.com/s/files/1/0831/4141/files/Coffee_Holder.png?v=1745751140" alt="MethodIcon" />Method: <span className='selection-span'>{method}</span></li>
-          <li><img className='w-12' src="https://cdn.shopify.com/s/files/1/0831/4141/files/Coffee_Beans.png?v=1745751373" alt="" />Type: <span className='selection-span'>{type}</span> </li>
-          {region && <li>Region: <span className='selection-span'>{region}</span></li>}
-          {sizeOption && <li><img className='w-12' src="https://cdn.shopify.com/s/files/1/0831/4141/files/Coffee_Pack.png?v=1745751291" alt="bag of coffee" />Option/Size: <span className='selection-span'>{sizeOption}</span></li>}
-          <li>Quantity: <span className='selection-span'>{quantity}</span></li>
-          <li> Frequency: Every <span className='selection-span'>{frequency}</span></li>
-        </ul>
-        <div className="cart-btn">
-  <button className="
-    bg-[#A67C52] p-3 rounded-sm border-[1.5px] border-[#3a3c3d]
-    hover:brightness-110
-    hover:scale-105
-    transition-all duration-300 ease-in-out
-    transform
-    text-white">
-    ADD TO CART
-  </button>
-</div>  
+
+        {/* --- Display the concise summary sentence paragraph --- */}
+        <p className="summary-sentence text-lg leading-relaxed my-4 px-4"> {/* Added margin, padding and line-height */}
+          {summarySentence}
+        </p>
+        {/* --- End Summary Paragraph --- */}
+
+        <div className="cart-btn mt-4"> {/* Adjusted margin if needed */}
+          <button className="
+            bg-[#A67C52] p-3 px-6 rounded-md border-[1.5px] border-[#3a3c3d]
+            hover:brightness-110
+            hover:scale-105
+            transition-all duration-300 ease-in-out
+            transform
+            text-white font-semibold text-lg">
+            ADD TO CART
+          </button>
+        </div>
       </div>
     );
 
@@ -109,12 +119,15 @@ const RightContainer = ({ method, type, region, sizeOption, quantity, frequency 
 
   } else {
     // --- STATE 3: DEFAULT / INITIAL ---
+    // Renders the DefaultIntroContent with the original UL
     contentToRender = <DefaultIntroContent />;
   }
   // --- End Display Logic ---
 
+
+  // --- Render the Component ---
   return (
-    <div className="right-container pt-10 flex justify-center items-start w-full min-h-screen">
+    <div className="right-container pt-10 flex justify-center items-start w-full min-h-screen bg-[#1a1a1a]"> {/* Example background */}
       {contentToRender}
     </div>
   );
