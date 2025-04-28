@@ -24,12 +24,13 @@
   display: flex;
   align-items: center;
   font-family: "Raleway", sans-serif;
-  font-weight: 500;
-  font-size: x-large;
+  font-weight: 300;
+  font-size: large;
 }
 
 .selection-span {
   margin-left: 3px;
+  margin-right: 3px;
   color: #A67C52;
   font-weight: bold;
 }
