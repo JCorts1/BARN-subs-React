@@ -321,25 +321,30 @@ const MiddleContainer = ({
                            {/* --- Other Coffee Types Flow --- */}
                            {!['Roasters Choice', 'Office', 'Regional'].includes(selectedCoffeeType) && (
                                 <div className='dropdown-row'>
-                                    <h3 className='dropdown-label'>Quantity</h3>
-                                    <DropdownMenu>
-                                        <DropdownMenuTrigger asChild>
-                                            <Button variant="outline" className='dropdown-trigger-button'>
-                                                {finalSelectionDetail || "Select Quantity..."}
-                                                <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                                            </Button>
-                                        </DropdownMenuTrigger>
-                                        <DropdownMenuContent className='dropdown-content-panel'>
-                                            <DropdownMenuRadioGroup value={finalSelectionDetail} onValueChange={onQuantityChange}>
-                                                {quantityOptions.map((option) => (
-                                                    <DropdownMenuRadioItem key={option.value} value={option.value}>
-                                                         {option.label} {parseInt(option.value) > 1 ? 'bags' : 'bag'} (250g each)
-                                                    </DropdownMenuRadioItem>
-                                                ))}
-                                            </DropdownMenuRadioGroup>
-                                        </DropdownMenuContent>
-                                    </DropdownMenu>
-                                </div>
+                                <h3 className='dropdown-label'>Quantity</h3>
+                                <DropdownMenu>
+                                    <DropdownMenuTrigger asChild>
+                                        <Button variant="outline" className='dropdown-trigger-button'>
+                                            {finalSelectionDetail || "Select Quantity..."}
+                                            <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                                        </Button>
+                                    </DropdownMenuTrigger>
+                                    <DropdownMenuContent className='dropdown-content-panel'>
+                                        <DropdownMenuRadioGroup value={finalSelectionDetail} onValueChange={onQuantityChange}>
+                                            {quantityOptions.map((option) => (
+                                                <DropdownMenuRadioItem key={option.value} value={option.value}>
+                                                   {/* --- MODIFICATION HERE --- */}
+                                                   {selectedCoffeeType === 'Masterpiece'
+                                                       ? `${option.label} ${parseInt(option.value) > 1 ? 'bags' : 'bag'} (100 - 200g each)` // Text for Masterpiece
+                                                       : `${option.label} ${parseInt(option.value) > 1 ? 'bags' : 'bag'} (250g each)`   // Text for others (e.g., Low-Caf)
+                                                   }
+                                                   {/* --- END MODIFICATION --- */}
+                                                </DropdownMenuRadioItem>
+                                            ))}
+                                        </DropdownMenuRadioGroup>
+                                    </DropdownMenuContent>
+                                </DropdownMenu>
+                            </div>
                            )}
                         </>
                     )}
