@@ -99,11 +99,11 @@ const MiddleContainer = ({
                <div className='recipient-buttons-container'>
                     <div className={`recipient-button ${showCoffeeType === true ? 'selected' : ''}`} onClick={handleSelectSelf}>
                         <h2>It's for me</h2>
-                        <p>Taking care of yourself</p>
+                        <p>Ahhh, My Coffee!</p>
                     </div>
                     <div className={`recipient-button ${showCoffeeType === false ? 'selected' : ''}`} onClick={handleSelectGift}>
                         <h2>It's a gift</h2>
-                        <p>Oh wow</p>
+                        <p>Top friend!</p>
                     </div>
                 </div>
             </div>
