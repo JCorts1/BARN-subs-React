@@ -216,10 +216,11 @@ const MiddleContainer = ({
                                     {/* Informational Container */}
                                     <div className='dropdown-row roasters-choice-info'>
                                         <h3 className='dropdown-label'>Roaster's Pick</h3>
-                                        <div className='info-text-container flex-1 text-left pl-2'>
-                                            <p className='text-sm text-muted-foreground'> {/* Adjust styling as needed */}
-                                                Our expert roasters select a unique coffee for you, based on seasonality and peak flavor. Enjoy the surprise!
-                                            </p>
+                                        <div className='info-text-container flex pl-2 justify-end'>
+                                            <ul className='text-sm text-white bg-[#161616] w-[95%] p-2 rounded-sm border border-[#A67C52]'>
+                                                <li><span className='text-[#A67C52]'>1 Bag:</span>  Our rotating monthly feature.</li>
+                                                <li><span className='text-[#A67C52]'>2 Bags:</span> 2 different rotating coffees monthly.</li>
+                                            </ul>
                                         </div>
                                     </div>
 
