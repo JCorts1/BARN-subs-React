@@ -13,20 +13,23 @@ import { ChevronDown } from "lucide-react";
 import "./MiddleContainer.css"; // Your CSS file
 
 // --- Data Constants ---
-// (Keep all your existing constants: filterOptions, espressoOptions, etc.)
 const filterOptions = [
     { value: "Roasters Choice", label: "Roasters Choice" },
     { value: "Masterpiece", label: "Masterpiece" },
     { value: "Low-Caf", label: "Low-Caf" },
     { value: "Regional", label: "Regional" },
 ];
+
+// --- MODIFIED espressoOptions array ---
 const espressoOptions = [
-    { value: "Roasters Choice", label: "Roasters Choice" },
-    { value: "Low-Caf", label: "Low-Caf" },
-    { value: "Office", label: "Office" },
-    { value: "Regional", label: "Regional" },
-    { value: "Masterpiece", label: "Masterpiece" },
+    { value: "Roasters Choice", label: "Roasters Choice" }, // First option
+    { value: "Masterpiece", label: "Masterpiece" },         // Second option (Moved up)
+    { value: "Low-Caf", label: "Low-Caf" },                 // Now third
+    { value: "Office", label: "Office" },                   // Now fourth
+    { value: "Regional", label: "Regional" },               // Now fifth
 ];
+// --- END MODIFICATION ---
+
 const roastersChoiceOptions = [
     { value: "1 bag 250grams", label: "1 bag 250grams" },
     { value: "2 bags 250grams", label: "2 bags 250grams" },
@@ -89,7 +92,7 @@ const MiddleContainer = ({
         }
     }, [finalSelectionDetail, selectedFrequency, selectedCoffeeType, onFrequencyChange]);
 
-    // --- NEW useEffect: Auto-set frequency for Masterpiece ---
+    // --- useEffect: Auto-set frequency for Masterpiece ---
     useEffect(() => {
         // Automatically set frequency for Masterpiece when quantity is selected
         if (selectedCoffeeType === 'Masterpiece' && finalSelectionDetail && typeof onFrequencyChange === 'function') {
@@ -105,26 +108,28 @@ const MiddleContainer = ({
         // Note: We don't need to clear it here if switching away,
         // because handleCoffeeTypeChange in App.jsx already clears frequency.
     }, [selectedCoffeeType, finalSelectionDetail, onFrequencyChange]); // Dependency array includes relevant state/props
-    // --- END NEW useEffect ---
+    // --- END useEffect ---
 
 
     // --- Event Handlers ---
     const handleSelectSelf = () => { setShowCoffeeType(true); };
     const handleSelectGift = () => { setShowCoffeeType(false); if (onResetSelections) onResetSelections(); };
 
-    // Modified handlers now clear frequency as well (delegated to App.jsx handlers passed via props)
-    const handleCoffeeTypeChange = (value) => { onCoffeeTypeChange(value); /* Resets handled in App.jsx */ };
-    const handleRoastersChoiceOptionChange = (value) => { onSizeOptionChange(value); /* Resets handled in App.jsx */ };
-    const handleRegionChangeInternal = (value) => { onRegionChange(value); /* Resets handled in App.jsx */};
-    const handleSizeOptionChangeInternal = (value) => { onSizeOptionChange(value); /* Resets handled in App.jsx */};
-    const handleQuantityChangeInternal = (value) => { onQuantityChange(value); /* Resets handled in App.jsx */};
+    // Handlers delegate state updates (and subsequent resets) to props from parent
+    const handleCoffeeTypeChange = (value) => { onCoffeeTypeChange(value); };
+    const handleRoastersChoiceOptionChange = (value) => { onSizeOptionChange(value); };
+    const handleRegionChangeInternal = (value) => { onRegionChange(value); };
+    const handleSizeOptionChangeInternal = (value) => { onSizeOptionChange(value); };
+    const handleQuantityChangeInternal = (value) => { onQuantityChange(value); };
+
+    // Determine the correct coffee type options based on the selected method
+    const currentCoffeeTypeOptions = selectedMethod === 'Filter' ? filterOptions : espressoOptions;
 
     return (
         <div className="middle-content-wrapper flex flex-col justify-center items-center">
 
             {/* --- Recipient Selection --- */}
             <div className='recipient-container mt-10'>
-               {/* ... (recipient buttons remain the same) ... */}
                <div className='recipient-buttons-container'>
                     <div className={`recipient-button ${showCoffeeType === true ? 'selected' : ''}`} onClick={handleSelectSelf}>
                         <h2>It's for me</h2>
@@ -152,7 +157,6 @@ const MiddleContainer = ({
                                 </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent className='dropdown-content-panel'>
-                                {/* Using onMethodChange directly from props */}
                                 <DropdownMenuRadioGroup value={selectedMethod} onValueChange={onMethodChange}>
                                     <DropdownMenuRadioItem value="Filter">Filter</DropdownMenuRadioItem>
                                     <DropdownMenuRadioItem value="Espresso">Espresso</DropdownMenuRadioItem>
@@ -173,9 +177,9 @@ const MiddleContainer = ({
                                     </Button>
                                 </DropdownMenuTrigger>
                                 <DropdownMenuContent className='dropdown-content-panel'>
-                                     {/* Using handleCoffeeTypeChange (which calls the prop) */}
                                     <DropdownMenuRadioGroup value={selectedCoffeeType} onValueChange={handleCoffeeTypeChange}>
-                                        {(selectedMethod === 'Filter' ? filterOptions : espressoOptions).map((option) => (
+                                        {/* Use the determined options array */}
+                                        {currentCoffeeTypeOptions.map((option) => (
                                             <DropdownMenuRadioItem key={option.value} value={option.value}>
                                                 {option.label}
                                             </DropdownMenuRadioItem>
@@ -213,7 +217,6 @@ const MiddleContainer = ({
                                                 </Button>
                                             </DropdownMenuTrigger>
                                             <DropdownMenuContent className='dropdown-content-panel'>
-                                                {/* Using handleRoastersChoiceOptionChange */}
                                                 <DropdownMenuRadioGroup value={selectedSizeOption} onValueChange={handleRoastersChoiceOptionChange}>
                                                     {roastersChoiceOptions.map((option) => (
                                                         <DropdownMenuRadioItem key={option.value} value={option.value}>
@@ -236,7 +239,6 @@ const MiddleContainer = ({
                                                     </Button>
                                                 </DropdownMenuTrigger>
                                                 <DropdownMenuContent className='dropdown-content-panel'>
-                                                    {/* Using handleQuantityChangeInternal */}
                                                     <DropdownMenuRadioGroup value={finalSelectionDetail} onValueChange={handleQuantityChangeInternal}>
                                                         {quantityOptions.map((option) => (
                                                             <DropdownMenuRadioItem key={option.value} value={option.value}>
@@ -265,7 +267,6 @@ const MiddleContainer = ({
                                                 </Button>
                                             </DropdownMenuTrigger>
                                             <DropdownMenuContent className='dropdown-content-panel'>
-                                                 {/* Using handleSizeOptionChangeInternal */}
                                                 <DropdownMenuRadioGroup value={selectedSizeOption} onValueChange={handleSizeOptionChangeInternal}>
                                                     {officeSizeOptions.map((option) => (
                                                         <DropdownMenuRadioItem key={option.value} value={option.value}>
@@ -288,7 +289,6 @@ const MiddleContainer = ({
                                                     </Button>
                                                 </DropdownMenuTrigger>
                                                 <DropdownMenuContent className='dropdown-content-panel'>
-                                                     {/* Using handleQuantityChangeInternal */}
                                                     <DropdownMenuRadioGroup value={finalSelectionDetail} onValueChange={handleQuantityChangeInternal}>
                                                         {quantityOptions.map((option) => (
                                                             <DropdownMenuRadioItem key={option.value} value={option.value}>
@@ -316,7 +316,6 @@ const MiddleContainer = ({
                                                 </Button>
                                             </DropdownMenuTrigger>
                                             <DropdownMenuContent className='dropdown-content-panel'>
-                                                {/* Using handleRegionChangeInternal */}
                                                 <DropdownMenuRadioGroup value={selectedRegion} onValueChange={handleRegionChangeInternal}>
                                                     {regionOptions.map((option) => (
                                                         <DropdownMenuRadioItem key={option.value} value={option.value}>
@@ -339,7 +338,6 @@ const MiddleContainer = ({
                                                     </Button>
                                                 </DropdownMenuTrigger>
                                                 <DropdownMenuContent className='dropdown-content-panel'>
-                                                     {/* Using handleQuantityChangeInternal */}
                                                     <DropdownMenuRadioGroup value={finalSelectionDetail} onValueChange={handleQuantityChangeInternal}>
                                                         {quantityOptions.map((option) => (
                                                             <DropdownMenuRadioItem key={option.value} value={option.value}>
@@ -366,7 +364,6 @@ const MiddleContainer = ({
                                             </Button>
                                         </DropdownMenuTrigger>
                                         <DropdownMenuContent className='dropdown-content-panel'>
-                                             {/* Using handleQuantityChangeInternal */}
                                             <DropdownMenuRadioGroup value={finalSelectionDetail} onValueChange={handleQuantityChangeInternal}>
                                                 {quantityOptions.map((option) => (
                                                     <DropdownMenuRadioItem key={option.value} value={option.value}>
@@ -397,7 +394,6 @@ const MiddleContainer = ({
                                     </Button>
                                 </DropdownMenuTrigger>
                                 <DropdownMenuContent className='dropdown-content-panel'>
-                                    {/* Using onFrequencyChange directly from props */}
                                     <DropdownMenuRadioGroup value={selectedFrequency} onValueChange={onFrequencyChange}>
                                         {frequencyOptions.map((option) => (
                                             <DropdownMenuRadioItem key={option.value} value={option.value}>
@@ -410,7 +406,7 @@ const MiddleContainer = ({
                         </div>
                     )}
 
-                    {/* --- NEW: Show Static Info Box ONLY if quantity selected AND type IS Masterpiece --- */}
+                    {/* --- Show Static Info Box ONLY if quantity selected AND type IS Masterpiece --- */}
                     {finalSelectionDetail && selectedCoffeeType === 'Masterpiece' && (
                         <div className='dropdown-row masterpiece-frequency-info'> {/* Re-use dropdown-row for alignment */}
                             <h3 className='dropdown-label'>Frequency</h3>
@@ -422,7 +418,7 @@ const MiddleContainer = ({
                             </div>
                         </div>
                     )}
-                    {/* --- END NEW FREQUENCY DISPLAY --- */}
+                    {/* --- END FREQUENCY DISPLAY --- */}
 
 
                    {/* --- Final Selection Display (Hidden by default in CSS) --- */}
