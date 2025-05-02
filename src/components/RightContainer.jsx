@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/carousel"; // Ensure this path matches your project structure
 
 // --- Image Data for Carousel ---
+// Using the data you provided earlier
 const carouselImageData = {
     "Roasters Choice": [
         "https://cdn.shopify.com/s/files/1/0831/4141/files/Ralf-coffee_1.jpg?v=1713252187",
@@ -73,91 +74,90 @@ const subscriptionDescriptions = {
     }
 };
 
-// --- MAPPING DATA (Needs Office, Regional, Masterpiece, Low-Caf IDs) ---
+// --- MAPPING DATA (Partially Populated - NEEDS MORE IDs) ---
 
 // Function to get Shopify Variant ID based on user selections
 const getVariantIdFromSelections = (method, type, region, sizeOption) => {
-    console.log("Looking up Variant ID for:", { method, type, region, sizeOption });
-    // --- !! IMPORTANT: Fill in remaining 'TODO' sections below with your actual Shopify Variant IDs !! ---
-  
-    // --- Roasters Choice --- (Completed)
-    if (type === 'Roasters Choice') {
-      if (method === 'Filter') {
-         if (sizeOption === '1 bag 250grams') return 45910178332939; // Filter / 1 x 250g
-         if (sizeOption === '2 bags 250grams') return 54897259151735; // Filter / 2 x 250g
-      } else if (method === 'Espresso') {
-         if (sizeOption === '1 bag 250grams') return 45910178398475; // Espresso / 1 x 250g
-         if (sizeOption === '2 bags 250grams') return 54897259184503; // Espresso / 2 x 250g
-      }
-    // --- Masterpiece --- (Corrected ID again)
-    } else if (type === 'Masterpiece') {
-       // Same variant ID regardless of method (Filter/Espresso)
-       return 45969541562635; // <<<<< CORRECTED Masterpiece Variant ID (from your latest message)
-    // --- Office --- (NEEDS IDs)
-    } else if (type === 'Office') {
-       if (method === 'Espresso') { // Assuming Office is Espresso only based on MiddleContainer
-           if (sizeOption === '2 x 250g') {
-             // TODO: Add Variant ID for Office - 2 x 250g
-             console.error("Missing Variant ID: Office - 2 x 250g"); return null;
-           }
-           if (sizeOption === '1 x 1kg') {
-              // TODO: Add Variant ID for Office - 1 x 1kg
-             console.error("Missing Variant ID: Office - 1 x 1kg"); return null;
-           }
-           if (sizeOption === '2 x 1kg') {
-              // TODO: Add Variant ID for Office - 2 x 1kg
-             console.error("Missing Variant ID: Office - 2 x 1kg"); return null;
-           }
-            if (sizeOption === '5 kg') {
-              // TODO: Add Variant ID for Office - 5 kg
-             console.error("Missing Variant ID: Office - 5 kg"); return null;
-           }
-       } else {
-           // Office type is only available for Espresso method in your MiddleContainer options
-           console.error("Office type selected but method is not Espresso - this shouldn't happen based on UI logic");
-           return null;
-       }
-    // --- Regional --- (NEEDS IDs)
-    } else if (type === 'Regional') {
-       // TODO: Check if Regional has different IDs based on method (Filter/Espresso) and add that logic if needed
-       // TODO: Add Variant ID for Regional - Ethiopia (Use 45972211695883 from its link or confirm if different)
-       if (region === 'Brazil') {
-         // TODO: Add Variant ID for Regional - Brazil
-         console.error("Missing Variant ID: Regional - Brazil"); return null;
-       }
-       if (region === 'Ethiopia') {
-         // TODO: Add Variant ID for Regional - Ethiopia
-         console.error("Missing Variant ID: Regional - Ethiopia"); return null;
-       }
-       if (region === 'Center America') {
-         // TODO: Add Variant ID for Regional - Center America
-         console.error("Missing Variant ID: Regional - Center America"); return null;
-       }
-       // Handle case where region might not be selected yet or is invalid
-       console.warn("Regional type selected but region is missing or invalid:", region);
-       return null;
-    // --- Low-Caf --- (NEEDS IDs)
-    } else if (type === 'Low-Caf') {
-       // TODO: Add Variant ID for Low-Caf (consider method if needed)
-       console.error("Missing Variant ID: Low-Caf"); return null;
-    }
-  
-    // Fallback if no type matches or an issue occurs within a type block
-    console.warn(`Variant ID not found for selection combination: Type=${type}, Method=${method}, Size=${sizeOption}, Region=${region}`);
-    return null;
-  };
+  console.log("Looking up Variant ID for:", { method, type, region, sizeOption });
+  // --- !! IMPORTANT: Fill in ALL 'TODO' sections below with your actual Shopify Variant IDs !! ---
 
-// Map frequency selection string to Selling Plan Info (Updated from new links)
-// ** NOTE: 1 Week and 2 Weeks links gave the same planId/groupId. Verify in Shopify Admin. **
-const sellingPlanMapping = {
-  // "Frequency String": { planId: SELLING_PLAN_ID }, -> Only planId is needed for Permalink
-  "1 Week":                  { planId: 710364234103 }, // Same as 2 Weeks link
-  "2 Weeks":                 { planId: 710364234103 },
-  "3 Weeks":                 { planId: 710364266871 },
-  "4 Weeks (Recommended)": { planId: 710364299639 },
-  "5 Weeks":                 { planId: 710364332407 },
-  "6 Weeks":                 { planId: 710364365175 },
+  // --- Roasters Choice --- (Completed)
+  if (type === 'Roasters Choice') {
+    if (method === 'Filter') {
+       if (sizeOption === '1 bag 250grams') return 45910178332939; // Filter / 1 x 250g
+       if (sizeOption === '2 bags 250grams') return 54897259151735; // Filter / 2 x 250g
+    } else if (method === 'Espresso') {
+       if (sizeOption === '1 bag 250grams') return 45910178398475; // Espresso / 1 x 250g
+       if (sizeOption === '2 bags 250grams') return 54897259184503; // Espresso / 2 x 250g
+    }
+  // --- Masterpiece --- (Completed)
+  } else if (type === 'Masterpiece') {
+     // Corrected ID based on your last input
+     return 45969541562635; // Masterpiece Variant ID
+  // --- Office --- (NEEDS IDs)
+  } else if (type === 'Office') {
+     if (method === 'Espresso') { // Assuming Office is Espresso only
+         if (sizeOption === '2 x 250g') {
+           // TODO: Add Variant ID for Office - 2 x 250g
+           console.error("Missing Variant ID: Office - 2 x 250g"); return null;
+         }
+         if (sizeOption === '1 x 1kg') {
+            // TODO: Add Variant ID for Office - 1 x 1kg
+           console.error("Missing Variant ID: Office - 1 x 1kg"); return null;
+         }
+         if (sizeOption === '2 x 1kg') {
+            // TODO: Add Variant ID for Office - 2 x 1kg
+           console.error("Missing Variant ID: Office - 2 x 1kg"); return null;
+         }
+          if (sizeOption === '5 kg') {
+            // TODO: Add Variant ID for Office - 5 kg
+           console.error("Missing Variant ID: Office - 5 kg"); return null;
+         }
+     } else {
+         console.error("Office type selected but method is not Espresso"); return null;
+     }
+  // --- Regional --- (NEEDS IDs)
+  } else if (type === 'Regional') {
+     // TODO: Check if Regional has different IDs based on method (Filter/Espresso)
+     if (region === 'Brazil') {
+       // TODO: Add Variant ID for Regional - Brazil
+       console.error("Missing Variant ID: Regional - Brazil"); return null;
+     }
+     if (region === 'Ethiopia') {
+        // TODO: Add Variant ID for Regional - Ethiopia (Use 45972211695883 from its link or confirm if different)
+       console.error("Missing Variant ID: Regional - Ethiopia"); return null;
+     }
+     if (region === 'Center America') {
+       // TODO: Add Variant ID for Regional - Center America
+       console.error("Missing Variant ID: Regional - Center America"); return null;
+     }
+     console.warn("Regional type selected but region is missing or invalid:", region);
+     return null;
+  // --- Low-Caf --- (NEEDS IDs)
+  } else if (type === 'Low-Caf') {
+     // TODO: Add Variant ID for Low-Caf (consider method if needed)
+     console.error("Missing Variant ID: Low-Caf"); return null;
+  }
+
+  console.warn(`Variant ID not found for selection combination: Type=${type}, Method=${method}, Size=${sizeOption}, Region=${region}`);
+  return null;
 };
+
+// Map frequency selection string to Plan ID AND Interval/Unit for AJAX properties
+// ** NOTE: 1 Week and 2 Weeks links gave the same planId. Verify if intervals/units should differ. **
+// ** Please verify all interval/unit values match your actual Shopify Selling Plan definitions **
+const sellingPlanMapping = {
+  // "Frequency String": { planId: ..., interval: FREQUENCY_NUMBER, unit: 'Days'|'Weeks'|'Months' },
+  "1 Week":                  { planId: 710364234103, interval: 1, unit: 'Weeks' }, // Assuming 1 Week interval
+  "2 Weeks":                 { planId: 710364234103, interval: 2, unit: 'Weeks' },
+  "3 Weeks":                 { planId: 710364266871, interval: 3, unit: 'Weeks' },
+  "4 Weeks (Recommended)": { planId: 710364299639, interval: 4, unit: 'Weeks' }, // Plan ID from Roasters Choice links
+  "5 Weeks":                 { planId: 710364332407, interval: 5, unit: 'Weeks' },
+  "6 Weeks":                 { planId: 710364365175, interval: 6, unit: 'Weeks' },
+};
+
+// Define Masterpiece specific plan ID separately (used in properties)
+const MASTERPIECE_4_WEEK_SELLING_PLAN_ID = 710364397943;
 
 // --- Component ---
 const RightContainer = ({ method, type, region, sizeOption, quantity, frequency }) => {
@@ -189,9 +189,9 @@ const RightContainer = ({ method, type, region, sizeOption, quantity, frequency 
         (type !== 'Regional' || region) &&
         ((type !== 'Roasters Choice' && type !== 'Office') || sizeOption);
 
-    // --- ADD TO CART HANDLER (Builds Shopify Permalink URL) ---
-    const handleAddToCartClick = () => {
-        console.log("Add to cart clicked (Shopify Permalink). State:", { method, type, region, sizeOption, quantity, frequency });
+    // --- ADD TO CART HANDLER (AJAX POST to /cart/add.js) ---
+    const handleAddToCartClick = async () => {
+        console.log("Add to cart clicked (AJAX). State:", { method, type, region, sizeOption, quantity, frequency });
 
         if (!canAddToCart) {
             alert("Please complete your subscription selections.");
@@ -199,55 +199,111 @@ const RightContainer = ({ method, type, region, sizeOption, quantity, frequency 
             return;
         }
 
-        // 1. Look up IDs based on state
+        // 1. Look up Variant ID and Frequency Details
         const selectedVariantId = getVariantIdFromSelections(method, type, region, sizeOption);
-        const selectedPlanInfo = sellingPlanMapping[frequency]; // Get {planId}
         const selectedQuantity = parseInt(quantity, 10);
+        let subscriptionInterval = null;
+        let subscriptionUnit = null;
+        let sellingPlanIdForProps = null; // Use the correct plan ID for properties
 
-        // Validate lookups
+        // Determine frequency details and correct selling plan ID
+        if (type === 'Masterpiece') {
+            // Masterpiece uses a fixed 4-week plan and its specific plan ID
+            subscriptionInterval = 4; // Assuming 4 weeks interval
+            subscriptionUnit = 'Weeks'; // Assuming 'Weeks' unit
+            sellingPlanIdForProps = MASTERPIECE_4_WEEK_SELLING_PLAN_ID; // The specific Masterpiece plan ID
+            if (frequency !== "4 Weeks (Recommended)") {
+                console.warn("Masterpiece selected, but frequency state is not '4 Weeks (Recommended)'. Using 4 weeks plan ID anyway.");
+            }
+            console.log("Using specific Masterpiece Selling Plan ID in properties:", sellingPlanIdForProps);
+        } else {
+            // For other types, use the general mapping based on frequency selection
+            const selectedPlanInfo = sellingPlanMapping[frequency];
+            if (!selectedPlanInfo || !selectedPlanInfo.interval || !selectedPlanInfo.unit || !selectedPlanInfo.planId) {
+                alert(`Error: Could not find full subscription plan details (interval/unit/planId) for frequency: "${frequency}". Check sellingPlanMapping.`);
+                return;
+            }
+            subscriptionInterval = selectedPlanInfo.interval;
+            subscriptionUnit = selectedPlanInfo.unit;
+            sellingPlanIdForProps = selectedPlanInfo.planId; // The general plan ID for this frequency
+            console.log(`Using general Selling Plan ID for ${frequency}:`, sellingPlanIdForProps);
+        }
+
+        // Validate Variant ID
         if (!selectedVariantId) {
-            alert("Error: Could not determine the correct product variant. Please complete the getVariantIdFromSelections function in RightContainer.jsx.");
+            alert("Error: Could not determine the correct product variant. Please complete getVariantIdFromSelections function.");
             return;
         }
-        if (!selectedPlanInfo || !selectedPlanInfo.planId) {
-            alert(`Error: Could not find subscription plan ID for frequency: "${frequency}". Check sellingPlanMapping in RightContainer.jsx and verify IDs.`);
-            return;
-        }
+        // Validate Quantity
         if (isNaN(selectedQuantity) || selectedQuantity < 1) {
            alert("Error: Invalid quantity selected.");
            return;
         }
 
-        const sellingPlanId = selectedPlanInfo.planId; // Extract the planId needed for the URL
-
-        console.log("Resolved IDs/Qty for Permalink:", {
+        console.log("Resolved Data for AJAX:", {
             variantId: selectedVariantId,
             quantity: selectedQuantity,
-            sellingPlanId: sellingPlanId
+            interval: subscriptionInterval,
+            unit: subscriptionUnit,
+            sellingPlanIdForProps: sellingPlanIdForProps
         });
 
+        // 2. Prepare Recharge Properties for AJAX call
+        const rechargeProperties = {
+            'shipping_interval_frequency': subscriptionInterval.toString(), // Send as string
+            'shipping_interval_unit_type': subscriptionUnit,
+            'selling_plan': sellingPlanIdForProps // Include the determined selling plan ID
+            // Add other properties if needed
+        };
+
+        // 3. Prepare data payload for Shopify's /cart/add.js endpoint
+        const formData = {
+            items: [{
+                id: selectedVariantId,
+                quantity: selectedQuantity,
+                properties: rechargeProperties // Pass subscription details here
+            }]
+        };
+
+        // 4. Make the AJAX POST request
+        // NOTE: This needs to run within Shopify (embedded app / theme app extension)
+        // or use a proxy during development (e.g., via Shopify CLI) to avoid CORS errors.
         try {
-            // 2. Construct the Shopify Permalink URL
-            const shopDomain = "thebarn.de"; // Your primary Shopify domain
-            // Build the 'items' part of the query string
-            const itemsParam = `items[][id]=${selectedVariantId}&items[][quantity]=${selectedQuantity}&items[][selling_plan]=${sellingPlanId}`;
-            const returnToCheckoutParam = `return_to=/checkout`;
-            // Path for the inner /cart/add request
-            const addToCartPath = `/cart/add?${itemsParam}&${returnToCheckoutParam}`;
-            // IMPORTANT: Encode the *entire* inner path for the 'return_to' parameter of /cart/clear
-            const encodedAddToCartPath = encodeURIComponent(addToCartPath);
+            console.log("Sending AJAX POST to /cart/add.js with data:", JSON.stringify(formData));
+            // You might want to add a loading state indicator here
 
-            // Construct the final URL that first clears the cart, then executes the encoded path
-            const finalUrl = `https://${shopDomain}/cart/clear?return_to=${encodedAddToCartPath}`;
+            const response = await fetch('/cart/add.js', { // Relative path works when embedded
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            });
 
-            console.log("Redirecting to Shopify Permalink:", finalUrl);
+            const responseData = await response.json();
 
-            // 3. Redirect User's Browser
-            window.location.href = finalUrl;
+            // Remove loading state indicator here
+
+            if (!response.ok) {
+                // Handle Shopify errors (e.g., out of stock, invalid variant/plan combo)
+                console.error('Shopify cart/add error:', response.status, responseData);
+                alert(`Error adding to cart: ${responseData.description || responseData.message || 'Inventory issue or invalid selection. Please try again.'}`);
+                return;
+            }
+
+            // Success!
+            console.log('Successfully added to cart via AJAX:', responseData);
+            alert('Subscription added to your cart!');
+
+            // Optionally update mini-cart UI or redirect after success
+            // e.g., fetch('/cart.js').then(res => res.json()).then(cart => console.log('Current cart:', cart));
+            // window.location.href = '/cart'; // Or redirect if desired
 
         } catch (error) {
-            console.error("Error constructing Shopify Permalink URL:", error);
-            alert("An error occurred while preparing your checkout link. Check console for details.");
+            // Remove loading state indicator here
+            console.error("AJAX request failed (Network Error or CORS Issue):", error);
+            alert("Could not add subscription to cart due to a network issue (Check CORS if running locally). Please try again.");
         }
     };
     // --- END ADD TO CART HANDLER ---
