@@ -13,7 +13,6 @@ import {
 } from "@/components/ui/carousel"; // Ensure this path matches your project structure
 
 // --- Image Data for Carousel ---
-// Using the data you provided earlier
 const carouselImageData = {
     "Roasters Choice": [
         "https://cdn.shopify.com/s/files/1/0831/4141/files/Ralf-coffee_1.jpg?v=1713252187",
@@ -74,32 +73,25 @@ const subscriptionDescriptions = {
     }
 };
 
-// --- MAPPING DATA (Partially Populated - NEEDS MORE IDs) ---
+// --- MAPPING DATA (Needs Office, Regional, Masterpiece, Low-Caf IDs) ---
 
 // Function to get Shopify Variant ID based on user selections
 const getVariantIdFromSelections = (method, type, region, sizeOption) => {
   console.log("Looking up Variant ID for:", { method, type, region, sizeOption });
-  // --- !! IMPORTANT: Fill in ALL 'TODO' sections below with your actual Shopify Variant IDs !! ---
+  // --- !! IMPORTANT: Fill in remaining 'TODO' sections below with your actual Shopify Variant IDs !! ---
 
-  // --- Roasters Choice ---
+  // --- Roasters Choice --- (Now Complete with your IDs)
   if (type === 'Roasters Choice') {
     if (method === 'Filter') {
-       if (sizeOption === '1 bag 250grams') {
-         // TODO: Add Variant ID for Filter Roasters Choice - 1 bag 250g
-         console.error("Missing Variant ID: Filter Roasters Choice - 1 bag 250g"); return null;
-       }
-       if (sizeOption === '2 bags 250grams') {
-         // TODO: Add Variant ID for Filter Roasters Choice - 2 bags 250g
-         console.error("Missing Variant ID: Filter Roasters Choice - 2 bags 250g"); return null;
-       }
+       if (sizeOption === '1 bag 250grams') return 45910178332939; // Filter / 1 x 250g
+       if (sizeOption === '2 bags 250grams') return 54897259151735; // Filter / 2 x 250g
     } else if (method === 'Espresso') {
-       // IDs you provided for Espresso Roasters Choice:
-       if (sizeOption === '1 bag 250grams') return 55173034213751;
-       if (sizeOption === '2 bags 250grams') return 55173034246519;
+       if (sizeOption === '1 bag 250grams') return 45910178398475; // Espresso / 1 x 250g
+       if (sizeOption === '2 bags 250grams') return 54897259184503; // Espresso / 2 x 250g
     }
   // --- Office ---
   } else if (type === 'Office') {
-     if (method === 'Espresso') { // Assuming Office is Espresso only based on MiddleContainer
+     if (method === 'Espresso') { // Assuming Office is Espresso only
          if (sizeOption === '2 x 250g') {
            // TODO: Add Variant ID for Office - 2 x 250g
            console.error("Missing Variant ID: Office - 2 x 250g"); return null;
@@ -148,17 +140,19 @@ const getVariantIdFromSelections = (method, type, region, sizeOption) => {
   return null;
 };
 
-// Map frequency selection string to Selling Plan Info (Populated from your links)
-// Note: Only the planId is needed for the Shopify Permalink method
+// Map frequency selection string to Selling Plan Info (Updated from new links)
+// ** NOTE: 1 Week and 2 Weeks links gave the same planId/groupId. Verify in Shopify Admin. **
 const sellingPlanMapping = {
-  // "Frequency String from Dropdown": { planId: SELLING_PLAN_ID },
-  "1 Week":                  { planId: 710709117303 },
-  "2 Weeks":                 { planId: 710708953463 },
-  "3 Weeks":                 { planId: 710709051767 },
-  "4 Weeks (Recommended)": { planId: 710709084535 },
-  "5 Weeks":                 { planId: 710708986231 },
-  "6 Weeks":                 { planId: 710709018999 },
+  // "Frequency String": { planId: SELLING_PLAN_ID, groupId: SELLING_PLAN_GROUP_ID },
+  "1 Week":                  { planId: 710364234103, groupId: 97844658551 }, // Same as 2 Weeks link
+  "2 Weeks":                 { planId: 710364234103, groupId: 97844658551 },
+  "3 Weeks":                 { planId: 710364266871, groupId: 97844691319 },
+  "4 Weeks (Recommended)": { planId: 710364299639, groupId: 97844724087 },
+  "5 Weeks":                 { planId: 710364332407, groupId: 97844756855 },
+  "6 Weeks":                 { planId: 710364365175, groupId: 97844789623 },
 };
+
+const YOUR_RECHARGE_STORE_ID = '10279'; // Your Store ID (Not needed for Shopify Permalink, but kept for reference)
 
 // --- Component ---
 const RightContainer = ({ method, type, region, sizeOption, quantity, frequency }) => {
@@ -202,7 +196,7 @@ const RightContainer = ({ method, type, region, sizeOption, quantity, frequency 
 
         // 1. Look up IDs based on state
         const selectedVariantId = getVariantIdFromSelections(method, type, region, sizeOption);
-        const selectedPlanInfo = sellingPlanMapping[frequency]; // Get {planId}
+        const selectedPlanInfo = sellingPlanMapping[frequency]; // Get {planId, groupId}
         const selectedQuantity = parseInt(quantity, 10);
 
         // Validate lookups
@@ -210,8 +204,9 @@ const RightContainer = ({ method, type, region, sizeOption, quantity, frequency 
             alert("Error: Could not determine the correct product variant. Please complete the getVariantIdFromSelections function in RightContainer.jsx.");
             return;
         }
-        if (!selectedPlanInfo || !selectedPlanInfo.planId) { // Check if planId exists
-            alert(`Error: Could not find subscription plan ID for frequency: "${frequency}". Check sellingPlanMapping in RightContainer.jsx.`);
+        // Check planId exists from the mapping
+        if (!selectedPlanInfo || !selectedPlanInfo.planId) {
+            alert(`Error: Could not find subscription plan ID for frequency: "${frequency}". Check sellingPlanMapping in RightContainer.jsx and verify IDs.`);
             return;
         }
         if (isNaN(selectedQuantity) || selectedQuantity < 1) {
@@ -219,7 +214,7 @@ const RightContainer = ({ method, type, region, sizeOption, quantity, frequency 
            return;
         }
 
-        const sellingPlanId = selectedPlanInfo.planId; // Extract just the planId
+        const sellingPlanId = selectedPlanInfo.planId; // Extract the planId needed for the URL
 
         console.log("Resolved IDs/Qty for Permalink:", {
             variantId: selectedVariantId,
@@ -229,20 +224,21 @@ const RightContainer = ({ method, type, region, sizeOption, quantity, frequency 
 
         try {
             // 2. Construct the Shopify Permalink URL
-            const shopDomain = "thebarn.de"; // Use your primary Shopify domain (without https://)
+            const shopDomain = "thebarn.de"; // Your primary Shopify domain
+            // Build the 'items' part of the query string
             const itemsParam = `items[][id]=${selectedVariantId}&items[][quantity]=${selectedQuantity}&items[][selling_plan]=${sellingPlanId}`;
             const returnToCheckoutParam = `return_to=/checkout`;
-            // Path for the inner /cart/add request
+            // Build the inner path that adds items and redirects
             const addToCartPath = `/cart/add?${itemsParam}&${returnToCheckoutParam}`;
-            // IMPORTANT: Encode the inner path to be used as a parameter for return_to
+            // IMPORTANT: Encode the *entire* inner path for the 'return_to' parameter of /cart/clear
             const encodedAddToCartPath = encodeURIComponent(addToCartPath);
 
-            // Construct the final /cart/clear URL
+            // Construct the final URL that first clears the cart, then executes the encoded path
             const finalUrl = `https://${shopDomain}/cart/clear?return_to=${encodedAddToCartPath}`;
 
             console.log("Redirecting to Shopify Permalink:", finalUrl);
 
-            // 3. Redirect User
+            // 3. Redirect User's Browser
             window.location.href = finalUrl;
 
         } catch (error) {
