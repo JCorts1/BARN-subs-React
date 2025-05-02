@@ -3,7 +3,7 @@
 import React from 'react';
 import './RightContainer.css'; // Make sure this CSS file exists and is styled appropriately
 
-// --- Carousel components are still needed ---
+// --- Carousel components ---
 import {
     Carousel,
     CarouselContent,
@@ -11,15 +11,14 @@ import {
     CarouselNext,
     CarouselPrevious,
 } from "@/components/ui/carousel"; // Ensure this path matches your project structure
-// --- Card and CardContent imports are REMOVED ---
 
 // --- Image Data for Carousel ---
-// TODO: Replace placeholder URLs with your actual image URLs
+// Using the data you provided earlier
 const carouselImageData = {
     "Roasters Choice": [
         "https://cdn.shopify.com/s/files/1/0831/4141/files/Ralf-coffee_1.jpg?v=1713252187",
-        "https://cdn.shopify.com/s/files/1/0831/4141/files/Curated_Subscription_Coffee_FIL_March_2025.jpg?v=1745957301", 
-        "https://cdn.shopify.com/s/files/1/0831/4141/files/330B7ED3-F6D7-452A-80C1-F377D55D8FA6-2950-000002F30AF09FBC.jpg?v=1745591524", 
+        "https://cdn.shopify.com/s/files/1/0831/4141/files/Curated_Subscription_Coffee_FIL_March_2025.jpg?v=1745957301",
+        "https://cdn.shopify.com/s/files/1/0831/4141/files/330B7ED3-F6D7-452A-80C1-F377D55D8FA6-2950-000002F30AF09FBC.jpg?v=1745591524",
     ],
     "Masterpiece": [
         "https://cdn.shopify.com/s/files/1/0831/4141/files/Aroma_Nativo_Masterpiece.jpg?v=1744711907",
@@ -32,90 +31,148 @@ const carouselImageData = {
         "https://cdn.shopify.com/s/files/1/0831/4141/products/caffeine_levels_d161625f-8c4c-4a27-86fb-b3c5b94a3414.jpg?v=1739301233"
     ],
     "Office": [
-        "https://cdn.shopify.com/s/files/1/1657/3941/files/volcan_azul_1kg.webp?v=1743027540", 
-        "https://cdn.shopify.com/s/files/1/0831/4141/files/gigesa_EOM.jpg?v=1741274114", 
+        "https://cdn.shopify.com/s/files/1/1657/3941/files/volcan_azul_1kg.webp?v=1743027540",
+        "https://cdn.shopify.com/s/files/1/0831/4141/files/gigesa_EOM.jpg?v=1741274114",
         "https://cdn.shopify.com/s/files/1/0831/4141/products/espressoshotsCropped_60eb6865-fd62-43c7-90c5-2bc9050f167b.jpg?v=1741274114"
     ],
     "Regional": {
         "Brazil": [
             "https://cdn.shopify.com/s/files/1/0831/4141/files/Elemental_Bag_Catuai_mit_labelle.png?v=1723799712",
             "https://cdn.shopify.com/s/files/1/0831/4141/files/Image_26.04.24_at_14.12.jpg?v=1728375513",
-            "https://cdn.shopify.com/s/files/1/0831/4141/files/2_v60_6c2d62af-96c2-4e95-a9f9-5d66eb85efb8.png?v=1712752891", 
+            "https://cdn.shopify.com/s/files/1/0831/4141/files/2_v60_6c2d62af-96c2-4e95-a9f9-5d66eb85efb8.png?v=1712752891",
         ],
         "Ethiopia": [
             "https://cdn.shopify.com/s/files/1/0831/4141/files/BAG_Chelbesa_Natural_2024.png?v=1729679115",
             "https://cdn.shopify.com/s/files/1/0831/4141/files/Image_26.04.24_at_14.12.jpg?v=1728375513",
-            "https://cdn.shopify.com/s/files/1/0831/4141/files/2_v60_6c2d62af-96c2-4e95-a9f9-5d66eb85efb8.png?v=1712752891", 
+            "https://cdn.shopify.com/s/files/1/0831/4141/files/2_v60_6c2d62af-96c2-4e95-a9f9-5d66eb85efb8.png?v=1712752891",
         ],
         "Center America": [
             "https://cdn.shopify.com/s/files/1/0831/4141/files/BAG_Volcan_Azul_Caturra_OMNI_3a40d3d4-a185-4da0-99ff-b8d0f43479b7.png?v=1743674027",
             "https://cdn.shopify.com/s/files/1/0831/4141/files/Image_26.04.24_at_14.12.jpg?v=1728375513",
-            "https://cdn.shopify.com/s/files/1/0831/4141/files/2_v60_6c2d62af-96c2-4e95-a9f9-5d66eb85efb8.png?v=1712752891", 
+            "https://cdn.shopify.com/s/files/1/0831/4141/files/2_v60_6c2d62af-96c2-4e95-a9f9-5d66eb85efb8.png?v=1712752891",
         ],
-         // Image(s) shown when 'Regional' is selected but no specific region yet
         "_default": [
-            "https://cdn.shopify.com/s/files/1/0831/4141/files/map.png?v=1745847536" // Map image
+            "https://cdn.shopify.com/s/files/1/0831/4141/files/map.png?v=1745847536"
         ]
     },
-     // Fallback images if type is somehow not found
      "_fallback": [
-        "https://cdn.shopify.com/s/files/1/0831/4141/files/LOGO-NAME.png?v=1710576883" // Default logo or other fallback image
+        "https://cdn.shopify.com/s/files/1/0831/4141/files/LOGO-NAME.png?v=1710576883"
      ]
 };
 
 // --- Data for Subscription Descriptions ---
-// TODO: Ensure these descriptions are complete and accurate
 const subscriptionDescriptions = {
-    "Roasters Choice": {
-        description: "Our most popular Subscription. Every month, we source stunning coffees from around the world. This is the best way to explore the origins, varietals, and processes that make Single Origin flavour so special.",
-        currentOffering: "Current Offering:\n\n🇪🇹 Spring Coffee, Ethiopia: Apricot Jam. Bergamot. Floral." // Example
-    },
-    "Masterpiece": {
-        description: "The rarest coffees on the planet. Scoring 90 points and up. Omni Roast.",
-        currentOffering: "Current Offering:\n\nFinca Sophia Natural Gesha, Panama 🇵🇦" // Example
-    },
-    "Low-Caf": {
-        description: "This subscription sends out 250g of rare coffee varietals that naturally contain low caffeine: Aramosa or Laurina.",
-        currentOffering: "Current Offering:\n\nDaterra Reserve from Brazil 🇧🇷" // Example
-    },
-    "Office": {
-        description: "This subscription is for offices that prefer espresso and need a little more volume each month. The coffee selection changes every month, allowing you to explore different coffee regions!",
-        currentOffering: "Current Offering:\n\n🇪🇹 Spring Coffee, Ethiopia: Apricot Jam. Bergamot. Floral." // Example
-    },
+    "Roasters Choice": { description: "Our most popular Subscription. Every month, we source stunning coffees from around the world. This is the best way to explore the origins, varietals, and processes that make Single Origin flavour so special.", currentOffering: "Current Offering:\n\n🇪🇹 Spring Coffee, Ethiopia: Apricot Jam. Bergamot. Floral." },
+    "Masterpiece": { description: "The rarest coffees on the planet. Scoring 90 points and up. Omni Roast.", currentOffering: "Current Offering:\n\nFinca Sophia Natural Gesha, Panama 🇵🇦" },
+    "Low-Caf": { description: "This subscription sends out 250g of rare coffee varietals that naturally contain low caffeine: Aramosa or Laurina.", currentOffering: "Current Offering:\n\nDaterra Reserve from Brazil 🇧🇷" },
+    "Office": { description: "This subscription is for offices that prefer espresso and need a little more volume each month. The coffee selection changes every month, allowing you to explore different coffee regions!", currentOffering: "Current Offering:\n\n🇪🇹 Spring Coffee, Ethiopia: Apricot Jam. Bergamot. Floral." },
     "Regional": {
-        "Brazil": {
-            description: "People love Brazilian Coffees for their sweetness, low acidity and chocolate notes.",
-            currentOffering: "Current Offering:\n\n🇧🇷 Elemental, Brazil: Milk Chocolate. Macadamia. Smooth." // Example
-        },
-        "Ethiopia": {
-            description: "People love Ethiopian Coffees for their floral notes and its tea-like character.",
-            currentOffering: "Current Offering:\n\n🇪🇹 Chelbesa, Ethiopia: Peach. Fudge. Jasmine." // Example
-        },
-        "Center America": {
-            description: "People like Central Coffees for their exciting acidity and clean notes of terroir.",
-            currentOffering: "Current Offering:\n\n🇨🇷 Volcan Azul, Costa Rica: Dried Fig. Vanilla." // Example
-        },
-        // Default text if type is Regional but region isn't selected/matched
-        _default: {
-            description: "Select a region to see details about the specific coffee offering for this type.",
-            currentOffering: ""
-        }
+        "Brazil": { description: "People love Brazilian Coffees for their sweetness, low acidity and chocolate notes.", currentOffering: "Current Offering:\n\n🇧🇷 Elemental, Brazil: Milk Chocolate. Macadamia. Smooth." },
+        "Ethiopia": { description: "People love Ethiopian Coffees for their floral notes and its tea-like character.", currentOffering: "Current Offering:\n\n🇪🇹 Chelbesa, Ethiopia: Peach. Fudge. Jasmine." },
+        "Center America": { description: "People like Central Coffees for their exciting acidity and clean notes of terroir.", currentOffering: "Current Offering:\n\n🇨🇷 Volcan Azul, Costa Rica: Dried Fig. Vanilla." },
+        _default: { description: "Select a region to see details about the specific coffee offering for this type.", currentOffering: "" }
     }
+};
+
+// --- MAPPING DATA (Partially Populated - NEEDS MORE IDs) ---
+
+// Function to get Shopify Variant ID based on user selections
+const getVariantIdFromSelections = (method, type, region, sizeOption) => {
+  console.log("Looking up Variant ID for:", { method, type, region, sizeOption });
+  // --- !! IMPORTANT: Fill in ALL 'TODO' sections below with your actual Shopify Variant IDs !! ---
+
+  // --- Roasters Choice ---
+  if (type === 'Roasters Choice') {
+    if (method === 'Filter') {
+       if (sizeOption === '1 bag 250grams') {
+         // TODO: Add Variant ID for Filter Roasters Choice - 1 bag 250g
+         console.error("Missing Variant ID: Filter Roasters Choice - 1 bag 250g"); return null;
+       }
+       if (sizeOption === '2 bags 250grams') {
+         // TODO: Add Variant ID for Filter Roasters Choice - 2 bags 250g
+         console.error("Missing Variant ID: Filter Roasters Choice - 2 bags 250g"); return null;
+       }
+    } else if (method === 'Espresso') {
+       // IDs you provided for Espresso Roasters Choice:
+       if (sizeOption === '1 bag 250grams') return 55173034213751;
+       if (sizeOption === '2 bags 250grams') return 55173034246519;
+    }
+  // --- Office ---
+  } else if (type === 'Office') {
+     if (method === 'Espresso') { // Assuming Office is Espresso only based on MiddleContainer
+         if (sizeOption === '2 x 250g') {
+           // TODO: Add Variant ID for Office - 2 x 250g
+           console.error("Missing Variant ID: Office - 2 x 250g"); return null;
+         }
+         if (sizeOption === '1 x 1kg') {
+            // TODO: Add Variant ID for Office - 1 x 1kg
+           console.error("Missing Variant ID: Office - 1 x 1kg"); return null;
+         }
+         if (sizeOption === '2 x 1kg') {
+            // TODO: Add Variant ID for Office - 2 x 1kg
+           console.error("Missing Variant ID: Office - 2 x 1kg"); return null;
+         }
+          if (sizeOption === '5 kg') {
+            // TODO: Add Variant ID for Office - 5 kg
+           console.error("Missing Variant ID: Office - 5 kg"); return null;
+         }
+     } else {
+         console.error("Office type selected but method is not Espresso"); return null;
+     }
+  // --- Regional ---
+  } else if (type === 'Regional') {
+     // TODO: Check if Regional has different IDs based on method (Filter/Espresso)
+     if (region === 'Brazil') {
+       // TODO: Add Variant ID for Regional - Brazil
+       console.error("Missing Variant ID: Regional - Brazil"); return null;
+     }
+     if (region === 'Ethiopia') {
+       // TODO: Add Variant ID for Regional - Ethiopia
+       console.error("Missing Variant ID: Regional - Ethiopia"); return null;
+     }
+     if (region === 'Center America') {
+       // TODO: Add Variant ID for Regional - Center America
+       console.error("Missing Variant ID: Regional - Center America"); return null;
+     }
+  // --- Masterpiece ---
+  } else if (type === 'Masterpiece') {
+     // TODO: Add Variant ID for Masterpiece (consider method if needed)
+     console.error("Missing Variant ID: Masterpiece"); return null;
+  // --- Low-Caf ---
+  } else if (type === 'Low-Caf') {
+     // TODO: Add Variant ID for Low-Caf (consider method if needed)
+     console.error("Missing Variant ID: Low-Caf"); return null;
+  }
+
+  console.warn("Variant ID not found for selection combination!");
+  return null;
+};
+
+// Map frequency selection string to Selling Plan Info (Populated from your links)
+// Note: Only the planId is needed for the Shopify Permalink method
+const sellingPlanMapping = {
+  // "Frequency String from Dropdown": { planId: SELLING_PLAN_ID },
+  "1 Week":                  { planId: 710709117303 },
+  "2 Weeks":                 { planId: 710708953463 },
+  "3 Weeks":                 { planId: 710709051767 },
+  "4 Weeks (Recommended)": { planId: 710709084535 },
+  "5 Weeks":                 { planId: 710708986231 },
+  "6 Weeks":                 { planId: 710709018999 },
 };
 
 // --- Component ---
 const RightContainer = ({ method, type, region, sizeOption, quantity, frequency }) => {
 
-    // --- Default/Introductory Content (Shown initially) ---
+    // --- Default/Introductory Content ---
     const DefaultIntroContent = () => {
-        const defaultImageUrl = "https://cdn.shopify.com/s/files/1/0831/4141/files/LOGO-NAME.png?v=1710576883"; // The Barn Logo
+        const defaultImageUrl = "https://cdn.shopify.com/s/files/1/0831/4141/files/LOGO-NAME.png?v=1710576883";
         return (
             <div className='default-intro-content text-white w-[90%] h-full flex flex-col items-center'>
-                <div className='mt-8'> {/* Added margin top */}
+                <div className='mt-8'>
                     <img src={defaultImageUrl} alt="The Barn Coffee Roasters Logo" style={{ width: '100%', maxWidth: '350px', height: 'auto', margin: '1rem 0' }} />
                 </div>
-                <div className='p-5 border border-[#A57C62] rounded-md mt-8 w-full max-w-md'> {/* Added max-width */}
-                    <ul className="intro-list text-xl sm:text-2xl" style={{ listStyle: 'none', padding: 0 }}> {/* Adjusted text size */}
+                <div className='p-5 border border-[#A57C62] rounded-md mt-8 w-full max-w-md'>
+                    <ul className="intro-list text-xl sm:text-2xl" style={{ listStyle: 'none', padding: 0 }}>
                         <li className="my-2">🌱 Sustainably sourced from top farms</li>
                         <li className="my-2">🔥 Expertly roasted in Berlin</li>
                         <li className="my-2">📦 Delivered fresh, right when you need it</li>
@@ -125,41 +182,92 @@ const RightContainer = ({ method, type, region, sizeOption, quantity, frequency 
             </div>
         );
     };
-    // --- End Default/Introductory Content ---
+    // --- End Default Content ---
 
     // --- Determine Display Logic ---
     const showSummaryLayout = method && type;
     const canAddToCart = method && type && quantity && frequency &&
         (type !== 'Regional' || region) &&
-        (type !== 'Roasters Choice' || sizeOption) &&
-        (type !== 'Office' || sizeOption);
+        ((type !== 'Roasters Choice' && type !== 'Office') || sizeOption);
+
+    // --- ADD TO CART HANDLER (Builds Shopify Permalink URL) ---
+    const handleAddToCartClick = () => {
+        console.log("Add to cart clicked (Shopify Permalink). State:", { method, type, region, sizeOption, quantity, frequency });
+
+        if (!canAddToCart) {
+            alert("Please complete your subscription selections.");
+            console.warn("Add to cart blocked, selections incomplete.");
+            return;
+        }
+
+        // 1. Look up IDs based on state
+        const selectedVariantId = getVariantIdFromSelections(method, type, region, sizeOption);
+        const selectedPlanInfo = sellingPlanMapping[frequency]; // Get {planId}
+        const selectedQuantity = parseInt(quantity, 10);
+
+        // Validate lookups
+        if (!selectedVariantId) {
+            alert("Error: Could not determine the correct product variant. Please complete the getVariantIdFromSelections function in RightContainer.jsx.");
+            return;
+        }
+        if (!selectedPlanInfo || !selectedPlanInfo.planId) { // Check if planId exists
+            alert(`Error: Could not find subscription plan ID for frequency: "${frequency}". Check sellingPlanMapping in RightContainer.jsx.`);
+            return;
+        }
+        if (isNaN(selectedQuantity) || selectedQuantity < 1) {
+           alert("Error: Invalid quantity selected.");
+           return;
+        }
+
+        const sellingPlanId = selectedPlanInfo.planId; // Extract just the planId
+
+        console.log("Resolved IDs/Qty for Permalink:", {
+            variantId: selectedVariantId,
+            quantity: selectedQuantity,
+            sellingPlanId: sellingPlanId
+        });
+
+        try {
+            // 2. Construct the Shopify Permalink URL
+            const shopDomain = "thebarn.de"; // Use your primary Shopify domain (without https://)
+            const itemsParam = `items[][id]=${selectedVariantId}&items[][quantity]=${selectedQuantity}&items[][selling_plan]=${sellingPlanId}`;
+            const returnToCheckoutParam = `return_to=/checkout`;
+            // Path for the inner /cart/add request
+            const addToCartPath = `/cart/add?${itemsParam}&${returnToCheckoutParam}`;
+            // IMPORTANT: Encode the inner path to be used as a parameter for return_to
+            const encodedAddToCartPath = encodeURIComponent(addToCartPath);
+
+            // Construct the final /cart/clear URL
+            const finalUrl = `https://${shopDomain}/cart/clear?return_to=${encodedAddToCartPath}`;
+
+            console.log("Redirecting to Shopify Permalink:", finalUrl);
+
+            // 3. Redirect User
+            window.location.href = finalUrl;
+
+        } catch (error) {
+            console.error("Error constructing Shopify Permalink URL:", error);
+            alert("An error occurred while preparing your checkout link. Check console for details.");
+        }
+    };
+    // --- END ADD TO CART HANDLER ---
 
     let contentToRender;
     let imagesToShow = [];
 
     // --- Logic to determine content based on selections ---
     if (showSummaryLayout) {
-        // --- Determine which images to show in the carousel ---
-        if (type === 'Regional') {
-            imagesToShow = carouselImageData.Regional[region] || carouselImageData.Regional._default;
-        } else {
-            imagesToShow = carouselImageData[type] || carouselImageData._fallback;
-        }
-        if (!Array.isArray(imagesToShow)) {
-            imagesToShow = carouselImageData._fallback || [];
-        }
-        // --- End Image determination ---
+        // Determine images to show
+        if (type === 'Regional') { imagesToShow = carouselImageData.Regional[region] || carouselImageData.Regional._default; }
+        else { imagesToShow = carouselImageData[type] || carouselImageData._fallback; }
+        if (!Array.isArray(imagesToShow)) { imagesToShow = carouselImageData._fallback || []; }
 
-        // --- Get Subscription Description Text ---
+        // Get description text
         let currentDescriptionData = null;
-        if (type === 'Regional') {
-            currentDescriptionData = subscriptionDescriptions.Regional[region] || subscriptionDescriptions.Regional._default;
-        } else {
-            currentDescriptionData = subscriptionDescriptions[type] || null;
-        }
-        // --- End Get Description Text ---
+        if (type === 'Regional') { currentDescriptionData = subscriptionDescriptions.Regional[region] || subscriptionDescriptions.Regional._default; }
+        else { currentDescriptionData = subscriptionDescriptions[type] || null; }
 
-        // --- Construct the dynamic summary sentence ---
+        // Construct summary sentence
         const highlightClass = "text-[#A67C52] font-semibold";
         const sentenceParts = [];
         sentenceParts.push('Your selection: ');
@@ -172,34 +280,35 @@ const RightContainer = ({ method, type, region, sizeOption, quantity, frequency 
         sentenceParts.push(' coffee');
         if (quantity) { sentenceParts.push(' '); sentenceParts.push(<span key="qty-val" className={highlightClass}>{quantity}</span>); sentenceParts.push(' '); sentenceParts.push(<span key="qty-word" className={highlightClass}>{parseInt(quantity) > 1 ? 'times' : 'time'}</span>); }
         else { sentenceParts.push(' (select quantity)'); }
-        if (frequency) { sentenceParts.push(', delivered every '); const displayFrequency = frequency.replace(' (Recommended)', ''); sentenceParts.push(<span key="freq" className={highlightClass}>{displayFrequency}</span>); }
-        else { sentenceParts.push(' (select frequency)'); }
+        if (frequency) {
+            sentenceParts.push(', delivered every ');
+            const displayFrequency = frequency.replace(' (Recommended)', '');
+            sentenceParts.push(<span key="freq" className={highlightClass}>{displayFrequency}</span>);
+         } else {
+            sentenceParts.push(' (select frequency)');
+        }
         sentenceParts.push('.');
-        // --- End sentence construction ---
 
-        // --- JSX for the summary layout (includes Carousel WITHOUT Card) ---
+
+        // --- JSX for the summary layout ---
         contentToRender = (
-            <div className="final-selection-display w-[100%] flex flex-col items-center text-white text-center px-4"> {/* Added padding */}
+            <div className="final-selection-display w-[100%] flex flex-col items-center text-white text-center px-4">
                 <h2 className="summary-init text-2xl font-semibold text-[#A67C52] mb-4">Subscription Summary</h2>
 
-                {/* === CAROUSEL IMPLEMENTATION START (No Card/CardContent) === */}
+                {/* === CAROUSEL IMPLEMENTATION START === */}
                 {imagesToShow.length > 0 ? (
                     <Carousel
-                        className="w-full max-w-xs mx-auto mb-6" // Center carousel, limit width, add bottom margin
-                        opts={{
-                            align: "start",
-                            loop: imagesToShow.length > 1,
-                        }}
+                        className="w-full max-w-xs mx-auto mb-6"
+                        opts={{ align: "start", loop: imagesToShow.length > 1 }}
                     >
                         <CarouselContent>
                             {imagesToShow.map((imageUrl, index) => (
-                                <CarouselItem key={`${type}-${region || ''}-${index}`}>
-                                    <div className="p-1"> {/* Optional: Padding around image slide */}
-                                        {/* Image displayed directly */}
+                                <CarouselItem key={`${type}-${region || ''}-${index}-${index}`}>
+                                    <div className="p-1">
                                         <img
                                             src={imageUrl}
                                             alt={`${type}${region ? ' - ' + region : ''} image ${index + 1}`}
-                                            className="w-full h-auto aspect-square object-cover rounded-md block" // Style image directly
+                                            className="w-full h-auto aspect-square object-cover rounded-md block"
                                             loading="lazy"
                                         />
                                     </div>
@@ -214,11 +323,10 @@ const RightContainer = ({ method, type, region, sizeOption, quantity, frequency 
                         )}
                     </Carousel>
                 ) : (
-                    // Fallback display if no images are available
-                    <div className="w-full max-w-xs h-[250px] bg-[#3a3c3d]/50 flex items-center justify-center rounded-md mb-6 border border-[#A67C52]/30">
-                        <p className="text-gray-400">Image Coming Soon</p>
-                    </div>
-                )}
+                     <div className="w-full max-w-xs h-[250px] bg-[#3a3c3d]/50 flex items-center justify-center rounded-md mb-6 border border-[#A67C52]/30">
+                         <p className="text-gray-400">Image Coming Soon</p>
+                     </div>
+                 )}
                 {/* === CAROUSEL IMPLEMENTATION END === */}
 
 
@@ -251,6 +359,7 @@ const RightContainer = ({ method, type, region, sizeOption, quantity, frequency 
                           disabled:opacity-50 disabled:cursor-not-allowed enabled:hover:brightness-110 enabled:active:scale-95
                         `}
                         disabled={!canAddToCart}
+                        onClick={handleAddToCartClick} // Correctly attached handler
                     >
                         ADD TO CART
                     </button>
