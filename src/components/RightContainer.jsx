@@ -77,82 +77,87 @@ const subscriptionDescriptions = {
 
 // Function to get Shopify Variant ID based on user selections
 const getVariantIdFromSelections = (method, type, region, sizeOption) => {
-  console.log("Looking up Variant ID for:", { method, type, region, sizeOption });
-  // --- !! IMPORTANT: Fill in remaining 'TODO' sections below with your actual Shopify Variant IDs !! ---
-
-  // --- Roasters Choice --- (Now Complete with your IDs)
-  if (type === 'Roasters Choice') {
-    if (method === 'Filter') {
-       if (sizeOption === '1 bag 250grams') return 45910178332939; // Filter / 1 x 250g
-       if (sizeOption === '2 bags 250grams') return 54897259151735; // Filter / 2 x 250g
-    } else if (method === 'Espresso') {
-       if (sizeOption === '1 bag 250grams') return 45910178398475; // Espresso / 1 x 250g
-       if (sizeOption === '2 bags 250grams') return 54897259184503; // Espresso / 2 x 250g
+    console.log("Looking up Variant ID for:", { method, type, region, sizeOption });
+    // --- !! IMPORTANT: Fill in remaining 'TODO' sections below with your actual Shopify Variant IDs !! ---
+  
+    // --- Roasters Choice --- (Completed)
+    if (type === 'Roasters Choice') {
+      if (method === 'Filter') {
+         if (sizeOption === '1 bag 250grams') return 45910178332939; // Filter / 1 x 250g
+         if (sizeOption === '2 bags 250grams') return 54897259151735; // Filter / 2 x 250g
+      } else if (method === 'Espresso') {
+         if (sizeOption === '1 bag 250grams') return 45910178398475; // Espresso / 1 x 250g
+         if (sizeOption === '2 bags 250grams') return 54897259184503; // Espresso / 2 x 250g
+      }
+    // --- Masterpiece --- (Corrected ID again)
+    } else if (type === 'Masterpiece') {
+       // Same variant ID regardless of method (Filter/Espresso)
+       return 45969541562635; // <<<<< CORRECTED Masterpiece Variant ID (from your latest message)
+    // --- Office --- (NEEDS IDs)
+    } else if (type === 'Office') {
+       if (method === 'Espresso') { // Assuming Office is Espresso only based on MiddleContainer
+           if (sizeOption === '2 x 250g') {
+             // TODO: Add Variant ID for Office - 2 x 250g
+             console.error("Missing Variant ID: Office - 2 x 250g"); return null;
+           }
+           if (sizeOption === '1 x 1kg') {
+              // TODO: Add Variant ID for Office - 1 x 1kg
+             console.error("Missing Variant ID: Office - 1 x 1kg"); return null;
+           }
+           if (sizeOption === '2 x 1kg') {
+              // TODO: Add Variant ID for Office - 2 x 1kg
+             console.error("Missing Variant ID: Office - 2 x 1kg"); return null;
+           }
+            if (sizeOption === '5 kg') {
+              // TODO: Add Variant ID for Office - 5 kg
+             console.error("Missing Variant ID: Office - 5 kg"); return null;
+           }
+       } else {
+           // Office type is only available for Espresso method in your MiddleContainer options
+           console.error("Office type selected but method is not Espresso - this shouldn't happen based on UI logic");
+           return null;
+       }
+    // --- Regional --- (NEEDS IDs)
+    } else if (type === 'Regional') {
+       // TODO: Check if Regional has different IDs based on method (Filter/Espresso) and add that logic if needed
+       // TODO: Add Variant ID for Regional - Ethiopia (Use 45972211695883 from its link or confirm if different)
+       if (region === 'Brazil') {
+         // TODO: Add Variant ID for Regional - Brazil
+         console.error("Missing Variant ID: Regional - Brazil"); return null;
+       }
+       if (region === 'Ethiopia') {
+         // TODO: Add Variant ID for Regional - Ethiopia
+         console.error("Missing Variant ID: Regional - Ethiopia"); return null;
+       }
+       if (region === 'Center America') {
+         // TODO: Add Variant ID for Regional - Center America
+         console.error("Missing Variant ID: Regional - Center America"); return null;
+       }
+       // Handle case where region might not be selected yet or is invalid
+       console.warn("Regional type selected but region is missing or invalid:", region);
+       return null;
+    // --- Low-Caf --- (NEEDS IDs)
+    } else if (type === 'Low-Caf') {
+       // TODO: Add Variant ID for Low-Caf (consider method if needed)
+       console.error("Missing Variant ID: Low-Caf"); return null;
     }
-  // --- Office ---
-  } else if (type === 'Office') {
-     if (method === 'Espresso') { // Assuming Office is Espresso only
-         if (sizeOption === '2 x 250g') {
-           // TODO: Add Variant ID for Office - 2 x 250g
-           console.error("Missing Variant ID: Office - 2 x 250g"); return null;
-         }
-         if (sizeOption === '1 x 1kg') {
-            // TODO: Add Variant ID for Office - 1 x 1kg
-           console.error("Missing Variant ID: Office - 1 x 1kg"); return null;
-         }
-         if (sizeOption === '2 x 1kg') {
-            // TODO: Add Variant ID for Office - 2 x 1kg
-           console.error("Missing Variant ID: Office - 2 x 1kg"); return null;
-         }
-          if (sizeOption === '5 kg') {
-            // TODO: Add Variant ID for Office - 5 kg
-           console.error("Missing Variant ID: Office - 5 kg"); return null;
-         }
-     } else {
-         console.error("Office type selected but method is not Espresso"); return null;
-     }
-  // --- Regional ---
-  } else if (type === 'Regional') {
-     // TODO: Check if Regional has different IDs based on method (Filter/Espresso)
-     if (region === 'Brazil') {
-       // TODO: Add Variant ID for Regional - Brazil
-       console.error("Missing Variant ID: Regional - Brazil"); return null;
-     }
-     if (region === 'Ethiopia') {
-       // TODO: Add Variant ID for Regional - Ethiopia
-       console.error("Missing Variant ID: Regional - Ethiopia"); return null;
-     }
-     if (region === 'Center America') {
-       // TODO: Add Variant ID for Regional - Center America
-       console.error("Missing Variant ID: Regional - Center America"); return null;
-     }
-  // --- Masterpiece ---
-  } else if (type === 'Masterpiece') {
-     // TODO: Add Variant ID for Masterpiece (consider method if needed)
-     console.error("Missing Variant ID: Masterpiece"); return null;
-  // --- Low-Caf ---
-  } else if (type === 'Low-Caf') {
-     // TODO: Add Variant ID for Low-Caf (consider method if needed)
-     console.error("Missing Variant ID: Low-Caf"); return null;
-  }
-
-  console.warn("Variant ID not found for selection combination!");
-  return null;
-};
+  
+    // Fallback if no type matches or an issue occurs within a type block
+    console.warn(`Variant ID not found for selection combination: Type=${type}, Method=${method}, Size=${sizeOption}, Region=${region}`);
+    return null;
+  };
 
 // Map frequency selection string to Selling Plan Info (Updated from new links)
 // ** NOTE: 1 Week and 2 Weeks links gave the same planId/groupId. Verify in Shopify Admin. **
 const sellingPlanMapping = {
-  // "Frequency String": { planId: SELLING_PLAN_ID, groupId: SELLING_PLAN_GROUP_ID },
-  "1 Week":                  { planId: 710364234103, groupId: 97844658551 }, // Same as 2 Weeks link
-  "2 Weeks":                 { planId: 710364234103, groupId: 97844658551 },
-  "3 Weeks":                 { planId: 710364266871, groupId: 97844691319 },
-  "4 Weeks (Recommended)": { planId: 710364299639, groupId: 97844724087 },
-  "5 Weeks":                 { planId: 710364332407, groupId: 97844756855 },
-  "6 Weeks":                 { planId: 710364365175, groupId: 97844789623 },
+  // "Frequency String": { planId: SELLING_PLAN_ID }, -> Only planId is needed for Permalink
+  "1 Week":                  { planId: 710364234103 }, // Same as 2 Weeks link
+  "2 Weeks":                 { planId: 710364234103 },
+  "3 Weeks":                 { planId: 710364266871 },
+  "4 Weeks (Recommended)": { planId: 710364299639 },
+  "5 Weeks":                 { planId: 710364332407 },
+  "6 Weeks":                 { planId: 710364365175 },
 };
-
-const YOUR_RECHARGE_STORE_ID = '10279'; // Your Store ID (Not needed for Shopify Permalink, but kept for reference)
 
 // --- Component ---
 const RightContainer = ({ method, type, region, sizeOption, quantity, frequency }) => {
@@ -196,7 +201,7 @@ const RightContainer = ({ method, type, region, sizeOption, quantity, frequency 
 
         // 1. Look up IDs based on state
         const selectedVariantId = getVariantIdFromSelections(method, type, region, sizeOption);
-        const selectedPlanInfo = sellingPlanMapping[frequency]; // Get {planId, groupId}
+        const selectedPlanInfo = sellingPlanMapping[frequency]; // Get {planId}
         const selectedQuantity = parseInt(quantity, 10);
 
         // Validate lookups
@@ -204,7 +209,6 @@ const RightContainer = ({ method, type, region, sizeOption, quantity, frequency 
             alert("Error: Could not determine the correct product variant. Please complete the getVariantIdFromSelections function in RightContainer.jsx.");
             return;
         }
-        // Check planId exists from the mapping
         if (!selectedPlanInfo || !selectedPlanInfo.planId) {
             alert(`Error: Could not find subscription plan ID for frequency: "${frequency}". Check sellingPlanMapping in RightContainer.jsx and verify IDs.`);
             return;
@@ -228,7 +232,7 @@ const RightContainer = ({ method, type, region, sizeOption, quantity, frequency 
             // Build the 'items' part of the query string
             const itemsParam = `items[][id]=${selectedVariantId}&items[][quantity]=${selectedQuantity}&items[][selling_plan]=${sellingPlanId}`;
             const returnToCheckoutParam = `return_to=/checkout`;
-            // Build the inner path that adds items and redirects
+            // Path for the inner /cart/add request
             const addToCartPath = `/cart/add?${itemsParam}&${returnToCheckoutParam}`;
             // IMPORTANT: Encode the *entire* inner path for the 'return_to' parameter of /cart/clear
             const encodedAddToCartPath = encodeURIComponent(addToCartPath);
