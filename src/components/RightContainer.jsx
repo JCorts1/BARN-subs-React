@@ -1,4 +1,5 @@
 // src/components/RightContainer.jsx
+// Final version using AJAX POST for Add to Cart, compatible with App Bridge v4 script setup
 
 import React from 'react';
 import './RightContainer.css'; // Make sure this CSS file exists and is styled appropriately
@@ -13,7 +14,6 @@ import {
 } from "@/components/ui/carousel"; // Ensure this path matches your project structure
 
 // --- Image Data for Carousel ---
-// Using the data you provided earlier
 const carouselImageData = {
     "Roasters Choice": [
         "https://cdn.shopify.com/s/files/1/0831/4141/files/Ralf-coffee_1.jpg?v=1713252187",
@@ -157,7 +157,7 @@ const sellingPlanMapping = {
 };
 
 // Define Masterpiece specific plan ID separately (used in properties)
-const MASTERPIECE_4_WEEK_SELLING_PLAN_ID = 710364397943;
+const MASTERPIECE_4_WEEK_SELLING_PLAN_ID = 710364397943; // From Masterpiece link analysis
 
 // --- Component ---
 const RightContainer = ({ method, type, region, sizeOption, quantity, frequency }) => {
@@ -249,11 +249,14 @@ const RightContainer = ({ method, type, region, sizeOption, quantity, frequency 
         });
 
         // 2. Prepare Recharge Properties for AJAX call
+        // These names ('shipping_interval_frequency', 'shipping_interval_unit_type') are standard
+        // for Recharge subscriptions added via Shopify Checkout Integration / AJAX API
         const rechargeProperties = {
             'shipping_interval_frequency': subscriptionInterval.toString(), // Send as string
             'shipping_interval_unit_type': subscriptionUnit,
-            'selling_plan': sellingPlanIdForProps // Include the determined selling plan ID
-            // Add other properties if needed
+            // It's good practice to also send the selling_plan ID Shopify expects
+            // even though Recharge primarily uses interval/unit for frequency logic.
+            'selling_plan': sellingPlanIdForProps
         };
 
         // 3. Prepare data payload for Shopify's /cart/add.js endpoint
@@ -266,11 +269,10 @@ const RightContainer = ({ method, type, region, sizeOption, quantity, frequency 
         };
 
         // 4. Make the AJAX POST request
-        // NOTE: This needs to run within Shopify (embedded app / theme app extension)
-        // or use a proxy during development (e.g., via Shopify CLI) to avoid CORS errors.
+        // NOTE: This should now work correctly when run within the embedded Shopify app context.
         try {
             console.log("Sending AJAX POST to /cart/add.js with data:", JSON.stringify(formData));
-            // You might want to add a loading state indicator here
+            // Consider adding a loading state here for better UX
 
             const response = await fetch('/cart/add.js', { // Relative path works when embedded
                 method: 'POST',
@@ -281,15 +283,15 @@ const RightContainer = ({ method, type, region, sizeOption, quantity, frequency 
                 body: JSON.stringify(formData)
             });
 
-            const responseData = await response.json();
+            const responseData = await response.json(); // Attempt to parse JSON response
 
-            // Remove loading state indicator here
+            // Consider removing loading state here
 
             if (!response.ok) {
                 // Handle Shopify errors (e.g., out of stock, invalid variant/plan combo)
                 console.error('Shopify cart/add error:', response.status, responseData);
                 alert(`Error adding to cart: ${responseData.description || responseData.message || 'Inventory issue or invalid selection. Please try again.'}`);
-                return;
+                return; // Stop execution on error
             }
 
             // Success!
@@ -298,12 +300,12 @@ const RightContainer = ({ method, type, region, sizeOption, quantity, frequency 
 
             // Optionally update mini-cart UI or redirect after success
             // e.g., fetch('/cart.js').then(res => res.json()).then(cart => console.log('Current cart:', cart));
-            // window.location.href = '/cart'; // Or redirect if desired
+            // window.location.href = '/cart'; // Example redirect to cart page
 
         } catch (error) {
-            // Remove loading state indicator here
-            console.error("AJAX request failed (Network Error or CORS Issue):", error);
-            alert("Could not add subscription to cart due to a network issue (Check CORS if running locally). Please try again.");
+            // Consider removing loading state here
+            console.error("AJAX request failed (Network Error or other issue):", error);
+            alert("Could not add subscription to cart due to an unexpected issue. Please check console or try again.");
         }
     };
     // --- END ADD TO CART HANDLER ---
