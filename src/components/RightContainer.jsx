@@ -431,7 +431,7 @@ const RightContainer = ({ method, type, region, edition, sizeOption, quantity, f
         contentToRender = <DefaultIntroContent />;
     }
 
-    // Final Render
+
     return (
         <div className="right-container pt-10 pb-10 flex justify-center items-start w-full min-h-screen bg-[#1a1a1a]">
             {contentToRender}
