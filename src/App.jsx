@@ -1,29 +1,28 @@
 // src/App.jsx
-// Final version for Native Assets approach (No App Bridge Provider needed)
+// Added state and handler for Capsule Edition
 
 import React, { useState } from 'react';
-// No Provider import needed from '@shopify/app-bridge-react'
+// No Provider needed for App Bridge v4 script setup
 import MiddleContainer from './components/MiddleContainer';
 import RightContainer from './components/RightContainer';
 import './App.css'; // Styles for App layout
 
 function App() {
-  // --- State for selections lives in the parent (App) ---
+  // --- State ---
   const [selectedMethod, setSelectedMethod] = useState('');
   const [selectedCoffeeType, setSelectedCoffeeType] = useState('');
   const [selectedRegion, setSelectedRegion] = useState('');
+  const [selectedEdition, setSelectedEdition] = useState(''); // <-- NEW: State for Capsule Edition
   const [selectedSizeOption, setSelectedSizeOption] = useState('');
-  const [finalSelectionDetail, setFinalSelectionDetail] = useState(''); // Represents quantity
+  const [finalSelectionDetail, setFinalSelectionDetail] = useState(''); // Quantity
   const [selectedFrequency, setSelectedFrequency] = useState('');
 
-  // --- App Bridge Configuration Logic is REMOVED ---
-  // Not needed when running same-origin via native assets
-
-  // --- Event Handlers ---
+  // --- Handlers ---
   const handleMethodChange = (newMethod) => {
     setSelectedMethod(newMethod);
     setSelectedCoffeeType(''); // Reset dependents
     setSelectedRegion('');
+    setSelectedEdition(''); // <-- NEW: Reset Edition
     setSelectedSizeOption('');
     setFinalSelectionDetail('');
     setSelectedFrequency('');
@@ -32,6 +31,7 @@ function App() {
   const handleCoffeeTypeChange = (newType) => {
     setSelectedCoffeeType(newType);
     setSelectedRegion(''); // Reset dependents
+    setSelectedEdition(''); // <-- NEW: Reset Edition
     setSelectedSizeOption('');
     setFinalSelectionDetail('');
     setSelectedFrequency('');
@@ -39,20 +39,35 @@ function App() {
 
   const handleRegionChange = (newRegion) => {
     setSelectedRegion(newRegion);
+    // Assuming selecting a region means it's not capsules
+    setSelectedEdition(''); // <-- NEW: Reset Edition
     setFinalSelectionDetail(''); // Reset dependents
     setSelectedFrequency('');
    };
 
+   // --- NEW: Handler for Capsule Edition Change ---
+   const handleEditionChange = (newEdition) => {
+    setSelectedEdition(newEdition);
+    // Reset potentially conflicting state and subsequent steps
+    setSelectedCoffeeType(''); // Clear coffee type if switching to capsules/edition
+    setSelectedRegion('');
+    setSelectedSizeOption(''); // Capsules have fixed size, clear this
+    setFinalSelectionDetail('');
+    setSelectedFrequency('');
+   };
+   // --- End New Handler ---
+
   const handleSizeOptionChange = (newSizeOption) => {
     setSelectedSizeOption(newSizeOption);
+     // Assuming selecting a size option means it's not capsules
+    setSelectedEdition(''); // <-- NEW: Reset Edition
     setFinalSelectionDetail(''); // Reset dependents
     setSelectedFrequency('');
    };
 
   const handleQuantityChange = (newQuantity) => {
     setFinalSelectionDetail(newQuantity);
-    // Reset frequency on quantity change
-    setSelectedFrequency('');
+    setSelectedFrequency(''); // Reset frequency on quantity change
    };
 
   const handleFrequencyChange = (newFrequency) => {
@@ -63,16 +78,14 @@ function App() {
     setSelectedMethod('');
     setSelectedCoffeeType('');
     setSelectedRegion('');
+    setSelectedEdition(''); // <-- NEW: Reset Edition
     setSelectedSizeOption('');
     setFinalSelectionDetail('');
     setSelectedFrequency('');
   }
   // --- End Handlers ---
 
-  // --- No Conditional Rendering needed based on App Bridge Config here ---
-
   // --- Main App Render ---
-  // No <Provider> wrapper needed
   return (
       <div className="app-container">
 
@@ -82,14 +95,16 @@ function App() {
             selectedMethod={selectedMethod}
             selectedCoffeeType={selectedCoffeeType}
             selectedRegion={selectedRegion}
+            selectedEdition={selectedEdition} // <-- NEW: Pass Edition state
             selectedSizeOption={selectedSizeOption}
-            finalSelectionDetail={finalSelectionDetail} // Quantity
+            finalSelectionDetail={finalSelectionDetail}
             selectedFrequency={selectedFrequency}
 
             // Pass down callback functions
             onMethodChange={handleMethodChange}
             onCoffeeTypeChange={handleCoffeeTypeChange}
             onRegionChange={handleRegionChange}
+            onEditionChange={handleEditionChange} // <-- NEW: Pass Edition handler
             onSizeOptionChange={handleSizeOptionChange}
             onQuantityChange={handleQuantityChange}
             onFrequencyChange={handleFrequencyChange}
@@ -104,6 +119,7 @@ function App() {
             method={selectedMethod}
             type={selectedCoffeeType}
             region={selectedRegion}
+            edition={selectedEdition} // <-- NEW: Pass Edition state
             sizeOption={selectedSizeOption}
             quantity={finalSelectionDetail}
             frequency={selectedFrequency}
