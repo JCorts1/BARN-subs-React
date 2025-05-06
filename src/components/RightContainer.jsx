@@ -53,17 +53,20 @@ const carouselImageData = {
         ],
         "_default": [ "https://cdn.shopify.com/s/files/1/0831/4141/files/map.png?v=1745847536" ]
     },
-    "Capsules": [ // Using generic capsule images
+    // --- ADDED: Capsule Images (Uses same images for all editions) ---
+    "Capsules": [
         "https://cdn.shopify.com/s/files/1/0831/4141/files/capsules_1.png?v=1695032905",
         "https://cdn.shopify.com/s/files/1/0831/4141/products/94caa496-c974-436d-a877-91b5f1deee76_e692294a-dcda-4e46-97cf-cb22632a1acf.jpg?v=1667996022",
         "https://cdn.shopify.com/s/files/1/0831/4141/files/Capsules.jpg?v=1629729054"
     ],
+    // --- End Capsule Images ---
      "_fallback": [
         "https://cdn.shopify.com/s/files/1/0831/4141/files/LOGO-NAME.png?v=1710576883"
      ]
 };
 
 // --- Data for Subscription Descriptions ---
+// TODO: Review/Update Placeholder Capsule Descriptions
 const subscriptionDescriptions = {
     "Roasters Choice": { description: "Our most popular Subscription. Every month, we source stunning coffees from around the world. This is the best way to explore the origins, varietals, and processes that make Single Origin flavour so special.", currentOffering: "Current Offering:\n\n🇪🇹 Spring Coffee, Ethiopia: Apricot Jam. Bergamot. Floral." },
     "Masterpiece": { description: "The rarest coffees on the planet. Scoring 90 points and up. Omni Roast.", currentOffering: "Current Offering:\n\nFinca Sophia Natural Gesha, Panama 🇵🇦" },
@@ -75,11 +78,22 @@ const subscriptionDescriptions = {
         "Center America": { description: "People like Central Coffees for their exciting acidity and clean notes of terroir.", currentOffering: "Current Offering:\n\n🇨🇷 Volcan Azul, Costa Rica: Dried Fig. Vanilla." },
         _default: { description: "Select a region to see details about the specific coffee offering for this type.", currentOffering: "" }
     },
-     "Capsules": { // Added Capsule descriptions (Placeholders - update needed)
-        "Seasonal Brazil": { description: "Convenient capsules featuring our current seasonal single origin coffee from Brazil. Nespresso® compatible.", currentOffering: "Current Offering:\n\n🇧🇷 Capsule - Brazil: Notes of..." },
-        "Seasonal Ethiopia": { description: "Convenient capsules featuring our current seasonal single origin coffee from Ethiopia. Nespresso® compatible.", currentOffering: "Current Offering:\n\n🇪🇹 Capsule - Ethiopia: Notes of..." },
-        _default: { description: "Select a Seasonal Edition for our Nespresso® compatible coffee capsules (30 per box).", currentOffering: "" }
+    // --- ADDED: Capsule Descriptions ---
+    "Capsules": {
+        "Seasonal Brazil": {
+            description: "Convenient capsules featuring our current seasonal single origin coffee from Brazil. Nespresso® compatible.",
+            currentOffering: "Current Offering:\n\n🇧🇷 Capsule - Brazil: Notes of..."
+        },
+        "Seasonal Ethiopia": {
+            description: "Convenient capsules featuring our current seasonal single origin coffee from Ethiopia. Nespresso® compatible.",
+            currentOffering: "Current Offering:\n\n🇪🇹 Capsule - Ethiopia: Notes of..."
+        },
+        _default: { // Description shown when Method=Capsules but no Edition selected yet
+            description: "Select a Seasonal Edition for our Nespresso® compatible coffee capsules (30 per box).",
+            currentOffering: ""
+        }
     }
+    // --- End Capsule Descriptions ---
 };
 
 // --- MAPPING DATA ---
@@ -102,7 +116,6 @@ const getVariantIdFromSelections = (method, type, region, sizeOption, edition) =
       }
       console.warn("Capsules method selected but edition is missing or invalid:", edition);
       return null;
-
   // --- Roasters Choice --- (Simplified - Always uses 1 bag variant)
   } else if (type === 'Roasters Choice') {
       if (method === 'Filter') {
@@ -112,50 +125,25 @@ const getVariantIdFromSelections = (method, type, region, sizeOption, edition) =
       }
       console.warn("Roasters Choice selected but method is invalid:", method);
       return null;
-
   // --- Masterpiece --- (Completed)
   } else if (type === 'Masterpiece') {
      return 45969541562635; // Masterpiece Variant ID
-
   // --- Office --- (NEEDS IDs)
   } else if (type === 'Office') {
      if (method === 'Espresso') { // Assuming Office is Espresso only
-         if (sizeOption === '2 x 250g') {
-           // TODO: Add Variant ID for Office - 2 x 250g
-           console.error("Missing Variant ID: Office - 2 x 250g"); return null;
-         }
-         if (sizeOption === '1 x 1kg') {
-            // TODO: Add Variant ID for Office - 1 x 1kg
-           console.error("Missing Variant ID: Office - 1 x 1kg"); return null;
-         }
-         if (sizeOption === '2 x 1kg') {
-            // TODO: Add Variant ID for Office - 2 x 1kg
-           console.error("Missing Variant ID: Office - 2 x 1kg"); return null;
-         }
-          if (sizeOption === '5 kg') {
-            // TODO: Add Variant ID for Office - 5 kg
-           console.error("Missing Variant ID: Office - 5 kg"); return null;
-         }
+         if (sizeOption === '2 x 250g') { /* TODO */ console.error("Missing Office ID: 2x250g"); return null; }
+         if (sizeOption === '1 x 1kg') { /* TODO */ console.error("Missing Office ID: 1x1kg"); return null; }
+         if (sizeOption === '2 x 1kg') { /* TODO */ console.error("Missing Office ID: 2x1kg"); return null; }
+         if (sizeOption === '5 kg') { /* TODO */ console.error("Missing Office ID: 5kg"); return null; }
          console.warn("Office selected but sizeOption is invalid:", sizeOption); return null;
      } else { console.error("Office type selected but method is not Espresso"); return null; }
-
   // --- Regional --- (NEEDS IDs)
   } else if (type === 'Regional') {
      // TODO: Check if Regional needs different IDs based on method (Filter/Espresso)
-     if (region === 'Brazil') {
-       // TODO: Add Variant ID for Regional - Brazil
-       console.error("Missing Variant ID: Regional - Brazil"); return null;
-     }
-     if (region === 'Ethiopia') {
-        // TODO: Add Variant ID for Regional - Ethiopia
-       console.error("Missing Variant ID: Regional - Ethiopia"); return null;
-     }
-     if (region === 'Center America') {
-       // TODO: Add Variant ID for Regional - Center America
-       console.error("Missing Variant ID: Regional - Center America"); return null;
-     }
+     if (region === 'Brazil') { /* TODO */ console.error("Missing Regional ID: Brazil"); return null; }
+     if (region === 'Ethiopia') { /* TODO */ console.error("Missing Regional ID: Ethiopia"); return null; }
+     if (region === 'Center America') { /* TODO */ console.error("Missing Regional ID: Center America"); return null; }
      console.warn("Regional type selected but region is missing or invalid:", region); return null;
-
   // --- Low-Caf --- (NEEDS IDs)
   } else if (type === 'Low-Caf') {
      // TODO: Add Variant ID for Low-Caf (consider method if needed)
@@ -180,6 +168,7 @@ const sellingPlanMapping = {
 const MASTERPIECE_SELLING_PLAN_ID = 710364397943; // Note: This plan is actually Monthly
 
 // --- Component ---
+// Added 'edition' to the props destructuring
 const RightContainer = ({ method, type, region, edition, sizeOption, quantity, frequency }) => {
 
     // --- Default/Introductory Content ---
@@ -264,7 +253,7 @@ const RightContainer = ({ method, type, region, edition, sizeOption, quantity, f
                      if (sizeOption) { sentenceParts.push(' - '); sentenceParts.push(<span key="amount" className={highlightClass}>{sizeOption}</span>); }
                      else { sentenceParts.push(' (select size)'); }
                 }
-                // Roasters Choice, Masterpiece, Low-Caf don't display size/region here
+                 // Roasters Choice, Masterpiece, Low-Caf don't display size/region here
             } else {
                  sentenceParts.push(' (select type)');
             }
@@ -348,7 +337,7 @@ const RightContainer = ({ method, type, region, edition, sizeOption, quantity, f
                 if (!response.ok) { console.error('Shopify cart/add error:', response.status, responseData); alert(`Error adding to cart: ${responseData.description || responseData.message || 'Inventory issue or invalid selection.'}`); return; }
                 console.log('Successfully added to cart via AJAX:', responseData);
                 alert('Subscription added to your cart!');
-                // Optionally update UI or redirect: window.location.href = '/cart';
+                // window.location.href = '/cart'; // Optionally redirect
             } catch (error) { console.error("AJAX request failed:", error); alert("Could not add subscription to cart (network issue)."); }
         };
         // --- END ADD TO CART HANDLER ---
@@ -364,10 +353,12 @@ const RightContainer = ({ method, type, region, edition, sizeOption, quantity, f
                     <Carousel className="w-full max-w-xs mx-auto mb-6" opts={{ align: "start", loop: imagesToShow.length > 1 }}>
                         <CarouselContent>
                             {imagesToShow.map((imageUrl, index) => (
+                                // Updated key to include potentially changing edition/region/type
                                 <CarouselItem key={`${method}-${type || edition}-${region || ''}-${index}`}>
                                     <div className="p-1">
                                         <img
                                             src={imageUrl}
+                                            // Updated Alt Text
                                             alt={`${method}${type ? ' - '+type : ''}${edition ? ' - '+edition : ''}${region ? ' - '+region : ''} image ${index + 1}`}
                                             className="w-full h-auto aspect-square object-cover rounded-md block"
                                             loading="lazy"
@@ -431,7 +422,7 @@ const RightContainer = ({ method, type, region, edition, sizeOption, quantity, f
         contentToRender = <DefaultIntroContent />;
     }
 
-
+    // Final Render
     return (
         <div className="right-container pt-10 pb-10 flex justify-center items-start w-full min-h-screen bg-[#1a1a1a]">
             {contentToRender}
