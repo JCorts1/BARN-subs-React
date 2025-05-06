@@ -1,15 +1,14 @@
 // src/App.jsx
-// Updated for App Bridge v4 (Provider removed, setup via index.html)
+// Final version for Native Assets approach (No App Bridge Provider needed)
 
 import React, { useState } from 'react';
-// No 'Provider' import needed from '@shopify/app-bridge-react' for v4 script tag setup
+// No Provider import needed from '@shopify/app-bridge-react'
 import MiddleContainer from './components/MiddleContainer';
 import RightContainer from './components/RightContainer';
 import './App.css'; // Styles for App layout
 
 function App() {
   // --- State for selections lives in the parent (App) ---
-  // (Keep all your existing useState hooks)
   const [selectedMethod, setSelectedMethod] = useState('');
   const [selectedCoffeeType, setSelectedCoffeeType] = useState('');
   const [selectedRegion, setSelectedRegion] = useState('');
@@ -18,14 +17,12 @@ function App() {
   const [selectedFrequency, setSelectedFrequency] = useState('');
 
   // --- App Bridge Configuration Logic is REMOVED ---
-  // Setup is now done via <meta name="shopify-api-key"...> and <script src="...app-bridge.js">
-  // tags in your main index.html file.
+  // Not needed when running same-origin via native assets
 
   // --- Event Handlers ---
-  // (Keep all your existing handler functions: handleMethodChange, etc.)
   const handleMethodChange = (newMethod) => {
     setSelectedMethod(newMethod);
-    setSelectedCoffeeType('');
+    setSelectedCoffeeType(''); // Reset dependents
     setSelectedRegion('');
     setSelectedSizeOption('');
     setFinalSelectionDetail('');
@@ -34,32 +31,33 @@ function App() {
 
   const handleCoffeeTypeChange = (newType) => {
     setSelectedCoffeeType(newType);
-    setSelectedRegion('');
+    setSelectedRegion(''); // Reset dependents
     setSelectedSizeOption('');
     setFinalSelectionDetail('');
     setSelectedFrequency('');
-  };
+   };
 
   const handleRegionChange = (newRegion) => {
     setSelectedRegion(newRegion);
-    setFinalSelectionDetail('');
+    setFinalSelectionDetail(''); // Reset dependents
     setSelectedFrequency('');
-  };
+   };
 
   const handleSizeOptionChange = (newSizeOption) => {
     setSelectedSizeOption(newSizeOption);
-    setFinalSelectionDetail('');
+    setFinalSelectionDetail(''); // Reset dependents
     setSelectedFrequency('');
-  };
+   };
 
   const handleQuantityChange = (newQuantity) => {
     setFinalSelectionDetail(newQuantity);
+    // Reset frequency on quantity change
     setSelectedFrequency('');
-  };
+   };
 
   const handleFrequencyChange = (newFrequency) => {
     setSelectedFrequency(newFrequency);
-  };
+   };
 
   const handleResetSelections = () => {
     setSelectedMethod('');
@@ -74,7 +72,7 @@ function App() {
   // --- No Conditional Rendering needed based on App Bridge Config here ---
 
   // --- Main App Render ---
-  // No <Provider> wrapper needed here
+  // No <Provider> wrapper needed
   return (
       <div className="app-container">
 
