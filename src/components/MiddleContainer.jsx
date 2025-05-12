@@ -1,6 +1,6 @@
 // src/components/MiddleContainer.jsx
-// FINAL VERSION: Adds Capsule flow AND removes Roasters Choice "Option" dropdown.
-// Includes updated quantity label format for Roasters Choice ("N x 250g").
+// FINAL VERSION: Adds Capsule flow, removes Roasters Choice "Option" dropdown,
+// updates RC quantity label format, and restricts RC frequency options.
 
 import React, { useState, useEffect } from 'react';
 import {
@@ -53,7 +53,9 @@ const regionOptions = [
     { value: "Ethiopia", label: "Ethiopia" },
     { value: "Center America", label: "Center America" },
 ];
-const frequencyOptions = [
+
+// Base frequency options available for most types
+const baseFrequencyOptions = [
     { value: "1 Week", label: "1 Week" },
     { value: "2 Weeks", label: "2 Weeks" },
     { value: "3 Weeks", label: "3 Weeks" },
@@ -61,6 +63,9 @@ const frequencyOptions = [
     { value: "5 Weeks", label: "5 Weeks" },
     { value: "6 Weeks", label: "6 Weeks" }
 ];
+
+// Specific frequencies allowed for Roasters Choice
+const allowedRoastersChoiceFrequencies = ["4 Weeks (Recommended)", "6 Weeks"];
 
 // --- Added: Capsule Edition Options ---
 const capsuleEditionOptions = [
@@ -100,23 +105,47 @@ const MiddleContainer = ({
         if (typeof onFrequencyChange !== 'function') { return; }
         const isReadyForFrequency = finalSelectionDetail && !selectedFrequency;
         const isMasterpiece = selectedMethod !== 'Capsules' && selectedCoffeeType === 'Masterpiece';
+        const isRoastersChoice = selectedCoffeeType === 'Roasters Choice';
 
-        if (isReadyForFrequency && !isMasterpiece) {
+        // Set default only if not Masterpiece AND not Roasters Choice (RC default is handled by the reset effect below)
+        if (isReadyForFrequency && !isMasterpiece && !isRoastersChoice) {
             try { onFrequencyChange('4 Weeks (Recommended)'); } catch (error) { console.error('Error calling onFrequencyChange:', error); }
         }
+        // If it's Roasters Choice and ready, ensure default is set (handled by the reset effect too, but belt-and-suspenders)
+        else if (isReadyForFrequency && isRoastersChoice) {
+             try { onFrequencyChange('4 Weeks (Recommended)'); } catch (error) { console.error('Error setting default RC frequency:', error); }
+        }
+
     }, [finalSelectionDetail, selectedFrequency, selectedCoffeeType, selectedMethod, onFrequencyChange]);
 
     useEffect(() => {
         // Auto-set frequency for Masterpiece (only if method isn't Capsules)
         if (selectedMethod !== 'Capsules' && selectedCoffeeType === 'Masterpiece' && finalSelectionDetail && typeof onFrequencyChange === 'function') {
              try {
-                 onFrequencyChange('4 Weeks (Recommended)');
+                 onFrequencyChange('4 Weeks (Recommended)'); // Masterpiece frequency is fixed display, but state might need setting
              } catch (error) {
                  console.error('Error auto-setting Masterpiece frequency:', error);
              }
         }
     }, [selectedMethod, selectedCoffeeType, finalSelectionDetail, onFrequencyChange]);
+
+    // --- ADDED: Effect to reset frequency if invalid for Roasters Choice ---
+    useEffect(() => {
+        if (selectedCoffeeType === 'Roasters Choice' && selectedFrequency && !allowedRoastersChoiceFrequencies.includes(selectedFrequency)) {
+            // If Roasters Choice is selected and the current frequency is now invalid for it,
+            // reset to the default allowed frequency.
+            console.warn(`Roasters Choice selected with previously valid frequency '${selectedFrequency}', resetting to default allowed.`);
+            if (typeof onFrequencyChange === 'function') {
+                try {
+                    onFrequencyChange('4 Weeks (Recommended)'); // Reset to default
+                } catch (error) {
+                    console.error('Error resetting frequency for Roasters Choice:', error);
+                }
+            }
+        }
+    }, [selectedCoffeeType, selectedFrequency, onFrequencyChange]);
     // --- END useEffect ---
+
 
     // --- Event Handlers ---
     const handleSelectSelf = () => { setShowOptionsContainer(true); };
@@ -137,11 +166,20 @@ const MiddleContainer = ({
         (selectedMethod !== 'Capsules' && ['Masterpiece', 'Low-Caf'].includes(selectedCoffeeType) && selectedCoffeeType); // Masterpiece/LowCaf just need Type selected
 
     // Determine if Frequency dropdown should be shown
+    // Masterpiece has fixed frequency info instead of a dropdown
     const showFrequency = showQuantity && finalSelectionDetail && (selectedMethod === 'Capsules' || selectedCoffeeType !== 'Masterpiece');
 
     // Determine if Masterpiece fixed frequency info should be shown
     const showMasterpieceFrequencyInfo = showQuantity && finalSelectionDetail && selectedMethod !== 'Capsules' && selectedCoffeeType === 'Masterpiece';
 
+
+    // --- Determine which frequency options to display ---
+    const currentFrequencyOptions = selectedCoffeeType === 'Roasters Choice'
+        ? baseFrequencyOptions.filter(option => allowedRoastersChoiceFrequencies.includes(option.value))
+        : baseFrequencyOptions;
+
+
+    // --- Component Render ---
     return (
         <div className="middle-content-wrapper flex flex-col justify-center items-center">
 
@@ -337,7 +375,7 @@ const MiddleContainer = ({
                     {/* Renders based on calculated showQuantity condition */}
                     {showQuantity && (
                         <div className='dropdown-row'>
-                            <h3 className='dropdown-label'>Quantity</h3>
+                            <h3 className='dropdown-label'>Quantity of Coffee</h3>
                             <DropdownMenu>
                                 <DropdownMenuTrigger asChild>
                                     <Button variant="outline" className='dropdown-trigger-button'>
@@ -359,7 +397,7 @@ const MiddleContainer = ({
                                                             ? option.label // Office size specified elsewhere
                                                             : selectedCoffeeType === 'Regional'
                                                                 ? `${option.label} ${parseInt(option.value) > 1 ? 'bags' : 'bag'} (250g each)`
-                                                                : selectedCoffeeType === 'Roasters Choice' // <<< Label format updated here (added spaces)
+                                                                : selectedCoffeeType === 'Roasters Choice'
                                                                     ? `${option.label} x 250g`
                                                                     // Fallback for Low-Caf etc. (assuming 250g)
                                                                     : `${option.label} ${parseInt(option.value) > 1 ? 'bags' : 'bag'} (250g each)`
@@ -374,13 +412,15 @@ const MiddleContainer = ({
                     {/* End Quantity Dropdown */}
 
 
-                    {/* Step 5: Frequency Selection / Display (Complete and Unchanged from original) */}
+                    {/* Step 5: Frequency Selection / Display */}
+                    {/* Show dropdown only if frequency should be shown AND type is not Masterpiece */}
                     {showFrequency && (
                         <div className='dropdown-row'>
                             <h3 className='dropdown-label'>Frequency</h3>
                             <DropdownMenu>
                                 <DropdownMenuTrigger asChild>
                                     <Button variant="outline" className='dropdown-trigger-button'>
+                                        {/* Display selected frequency or prompt */}
                                         {selectedFrequency || "Select Frequency..."}
                                         <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                                     </Button>
@@ -388,7 +428,8 @@ const MiddleContainer = ({
                                 <DropdownMenuContent className='dropdown-content-panel'>
                                     {/* Use onFrequencyChange prop */}
                                     <DropdownMenuRadioGroup value={selectedFrequency} onValueChange={onFrequencyChange}>
-                                        {frequencyOptions.map((option) => (
+                                        {/* Map over the conditionally determined frequency options */}
+                                        {currentFrequencyOptions.map((option) => (
                                             <DropdownMenuRadioItem key={option.value} value={option.value}>
                                                 {option.label}
                                             </DropdownMenuRadioItem>
@@ -399,6 +440,7 @@ const MiddleContainer = ({
                         </div>
                     )}
 
+                    {/* Show fixed frequency info only for Masterpiece (when frequency step is reached) */}
                      {showMasterpieceFrequencyInfo && (
                         <div className='dropdown-row masterpiece-frequency-info'>
                             <h3 className='dropdown-label'>Frequency</h3>
