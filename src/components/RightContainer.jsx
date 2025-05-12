@@ -1,6 +1,6 @@
 // src/components/RightContainer.jsx
 // FINAL VERSION: Includes Capsule logic/data, uses AJAX POST, reflects removal of Roasters Choice 'Option',
-// and updates summary sentence quantity display.
+// updates summary sentence quantity display, and adds h1 for animation.
 
 import React from 'react';
 import './RightContainer.css'; // Make sure this CSS file exists and is styled appropriately
@@ -393,9 +393,10 @@ const RightContainer = ({ method, type, region, edition, sizeOption, quantity, f
                      </div>
                  )}
 
-                {/* Description */}
+                {/* Description and Animation Container */}
                 {currentDescriptionData && currentDescriptionData.description && (
-                    <div className="subscription-description text-white my-4 text-left w-full max-w-md flex justify-center">
+                    <div className="subscription-description text-white my-4 text-left w-full max-w-md flex justify-center flex-col">
+                        {/* Description Box */}
                         <div className="bg-[#3a3c3d] p-4 rounded-md border border-[#A67C52] text-base sm:text-lg w-full">
                             <p className="mb-3">{currentDescriptionData.description}</p>
                             {currentDescriptionData.currentOffering && (
@@ -403,6 +404,10 @@ const RightContainer = ({ method, type, region, edition, sizeOption, quantity, f
                                     {currentDescriptionData.currentOffering}
                                 </p>
                             )}
+                        </div>
+                        {/* Animation Box */}
+                        <div>
+                            <h1 className='words-animation'>You can adjust your quantity any time!</h1>
                         </div>
                     </div>
                 )}
