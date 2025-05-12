@@ -1,8 +1,7 @@
 // src/App.jsx
-// Added state and handler for Capsule Edition
+// Updated handleSizeOptionChange for Office type.
 
 import React, { useState } from 'react';
-// No Provider needed for App Bridge v4 script setup
 import MiddleContainer from './components/MiddleContainer';
 import RightContainer from './components/RightContainer';
 import './App.css'; // Styles for App layout
@@ -12,17 +11,17 @@ function App() {
   const [selectedMethod, setSelectedMethod] = useState('');
   const [selectedCoffeeType, setSelectedCoffeeType] = useState('');
   const [selectedRegion, setSelectedRegion] = useState('');
-  const [selectedEdition, setSelectedEdition] = useState(''); // <-- NEW: State for Capsule Edition
-  const [selectedSizeOption, setSelectedSizeOption] = useState('');
-  const [finalSelectionDetail, setFinalSelectionDetail] = useState(''); // Quantity
+  const [selectedEdition, setSelectedEdition] = useState('');
+  const [selectedSizeOption, setSelectedSizeOption] = useState(''); // For Office: "1x 1kg", "2x 1kg", etc.
+  const [finalSelectionDetail, setFinalSelectionDetail] = useState(''); // Generic Quantity OR Office Size
   const [selectedFrequency, setSelectedFrequency] = useState('');
 
   // --- Handlers ---
   const handleMethodChange = (newMethod) => {
     setSelectedMethod(newMethod);
-    setSelectedCoffeeType(''); // Reset dependents
+    setSelectedCoffeeType('');
     setSelectedRegion('');
-    setSelectedEdition(''); // <-- NEW: Reset Edition
+    setSelectedEdition('');
     setSelectedSizeOption('');
     setFinalSelectionDetail('');
     setSelectedFrequency('');
@@ -30,8 +29,8 @@ function App() {
 
   const handleCoffeeTypeChange = (newType) => {
     setSelectedCoffeeType(newType);
-    setSelectedRegion(''); // Reset dependents
-    setSelectedEdition(''); // <-- NEW: Reset Edition
+    setSelectedRegion('');
+    setSelectedEdition('');
     setSelectedSizeOption('');
     setFinalSelectionDetail('');
     setSelectedFrequency('');
@@ -39,35 +38,37 @@ function App() {
 
   const handleRegionChange = (newRegion) => {
     setSelectedRegion(newRegion);
-    // Assuming selecting a region means it's not capsules
-    setSelectedEdition(''); // <-- NEW: Reset Edition
-    setFinalSelectionDetail(''); // Reset dependents
+    setSelectedEdition('');
+    setFinalSelectionDetail(''); // Regional uses the standard quantity dropdown
     setSelectedFrequency('');
    };
 
-   // --- NEW: Handler for Capsule Edition Change ---
    const handleEditionChange = (newEdition) => {
     setSelectedEdition(newEdition);
-    // Reset potentially conflicting state and subsequent steps
-    setSelectedCoffeeType(''); // Clear coffee type if switching to capsules/edition
+    setSelectedCoffeeType('');
     setSelectedRegion('');
-    setSelectedSizeOption(''); // Capsules have fixed size, clear this
-    setFinalSelectionDetail('');
+    setSelectedSizeOption('');
+    setFinalSelectionDetail(''); // Capsules use the standard quantity dropdown
     setSelectedFrequency('');
    };
-   // --- End New Handler ---
 
   const handleSizeOptionChange = (newSizeOption) => {
     setSelectedSizeOption(newSizeOption);
-     // Assuming selecting a size option means it's not capsules
-    setSelectedEdition(''); // <-- NEW: Reset Edition
-    setFinalSelectionDetail(''); // Reset dependents
+    // For Office, the "Size" (e.g., "1x 1kg") IS the quantity detail.
+    // For other types that might use a size option differently, this might need adjustment.
+    if (selectedCoffeeType === 'Office') {
+        setFinalSelectionDetail(newSizeOption);
+    } else {
+        setFinalSelectionDetail(''); // Reset if it's not Office, to allow generic quantity
+    }
+    setSelectedEdition('');
     setSelectedFrequency('');
    };
 
   const handleQuantityChange = (newQuantity) => {
+    // This is for the generic quantity dropdown, not used by Office directly
     setFinalSelectionDetail(newQuantity);
-    setSelectedFrequency(''); // Reset frequency on quantity change
+    setSelectedFrequency('');
    };
 
   const handleFrequencyChange = (newFrequency) => {
@@ -78,7 +79,7 @@ function App() {
     setSelectedMethod('');
     setSelectedCoffeeType('');
     setSelectedRegion('');
-    setSelectedEdition(''); // <-- NEW: Reset Edition
+    setSelectedEdition('');
     setSelectedSizeOption('');
     setFinalSelectionDetail('');
     setSelectedFrequency('');
@@ -88,23 +89,19 @@ function App() {
   // --- Main App Render ---
   return (
       <div className="app-container">
-
         <div className="function-container">
           <MiddleContainer
-            // Pass down state values
             selectedMethod={selectedMethod}
             selectedCoffeeType={selectedCoffeeType}
             selectedRegion={selectedRegion}
-            selectedEdition={selectedEdition} // <-- NEW: Pass Edition state
+            selectedEdition={selectedEdition}
             selectedSizeOption={selectedSizeOption}
             finalSelectionDetail={finalSelectionDetail}
             selectedFrequency={selectedFrequency}
-
-            // Pass down callback functions
             onMethodChange={handleMethodChange}
             onCoffeeTypeChange={handleCoffeeTypeChange}
             onRegionChange={handleRegionChange}
-            onEditionChange={handleEditionChange} // <-- NEW: Pass Edition handler
+            onEditionChange={handleEditionChange}
             onSizeOptionChange={handleSizeOptionChange}
             onQuantityChange={handleQuantityChange}
             onFrequencyChange={handleFrequencyChange}
@@ -112,20 +109,17 @@ function App() {
           />
         </div>
 
-        {/* Right Side: Pass state values down for display */}
         <div className="result-container">
           <RightContainer
-            // Pass down state values
             method={selectedMethod}
             type={selectedCoffeeType}
             region={selectedRegion}
-            edition={selectedEdition} // <-- NEW: Pass Edition state
-            sizeOption={selectedSizeOption}
-            quantity={finalSelectionDetail}
+            edition={selectedEdition}
+            sizeOption={selectedSizeOption} // This is key for Office display
+            quantity={finalSelectionDetail} // For Office, this will be same as sizeOption
             frequency={selectedFrequency}
           />
         </div>
-
       </div>
   );
 }
