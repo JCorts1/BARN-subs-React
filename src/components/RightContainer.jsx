@@ -1,6 +1,6 @@
 // src/components/RightContainer.jsx
-// Adds handling for "Curated". Updates "Masterpiece" quantity display in summary,
-// updates Masterpiece animation text, and adds TODOs for Masterpiece variant IDs.
+// Updates Office subscription display (summary sentence) and logic
+// (getVariantIdFromSelections, quantityForAjax).
 
 import React from 'react';
 import './RightContainer.css'; // Make sure this CSS file exists and is styled appropriately
@@ -15,19 +15,19 @@ import {
 } from "@/components/ui/carousel"; // Ensure this path matches your project structure
 
 // --- Image Data for Carousel ---
-const carouselImageData = {
+const carouselImageData = { // Ensure "Office" images are appropriate
     "Roasters Choice": [
         "https://cdn.shopify.com/s/files/1/0831/4141/files/Ralf-coffee_1.jpg?v=1713252187",
         "https://cdn.shopify.com/s/files/1/0831/4141/files/Curated_Subscription_Coffee_FIL_March_2025.jpg?v=1745957301",
         "https://cdn.shopify.com/s/files/1/0831/4141/files/330B7ED3-F6D7-452A-80C1-F377D55D8FA6-2950-000002F30AF09FBC.jpg?v=1745591524",
     ],
-    "Curated": [ // Placeholder images for Curated
+    "Curated": [
         "https://cdn.shopify.com/s/files/1/0831/4141/files/Curated_Subscription_Coffee_FIL_March_2025.jpg?v=1745957301",
         "https://cdn.shopify.com/s/files/1/0831/4141/files/330B7ED3-F6D7-452A-80C1-F377D55D8FA6-2950-000002F30AF09FBC.jpg?v=1745591524",
         "https://cdn.shopify.com/s/files/1/0831/4141/files/Ralf-coffee_1.jpg?v=1713252187",
     ],
-    "Masterpiece": [ // Updated size range note, images may need refresh
-        "https://cdn.shopify.com/s/files/1/0831/4141/files/Aroma_Nativo_Masterpiece.jpg?v=1744711907", // 100-150g now
+    "Masterpiece": [
+        "https://cdn.shopify.com/s/files/1/0831/4141/files/Aroma_Nativo_Masterpiece.jpg?v=1744711907",
         "https://cdn.shopify.com/s/files/1/0831/4141/files/MasterpiecePourover_62c21026-4dd5-492f-a000-2389bad32528.jpg?v=1716801442",
         "https://cdn.shopify.com/s/files/1/0831/4141/files/1A811F5A-D50E-4B89-B35D-1F3F68BFC79C-1435-0000008C80587130.jpg?v=1734608120"
     ],
@@ -36,53 +36,53 @@ const carouselImageData = {
         "https://cdn.shopify.com/s/files/1/0831/4141/products/NanoChalla_32c7ddc5-d7a5-4989-8483-b2a358c63eb5.jpg?v=1739301233",
         "https://cdn.shopify.com/s/files/1/0831/4141/products/caffeine_levels_d161625f-8c4c-4a27-86fb-b3c5b94a3414.jpg?v=1739301233"
     ],
-    "Office": [
-        "https://cdn.shopify.com/s/files/1/1657/3941/files/volcan_azul_1kg.webp?v=1743027540",
-        "https://cdn.shopify.com/s/files/1/0831/4141/files/gigesa_EOM.jpg?v=1741274114",
+    "Office": [ // These are 1kg bag images
+        "https://cdn.shopify.com/s/files/1/1657/3941/files/volcan_azul_1kg.webp?v=1743027540", // Example: Volcan Azul 1kg
+        "https://cdn.shopify.com/s/files/1/0831/4141/files/HANNES_1kg_BAG.png?v=1706179901",      // Example: Hannes 1kg (replace if needed)
         "https://cdn.shopify.com/s/files/1/0831/4141/products/espressoshotsCropped_60eb6865-fd62-43c7-90c5-2bc9050f167b.jpg?v=1741274114"
     ],
-    "Regional": {
-        "Brazil": [ /* ... regional images ... */
+    "Regional": { /* ... unchanged ... */
+        "Brazil": [
             "https://cdn.shopify.com/s/files/1/0831/4141/files/Elemental_Bag_Catuai_mit_labelle.png?v=1723799712",
             "https://cdn.shopify.com/s/files/1/0831/4141/files/Image_26.04.24_at_14.12.jpg?v=1728375513",
             "https://cdn.shopify.com/s/files/1/0831/4141/files/2_v60_6c2d62af-96c2-4e95-a9f9-5d66eb85efb8.png?v=1712752891",
         ],
-        "Ethiopia": [ /* ... */
+        "Ethiopia": [
             "https://cdn.shopify.com/s/files/1/0831/4141/files/BAG_Chelbesa_Natural_2024.png?v=1729679115",
             "https://cdn.shopify.com/s/files/1/0831/4141/files/Image_26.04.24_at_14.12.jpg?v=1728375513",
             "https://cdn.shopify.com/s/files/1/0831/4141/files/2_v60_6c2d62af-96c2-4e95-a9f9-5d66eb85efb8.png?v=1712752891",
         ],
-        "Center America": [ /* ... */
+        "Center America": [
             "https://cdn.shopify.com/s/files/1/0831/4141/files/BAG_Volcan_Azul_Caturra_OMNI_3a40d3d4-a185-4da0-99ff-b8d0f43479b7.png?v=1743674027",
             "https://cdn.shopify.com/s/files/1/0831/4141/files/Image_26.04.24_at_14.12.jpg?v=1728375513",
             "https://cdn.shopify.com/s/files/1/0831/4141/files/2_v60_6c2d62af-96c2-4e95-a9f9-5d66eb85efb8.png?v=1712752891",
         ],
         "_default": [ "https://cdn.shopify.com/s/files/1/0831/4141/files/map.png?v=1745847536" ]
     },
-    "Capsules": [
+    "Capsules": [ /* ... unchanged ... */
         "https://cdn.shopify.com/s/files/1/0831/4141/files/capsules_1.png?v=1695032905",
         "https://cdn.shopify.com/s/files/1/0831/4141/products/94caa496-c974-436d-a877-91b5f1deee76_e692294a-dcda-4e46-97cf-cb22632a1acf.jpg?v=1667996022",
         "https://cdn.shopify.com/s/files/1/0831/4141/files/Capsules.jpg?v=1629729054"
     ],
-     "_fallback": [
+     "_fallback": [ /* ... unchanged ... */
         "https://cdn.shopify.com/s/files/1/0831/4141/files/LOGO-NAME.png?v=1710576883"
      ]
 };
 
 // --- Data for Subscription Descriptions ---
-const subscriptionDescriptions = {
+const subscriptionDescriptions = { // Ensure "Office" description is suitable
     "Roasters Choice": { description: "Our most popular Subscription. Every month, we source stunning coffees from around the world. This is the best way to explore the origins, varietals, and processes that make Single Origin flavour so special.", currentOffering: "Current Offering:\n\n🇪🇹 Spring Coffee, Ethiopia: Apricot Jam. Bergamot. Floral." },
     "Curated": { description: "Perfect for sharing or enjoying variety. Every month our Roasters select two exceptional 250g bags of different single origin coffees, roasted for Filter or Espresso.", currentOffering: "Current Pairings:\n\nPairing details coming soon!" },
-    "Masterpiece": { description: "The rarest coffees on the planet, scoring 90 points and up. We send one bag (100-150g) of these extraordinary coffees each month. Omni Roast.", currentOffering: "Current Offering:\n\nFinca Sophia Natural Gesha, Panama 🇵🇦" }, // Updated description slightly
+    "Masterpiece": { description: "The rarest coffees on the planet, scoring 90 points and up. We send one bag (100-150g) of these extraordinary coffees each month. Omni Roast.", currentOffering: "Current Offering:\n\nFinca Sophia Natural Gesha, Panama 🇵🇦" },
     "Low-Caf": { description: "This subscription sends out 250g of rare coffee varietals that naturally contain low caffeine: Aramosa or Laurina.", currentOffering: "Current Offering:\n\nDaterra Reserve from Brazil 🇧🇷" },
-    "Office": { description: "This subscription is for offices that prefer espresso and need a little more volume each month. The coffee selection changes every month, allowing you to explore different coffee regions!", currentOffering: "Current Offering:\n\n🇪🇹 Spring Coffee, Ethiopia: Apricot Jam. Bergamot. Floral." },
-    "Regional": { /* ... regional descriptions ... */
+    "Office": { description: "Our Espresso works on all Office Machines: Full Automat, Espresso, Filter. Choose your monthly volume of 1kg bags, delivered fresh.", currentOffering: "Current Offering:\n\nOur signature Office Espresso Blend." }, // Updated description
+    "Regional": { /* ... unchanged ... */
         "Brazil": { description: "People love Brazilian Coffees for their sweetness, low acidity and chocolate notes.", currentOffering: "Current Offering:\n\n🇧🇷 Elemental, Brazil: Milk Chocolate. Macadamia. Smooth." },
         "Ethiopia": { description: "People love Ethiopian Coffees for their floral notes and its tea-like character.", currentOffering: "Current Offering:\n\n🇪🇹 Chelbesa, Ethiopia: Peach. Fudge. Jasmine." },
         "Center America": { description: "People like Central Coffees for their exciting acidity and clean notes of terroir.", currentOffering: "Current Offering:\n\n🇨🇷 Volcan Azul, Costa Rica: Dried Fig. Vanilla." },
         _default: { description: "Select a region to see details about the specific coffee offering for this type.", currentOffering: "" }
      },
-    "Capsules": { /* ... capsule descriptions ... */
+    "Capsules": { /* ... unchanged ... */
         "Seasonal Brazil": {
             description: "Convenient capsules featuring our current seasonal single origin coffee from Brazil. Nespresso® compatible.",
             currentOffering: "Current Offering:\n\n🇧🇷 Capsule - Brazil: Notes of..."
@@ -100,83 +100,82 @@ const subscriptionDescriptions = {
 
 // --- MAPPING DATA ---
 
-// Function to get Shopify Variant ID based on user selections
-const getVariantIdFromSelections = (method, type, region, sizeOption, edition, quantity) => { // Added quantity
-  console.log("Looking up Variant ID for:", { method, type, region, sizeOption, edition, quantity });
-  // --- !! IMPORTANT: Fill in missing Variant IDs below !! ---
+// Function to get Shopify Variant ID
+// `sizeOption` is used for Office ("1x 1kg", "2x 1kg", etc.)
+// `quantity` is used for other types for their specific quantity logic
+const getVariantIdFromSelections = (method, type, region, sizeOption, edition, quantity) => {
+  console.log("Looking up Variant ID for:", { method, type, region, sizeOption, edition, quantity }); // quantity is finalSelectionDetail
 
-  if (method === 'Capsules') { // --- Capsules ---
-      if (edition === 'Seasonal Brazil') { /* TODO */ console.error("Missing Variant ID: Capsules - Seasonal Brazil"); return null; }
-      if (edition === 'Seasonal Ethiopia') { /* TODO */ console.error("Missing Variant ID: Capsules - Seasonal Ethiopia"); return null; }
+  if (method === 'Capsules') { /* ... unchanged ... */
+      if (edition === 'Seasonal Brazil') { console.error("Missing Variant ID: Capsules - Seasonal Brazil"); return null; }
+      if (edition === 'Seasonal Ethiopia') { console.error("Missing Variant ID: Capsules - Seasonal Ethiopia"); return null; }
       console.warn("Capsules method selected but edition is missing or invalid:", edition); return null;
-  } else if (type === 'Roasters Choice') { // --- Roasters Choice ---
-      if (method === 'Filter') return 45910178332939; // Filter / 1 x 250g
-      if (method === 'Espresso') return 45910178398475; // Espresso / 1 x 250g
+  } else if (type === 'Roasters Choice') { /* ... unchanged ... */
+      if (method === 'Filter') return 45910178332939;
+      if (method === 'Espresso') return 45910178398475;
       console.warn("Roasters Choice selected but method is invalid:", method); return null;
-  } else if (type === 'Curated') { // --- Curated ---
+  } else if (type === 'Curated') { /* ... unchanged, uses quantity ... */
       const qty = quantity;
       if (!['2', '4', '6'].includes(qty)) { console.error(`Invalid quantity '${qty}' for Curated type.`); return null; }
       if (method === 'Filter') {
-          if (qty === '2') { /* TODO */ console.error("Missing Curated ID: Filter, 2x250g"); return null; }
-          if (qty === '4') { /* TODO */ console.error("Missing Curated ID: Filter, 4x250g"); return null; }
-          if (qty === '6') { /* TODO */ console.error("Missing Curated ID: Filter, 6x250g"); return null; }
+          if (qty === '2') { console.error("Missing Curated ID: Filter, 2x250g"); return null; }
+          if (qty === '4') { console.error("Missing Curated ID: Filter, 4x250g"); return null; }
+          if (qty === '6') { console.error("Missing Curated ID: Filter, 6x250g"); return null; }
       } else if (method === 'Espresso') {
-          if (qty === '2') { /* TODO */ console.error("Missing Curated ID: Espresso, 2x250g"); return null; }
-          if (qty === '4') { /* TODO */ console.error("Missing Curated ID: Espresso, 4x250g"); return null; }
-          if (qty === '6') { /* TODO */ console.error("Missing Curated ID: Espresso, 6x250g"); return null; }
+          if (qty === '2') { console.error("Missing Curated ID: Espresso, 2x250g"); return null; }
+          if (qty === '4') { console.error("Missing Curated ID: Espresso, 4x250g"); return null; }
+          if (qty === '6') { console.error("Missing Curated ID: Espresso, 6x250g"); return null; }
       } else { console.warn("Curated type selected but method is invalid:", method); return null; }
       return null;
-  } else if (type === 'Masterpiece') { // --- Masterpiece ---
-      const qty = quantity; // Quantity is "1", "2", or "3"
+  } else if (type === 'Masterpiece') { /* ... unchanged, uses quantity ... */
+      const qty = quantity;
       if (!['1', '2', '3'].includes(qty)) { console.error(`Invalid quantity '${qty}' for Masterpiece type.`); return null; }
-      // TODO: Add specific Masterpiece Variant IDs based on quantity (1, 2, or 3 bags)
-      // Assumes Filter/Espresso use the same variant ID for Masterpiece, differentiate if needed.
-      if (qty === '1') { /* TODO */ console.error("Missing Masterpiece ID: Qty 1"); return 45969541562635; /* Using old single ID as placeholder ONLY */ }
-      if (qty === '2') { /* TODO */ console.error("Missing Masterpiece ID: Qty 2"); return null; }
-      if (qty === '3') { /* TODO */ console.error("Missing Masterpiece ID: Qty 3"); return null; }
+      if (qty === '1') { console.error("Missing Masterpiece ID: Qty 1"); return 45969541562635; }
+      if (qty === '2') { console.error("Missing Masterpiece ID: Qty 2"); return null; }
+      if (qty === '3') { console.error("Missing Masterpiece ID: Qty 3"); return null; }
        console.warn("Masterpiece selected but couldn't determine variant ID for quantity:", qty); return null;
-  } else if (type === 'Office') { // --- Office ---
-     if (method === 'Espresso') {
-         if (sizeOption === '2 x 250g') { /* TODO */ console.error("Missing Office ID: 2x250g"); return null; }
-         if (sizeOption === '1 x 1kg') { /* TODO */ console.error("Missing Office ID: 1x1kg"); return null; }
-         if (sizeOption === '2 x 1kg') { /* TODO */ console.error("Missing Office ID: 2x1kg"); return null; }
-         if (sizeOption === '5 kg') { /* TODO */ console.error("Missing Office ID: 5kg"); return null; }
-         console.warn("Office selected but sizeOption is invalid:", sizeOption); return null;
-     } else { console.error("Office type selected but method is not Espresso"); return null; }
-  } else if (type === 'Regional') { // --- Regional ---
-     // TODO: Check if Regional needs different IDs based on method (Filter/Espresso)
-     if (region === 'Brazil') { /* TODO */ console.error("Missing Regional ID: Brazil"); return null; }
-     if (region === 'Ethiopia') { /* TODO */ console.error("Missing Regional ID: Ethiopia"); return null; }
-     if (region === 'Center America') { /* TODO */ console.error("Missing Regional ID: Center America"); return null; }
+  } else if (type === 'Office') { // --- UPDATED Office Logic ---
+     // For Office, sizeOption IS the quantity/size descriptor (e.g., "1x 1kg", "2x 1kg")
+     // quantity prop (finalSelectionDetail) will hold the same value as sizeOption for Office.
+     if (method === 'Espresso') { // Assuming Office is Espresso only
+         // TODO: Map these new sizeOptions to actual Variant IDs
+         if (sizeOption === '1x 1kg') { /* TODO */ console.error("Missing Office ID: 1x 1kg"); return null; }
+         if (sizeOption === '2x 1kg') { /* TODO */ console.error("Missing Office ID: 2x 1kg"); return null; }
+         if (sizeOption === '3x 1kg') { /* TODO */ console.error("Missing Office ID: 3x 1kg"); return null; }
+         if (sizeOption === '4x 1kg') { /* TODO */ console.error("Missing Office ID: 4x 1kg"); return null; }
+         if (sizeOption === '5x 1kg') { /* TODO */ console.error("Missing Office ID: 5x 1kg"); return null; }
+         console.warn("Office selected but sizeOption is invalid or unmapped:", sizeOption); return null;
+     } else {
+         console.error("Office type selected but method is not Espresso"); return null;
+     }
+  } else if (type === 'Regional') { /* ... unchanged ... */
+     if (region === 'Brazil') { console.error("Missing Regional ID: Brazil"); return null; }
+     if (region === 'Ethiopia') { console.error("Missing Regional ID: Ethiopia"); return null; }
+     if (region === 'Center America') { console.error("Missing Regional ID: Center America"); return null; }
      console.warn("Regional type selected but region is missing or invalid:", region); return null;
-  } else if (type === 'Low-Caf') { // --- Low-Caf ---
-     // TODO: Add Variant ID for Low-Caf (consider method if needed)
+  } else if (type === 'Low-Caf') { /* ... unchanged ... */
      console.error("Missing Variant ID: Low-Caf"); return null;
   }
 
-  console.warn(`Variant ID lookup reached end without match: Method=${method}, Type=${type}, Region=${region}, Size=${sizeOption}, Edition=${edition}, Qty=${quantity}`);
+  console.warn(`Variant ID lookup reached end: M=${method}, T=${type}, R=${region}, S=${sizeOption}, E=${edition}, Q=${quantity}`);
   return null;
 };
 
-// Map frequency selection string to Plan ID AND Interval/Unit for AJAX properties
-// TODO: Verify Selling Plan IDs for Curated and Masterpiece (if different from RC for 4/6 weeks)
-const sellingPlanMapping = {
+const sellingPlanMapping = { /* ... unchanged ... */
   "1 Week":                  { planId: 710364201335, interval: 1, unit: 'Weeks' },
-  "2 Weeks":                 { planId: 710364234103, interval: 2, unit: 'Weeks' },
+  "2 Weeks":                 { planId: 710364234103, interval: 2, unit: 'Weeks' }, // Used by Office
   "3 Weeks":                 { planId: 710364266871, interval: 3, unit: 'Weeks' },
-  "4 Weeks (Recommended)": { planId: 710364299639, interval: 4, unit: 'Weeks' }, // Used by RC, Curated, MP(state)
+  "4 Weeks (Recommended)": { planId: 710364299639, interval: 4, unit: 'Weeks' }, // Used by Office, MP, RC, Curated
   "5 Weeks":                 { planId: 710364332407, interval: 5, unit: 'Weeks' },
-  "6 Weeks":                 { planId: 710364365175, interval: 6, unit: 'Weeks' }, // Used by RC, Curated
+  "6 Weeks":                 { planId: 710364365175, interval: 6, unit: 'Weeks' },
 };
 
-// Define Masterpiece specific plan ID if it truly uses a different MONTHLY plan
-// const MASTERPIECE_SELLING_PLAN_ID = 710364397943; // Only uncomment if MP uses a unique monthly plan ID
+// const MASTERPIECE_SELLING_PLAN_ID = 710364397943; // Only if MP uses a unique MONTHLY plan
 
 // --- Component ---
 const RightContainer = ({ method, type, region, edition, sizeOption, quantity, frequency }) => {
 
-    // --- Default/Introductory Content ---
-    const DefaultIntroContent = () => { /* ... Default content ... */
+    const DefaultIntroContent = () => { /* ... unchanged ... */
         const defaultImageUrl = "https://cdn.shopify.com/s/files/1/0831/4141/files/LOGO-NAME.png?v=1710576883";
         return (
             <div className='default-intro-content text-white w-[90%] h-full flex flex-col items-center'>
@@ -193,18 +192,19 @@ const RightContainer = ({ method, type, region, edition, sizeOption, quantity, f
                 </div>
             </div>
         );
-     };
-    // --- End Default Content ---
+    };
 
-    // --- Determine Display Logic ---
     const showSummaryLayout = method && (type || edition);
-    // Enable button when all required fields are filled
+    // For Office, `quantity` (which is finalSelectionDetail) will be the same as `sizeOption`.
     const canAddToCart = method && quantity && frequency &&
         (
           (method === 'Capsules' && edition) ||
-          (method !== 'Capsules' && type && ['Roasters Choice', 'Masterpiece', 'Low-Caf', 'Curated'].includes(type) ) || // Added Curated
-          (method !== 'Capsules' && type === 'Office' && sizeOption) ||
-          (method !== 'Capsules' && type === 'Regional' && region)
+          (method !== 'Capsules' && type && ['Roasters Choice', 'Masterpiece', 'Low-Caf', 'Curated', 'Office', 'Regional'].includes(type) &&
+            ( (type === 'Office' && sizeOption) || // Office needs sizeOption (which is also quantity)
+              (type === 'Regional' && region) || // Regional needs region
+              (!['Office', 'Regional'].includes(type)) // Other non-capsule types just need type
+            )
+          )
         );
 
 
@@ -212,13 +212,12 @@ const RightContainer = ({ method, type, region, edition, sizeOption, quantity, f
     let imagesToShow = [];
     let currentDescriptionData = null;
 
-    // --- Logic to determine content based on selections ---
     if (showSummaryLayout) {
         // Determine images and description
-        if (method === 'Capsules') {
+        if (method === 'Capsules') { /* ... unchanged ... */
             imagesToShow = carouselImageData.Capsules || carouselImageData._fallback || [];
             currentDescriptionData = subscriptionDescriptions.Capsules?.[edition] || subscriptionDescriptions.Capsules?._default || null;
-        } else if (type === 'Regional') {
+        } else if (type === 'Regional') { /* ... unchanged ... */
             imagesToShow = carouselImageData.Regional?.[region] || carouselImageData.Regional?._default || carouselImageData._fallback || [];
             currentDescriptionData = subscriptionDescriptions.Regional?.[region] || subscriptionDescriptions.Regional?._default || null;
         } else { // Handles RC, Curated, MP, LC, Office
@@ -234,7 +233,7 @@ const RightContainer = ({ method, type, region, edition, sizeOption, quantity, f
         sentenceParts.push('Your selection: ');
         sentenceParts.push(<span key="method" className={highlightClass}>{method}</span>);
 
-        // Type/Edition/Region/Size specifics
+        // Type/Edition/Region specific part (Office does not use sizeOption here anymore)
         if (method === 'Capsules') {
             if (edition) { sentenceParts.push(' - '); sentenceParts.push(<span key="edition" className={highlightClass}>{edition}</span>); }
             else { sentenceParts.push(' (select edition)'); }
@@ -245,37 +244,37 @@ const RightContainer = ({ method, type, region, edition, sizeOption, quantity, f
                 if (type === 'Regional') {
                     if (region) { sentenceParts.push(' - '); sentenceParts.push(<span key="region" className={highlightClass}>{region}</span>); }
                     else { sentenceParts.push(' (select region)'); }
-                } else if (type === 'Office') {
-                     if (sizeOption) { sentenceParts.push(' - '); sentenceParts.push(<span key="amount" className={highlightClass}>{sizeOption}</span>); }
-                     else { sentenceParts.push(' (select size)'); }
                 }
-                 // RC, Curated, MP, LC size/region handled with quantity below
+                // Office size/quantity is handled in the "Qty" part now.
+                // RC, Curated, MP, LC size/region handled with quantity below
             } else {
                  sentenceParts.push(' (select type)');
             }
         }
         sentenceParts.push(' subscription');
 
-        // Quantity display
-        if (quantity) {
+        // Quantity display - `quantity` prop is `finalSelectionDetail` from App.jsx
+        // For Office, `quantity` will be like "1x 1kg", "2x 1kg", etc. (same as `sizeOption`)
+        if (quantity) { // This checks if finalSelectionDetail (or selectedSizeOption for Office) is set
             sentenceParts.push(' - Qty: ');
-            const qtyValue = parseInt(quantity);
-
-            if (type === 'Curated') {
-                sentenceParts.push(<span key="qty-val" className={highlightClass}>{`${qtyValue} x 250g`}</span>);
-            } else if (type === 'Masterpiece') {
-                // Use specific label structure for Masterpiece
-                sentenceParts.push(<span key="qty-val" className={highlightClass}>{`${qtyValue}x bag${qtyValue > 1 ? 's' : ''} (100-150g)`}</span>);
-            } else {
-                // Display standard quantity value for other types
+            if (type === 'Office') {
+                // For Office, `quantity` (which is `finalSelectionDetail` from App state, set to `selectedSizeOption`)
+                // already contains the full string like "1x 1kg".
                 sentenceParts.push(<span key="qty-val" className={highlightClass}>{quantity}</span>);
-                // Append unit/size
-                if (method === 'Capsules') {
-                     sentenceParts.push(qtyValue > 1 ? ' boxes (30 caps each)' : ' box (30 caps each)');
-                } else if (type === 'Roasters Choice' || type === 'Regional' || type === 'Low-Caf') {
-                    sentenceParts.push(` x 250g`);
+            } else {
+                const qtyValue = parseInt(quantity); // Standard numeric quantity (1-5 or 1-3 for MP, 2,4,6 for Curated)
+                if (type === 'Curated') {
+                    sentenceParts.push(<span key="qty-val" className={highlightClass}>{`${qtyValue}x 250g`}</span>);
+                } else if (type === 'Masterpiece') {
+                    sentenceParts.push(<span key="qty-val" className={highlightClass}>{`${qtyValue}x bag${qtyValue > 1 ? 's' : ''} (100-150g)`}</span>);
+                } else {
+                    sentenceParts.push(<span key="qty-val" className={highlightClass}>{quantity}</span>);
+                    if (method === 'Capsules') {
+                         sentenceParts.push(qtyValue > 1 ? ' boxes (30 caps each)' : ' box (30 caps each)');
+                    } else if (type === 'Roasters Choice' || type === 'Regional' || type === 'Low-Caf') {
+                        sentenceParts.push(` x 250g`);
+                    }
                 }
-                // Office size handled earlier
             }
         } else {
             sentenceParts.push(' (select quantity)');
@@ -284,7 +283,6 @@ const RightContainer = ({ method, type, region, edition, sizeOption, quantity, f
         // Frequency display
         if (frequency) {
             sentenceParts.push(', delivered every ');
-            // Masterpiece state is '4 Weeks (Recommended)', display should become '4 Weeks'
             const displayFrequency = frequency.replace(' (Recommended)', '');
             sentenceParts.push(<span key="freq" className={highlightClass}>{displayFrequency}</span>);
          } else {
@@ -296,23 +294,32 @@ const RightContainer = ({ method, type, region, edition, sizeOption, quantity, f
 
         // --- ADD TO CART HANDLER ---
         const handleAddToCartClick = async () => {
-            console.log("Add to cart clicked (AJAX). State:", { method, type, region, edition, sizeOption, quantity, frequency });
+            console.log("Add to cart clicked (AJAX). State:", { method, type, region, edition, sizeOption, quantity, frequency }); // quantity is finalSelectionDetail
 
             if (!canAddToCart) { alert("Please complete your subscription selections."); console.warn("Add to cart blocked, selections incomplete."); return; }
 
-            // Get Variant ID - Pass quantity needed for Curated/Masterpiece lookup
+            // Get Variant ID - Pass `sizeOption` for Office, `quantity` for others
             const selectedVariantId = getVariantIdFromSelections(method, type, region, sizeOption, edition, quantity);
 
             // Quantity for AJAX request
             let quantityForAjax;
-            if (type === 'Curated') {
-                 quantityForAjax = parseInt(quantity, 10); // "2", "4", "6" -> 2, 4, 6
+            if (type === 'Office') {
+                // Parse numeric quantity from sizeOption like "1x 1kg", "2x 1kg"
+                const match = sizeOption.match(/^(\d+)x/);
+                if (match && match[1]) {
+                    quantityForAjax = parseInt(match[1], 10);
+                } else {
+                    alert("Error: Could not determine quantity for Office subscription."); return;
+                }
+                if (isNaN(quantityForAjax) || quantityForAjax < 1) { alert("Error: Invalid quantity parsed for Office."); return; }
+            } else if (type === 'Curated') {
+                 quantityForAjax = parseInt(quantity, 10);
                  if (isNaN(quantityForAjax) || ![2, 4, 6].includes(quantityForAjax)) { alert("Error: Invalid quantity for Curated."); return; }
             } else if (type === 'Masterpiece') {
-                 quantityForAjax = parseInt(quantity, 10); // "1", "2", "3" -> 1, 2, 3
+                 quantityForAjax = parseInt(quantity, 10);
                  if (isNaN(quantityForAjax) || ![1, 2, 3].includes(quantityForAjax)) { alert("Error: Invalid quantity for Masterpiece."); return; }
-            } else {
-                 quantityForAjax = parseInt(quantity, 10); // Standard "1"-"5" -> 1-5
+            } else { // Standard types
+                 quantityForAjax = parseInt(quantity, 10);
                  if (isNaN(quantityForAjax) || quantityForAjax < 1) { alert("Error: Invalid quantity."); return; }
             }
 
@@ -321,27 +328,21 @@ const RightContainer = ({ method, type, region, edition, sizeOption, quantity, f
             let sellingPlanIdForProps = null;
 
             // Determine frequency details and selling plan ID
-            // Use the frequency state ("4 Weeks (Recommended)" for MP) to lookup plan
             const selectedPlanInfo = sellingPlanMapping[frequency];
             if (!selectedPlanInfo || !selectedPlanInfo.interval || !selectedPlanInfo.unit || !selectedPlanInfo.planId) {
-                // This check handles Masterpiece correctly if its state `frequency` is '4 Weeks (Recommended)'
-                // AND if Curated/RC correctly have their frequency set to '4 Weeks (Recommended)' or '6 Weeks'.
-                alert(`Error: Could not find plan details for frequency: "${frequency}". Check sellingPlanMapping & state.`); return;
+                alert(`Error: Could not find plan details for frequency: "${frequency}".`); return;
             }
             subscriptionInterval = selectedPlanInfo.interval;
             subscriptionUnit = selectedPlanInfo.unit;
             sellingPlanIdForProps = selectedPlanInfo.planId;
             console.log(`Using Selling Plan ID ${sellingPlanIdForProps} for ${frequency} (Type/Method: ${type || method})`);
 
-
-            // Validate looked-up values
             if (!selectedVariantId) { alert("Error: Could not determine product variant. Check TODOs in getVariantIdFromSelections."); return; }
             if (!quantityForAjax) { alert("Error: Failed to determine quantity for AJAX."); return; }
-            if (!subscriptionInterval || !subscriptionUnit || !sellingPlanIdForProps) { alert(`Error: Failed to determine subscription plan details.`); return; } // Should be caught earlier
+            if (!subscriptionInterval || !subscriptionUnit || !sellingPlanIdForProps) { alert(`Error: Failed to determine subscription plan details.`); return; }
 
             console.log("Resolved Data for AJAX:", { variantId: selectedVariantId, quantity: quantityForAjax, interval: subscriptionInterval, unit: subscriptionUnit, sellingPlanIdForProps: sellingPlanIdForProps });
 
-            // Prepare Properties and formData
             const rechargeProperties = {
                 'shipping_interval_frequency': subscriptionInterval.toString(),
                 'shipping_interval_unit_type': subscriptionUnit,
@@ -349,8 +350,7 @@ const RightContainer = ({ method, type, region, edition, sizeOption, quantity, f
             };
             const formData = { items: [{ id: selectedVariantId, quantity: quantityForAjax, properties: rechargeProperties }] };
 
-            // Make the AJAX POST request
-            try { // ... AJAX post logic ...
+            try { // AJAX Post
                 console.log("Sending AJAX POST to /cart/add.js with data:", JSON.stringify(formData));
                 const response = await fetch('/cart/add.js', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' }, body: JSON.stringify(formData) });
                 const responseData = await response.json();
@@ -362,23 +362,20 @@ const RightContainer = ({ method, type, region, edition, sizeOption, quantity, f
         // --- END ADD TO CART HANDLER ---
 
 
-        // --- Determine Animation Text ---
         const animationText = type === 'Masterpiece'
             ? "We roast this subscription only on the first Tuesday every month"
             : "You can adjust your quantity any time!";
 
 
-        // --- JSX for the summary layout ---
-        contentToRender = (
+        contentToRender = ( /* ... Summary Layout JSX ... */
             <div className="final-selection-display w-[100%] flex flex-col items-center text-white text-center px-4">
                 <h2 className="summary-init text-2xl font-semibold text-[#A67C52] mb-4">Subscription Summary</h2>
 
-                {/* Carousel */}
                 {imagesToShow.length > 0 ? ( /* ... Carousel JSX ... */
                      <Carousel className="w-full max-w-xs mx-auto mb-6" opts={{ align: "start", loop: imagesToShow.length > 1 }}>
                         <CarouselContent>
                             {imagesToShow.map((imageUrl, index) => (
-                                <CarouselItem key={`${method}-${type || edition}-${region || ''}-${index}`}>
+                                <CarouselItem key={`${method}-${type || edition}-${region || ''}-${index}-${quantity}`}> {/* Added quantity to key for Office */}
                                     <div className="p-1">
                                         <img
                                             src={imageUrl}
@@ -403,10 +400,8 @@ const RightContainer = ({ method, type, region, edition, sizeOption, quantity, f
                      </div>
                  )}
 
-                {/* Description and Animation Container */}
-                {currentDescriptionData && currentDescriptionData.description && (
+                {currentDescriptionData && currentDescriptionData.description && ( /* ... Description & Animation ... */
                     <div className="subscription-description text-white my-4 text-left w-full max-w-md flex justify-center flex-col">
-                        {/* Description Box */}
                         <div className="bg-[#3a3c3d] p-4 rounded-md border border-[#A67C52] text-base sm:text-lg w-full">
                             <p className="mb-3">{currentDescriptionData.description}</p>
                             {currentDescriptionData.currentOffering && (
@@ -415,20 +410,16 @@ const RightContainer = ({ method, type, region, edition, sizeOption, quantity, f
                                 </p>
                             )}
                         </div>
-                        {/* Animation Box */}
                         <div>
-                            {/* Use conditional animation text */}
                             <h1 className='words-animation'>{animationText}</h1>
                         </div>
                     </div>
                 )}
 
-                {/* Summary Sentence */}
                 <p className="summary-sentence text-base sm:text-lg leading-relaxed my-4 w-full max-w-md min-h-[3em]">
                     {sentenceParts}
                 </p>
 
-                {/* Add to Cart Button */}
                 <div className="cart-btn mt-auto pt-4 w-full max-w-md flex justify-center sm:justify-end"> {/* ... Button JSX ... */}
                      <button
                         className={`
@@ -447,11 +438,9 @@ const RightContainer = ({ method, type, region, edition, sizeOption, quantity, f
         );
 
     } else {
-        // Default Intro Content
         contentToRender = <DefaultIntroContent />;
     }
 
-    // Final Render
     return (
         <div className="right-container pt-10 pb-10 flex justify-center items-start w-full min-h-screen bg-[#1a1a1a]">
             {contentToRender}
