@@ -1,6 +1,6 @@
 // src/components/MiddleContainer.jsx
-// Adds "Curated" type. Updates "Masterpiece" flow: adds info text,
-// changes quantity options/labels, and updates static frequency display text.
+// Adds "Curated" type. Updates "Masterpiece" flow.
+// Updates "Low-Caf" flow: adds info text, specific quantity labels, and frequency options.
 
 import React, { useState, useEffect } from 'react';
 import {
@@ -42,9 +42,9 @@ const officeSizeOptions = [
     { value: "5 kg", label: "5 kg" },
 ];
 
-// Standard Quantity options (most types)
+// Standard Quantity options (values: "1" to "5")
 const standardQuantityOptions = [
-    { value: "1", label: "1" },
+    { value: "1", label: "1" }, // Base label, will be formatted per type
     { value: "2", label: "2" },
     { value: "3", label: "3" },
     { value: "4", label: "4" },
@@ -62,7 +62,7 @@ const curatedQuantityLabelMap = curatedQuantityOptions.reduce((acc, option) => {
     return acc;
 }, {});
 
-// --- NEW: Quantity options for Masterpiece ---
+// Quantity options for Masterpiece
 const masterpieceQuantityOptions = [
     { value: "1", label: "1x bag (100-150g)" },
     { value: "2", label: "2x bags (100-150g)" },
@@ -72,7 +72,6 @@ const masterpieceQuantityLabelMap = masterpieceQuantityOptions.reduce((acc, opti
     acc[option.value] = option.label;
     return acc;
 }, {});
-// --- END NEW Masterpiece Quantity ---
 
 const regionOptions = [
     { value: "Brazil", label: "Brazil" },
@@ -90,8 +89,10 @@ const baseFrequencyOptions = [
     { value: "6 Weeks", label: "6 Weeks" }
 ];
 
-// Frequencies allowed for RC & Curated
-const allowedLimitedFrequencies = ["4 Weeks (Recommended)", "6 Weeks"];
+// Frequencies for RC & Curated
+const allowedRCorCuratedFrequencies = ["4 Weeks (Recommended)", "6 Weeks"];
+// --- NEW: Frequencies for Low-Caf ---
+const allowedLowCafFrequencies = ["2 Weeks", "4 Weeks (Recommended)", "6 Weeks"];
 
 // Capsule Edition Options
 const capsuleEditionOptions = [
@@ -125,28 +126,27 @@ const MiddleContainer = ({
     const [showOptionsContainer, setShowOptionsContainer] = useState(null);
 
     // --- useEffect Hooks ---
+    // Effect to set default frequency when quantity is chosen and frequency isn't set
     useEffect(() => {
-        // Sets default frequency after quantity is chosen
         if (typeof onFrequencyChange !== 'function') { return; }
         const isReadyForFrequency = finalSelectionDetail && !selectedFrequency;
-        const isMasterpiece = selectedMethod !== 'Capsules' && selectedCoffeeType === 'Masterpiece';
-        const requiresLimitedFrequency = ['Roasters Choice', 'Curated'].includes(selectedCoffeeType);
+        if (!isReadyForFrequency) return;
 
-        if (isReadyForFrequency && !isMasterpiece && !requiresLimitedFrequency) {
-            try { onFrequencyChange('4 Weeks (Recommended)'); } catch (error) { console.error('Error setting default frequency:', error); }
+        const isMasterpiece = selectedCoffeeType === 'Masterpiece';
+        // Masterpiece handles its frequency state in a separate effect.
+        // For other types, if ready and no frequency set, default to "4 Weeks (Recommended)".
+        // The effect below will handle if this default is invalid for the specific type.
+        if (!isMasterpiece && !selectedFrequency) {
+            try { onFrequencyChange('4 Weeks (Recommended)'); }
+            catch (error) { console.error('Error setting initial default frequency:', error); }
         }
-        else if (isReadyForFrequency && requiresLimitedFrequency) {
-             try { onFrequencyChange('4 Weeks (Recommended)'); } catch (error) { console.error('Error setting default limited frequency:', error); }
-        }
-         // Masterpiece default is handled in its own effect
+    }, [finalSelectionDetail, selectedCoffeeType, selectedFrequency, onFrequencyChange]);
 
-    }, [finalSelectionDetail, selectedFrequency, selectedCoffeeType, selectedMethod, onFrequencyChange]);
 
     useEffect(() => {
         // Set frequency state for Masterpiece (even though dropdown isn't shown)
-        if (selectedMethod !== 'Capsules' && selectedCoffeeType === 'Masterpiece' && finalSelectionDetail && typeof onFrequencyChange === 'function') {
+        if (selectedCoffeeType === 'Masterpiece' && finalSelectionDetail && typeof onFrequencyChange === 'function') {
              try {
-                 // Ensure state is set correctly for backend, matching the fixed display
                  if (!selectedFrequency || selectedFrequency !== '4 Weeks (Recommended)') {
                      onFrequencyChange('4 Weeks (Recommended)');
                  }
@@ -154,38 +154,51 @@ const MiddleContainer = ({
                  console.error('Error auto-setting Masterpiece frequency state:', error);
              }
         }
-    }, [selectedMethod, selectedCoffeeType, finalSelectionDetail, selectedFrequency, onFrequencyChange]);
+    }, [selectedCoffeeType, finalSelectionDetail, selectedFrequency, onFrequencyChange]);
 
-    // Effect to reset frequency if invalid for RC or Curated
+
+    // Effect to reset frequency if current selection becomes invalid due to type change
     useEffect(() => {
-        const requiresLimitedFrequency = ['Roasters Choice', 'Curated'].includes(selectedCoffeeType);
-        if (requiresLimitedFrequency && selectedFrequency && !allowedLimitedFrequencies.includes(selectedFrequency)) {
-            console.warn(`${selectedCoffeeType} selected with invalid frequency '${selectedFrequency}', resetting.`);
-            if (typeof onFrequencyChange === 'function') {
-                try { onFrequencyChange('4 Weeks (Recommended)'); }
-                catch (error) { console.error(`Error resetting frequency for ${selectedCoffeeType}:`, error); }
-            }
+        let resetToFrequency = null;
+        let needsReset = false;
+        let currentAllowedFrequencies = [];
+
+        if (['Roasters Choice', 'Curated'].includes(selectedCoffeeType)) {
+            currentAllowedFrequencies = allowedRCorCuratedFrequencies;
+        } else if (selectedCoffeeType === 'Low-Caf') {
+            currentAllowedFrequencies = allowedLowCafFrequencies; // <-- Use Low-Caf frequencies
+        }
+
+        if (currentAllowedFrequencies.length > 0 && selectedFrequency && !currentAllowedFrequencies.includes(selectedFrequency)) {
+            // Default to the first allowed option or a specific default like '4 Weeks (Recommended)'
+            resetToFrequency = currentAllowedFrequencies.includes('4 Weeks (Recommended)') ? '4 Weeks (Recommended)' : currentAllowedFrequencies[0];
+            needsReset = true;
+        }
+
+        if (needsReset && typeof onFrequencyChange === 'function') {
+            console.warn(`${selectedCoffeeType} selected with invalid frequency '${selectedFrequency}', resetting to ${resetToFrequency}.`);
+            try { onFrequencyChange(resetToFrequency); }
+            catch (error) { console.error(`Error resetting frequency for ${selectedCoffeeType}:`, error); }
         }
     }, [selectedCoffeeType, selectedFrequency, onFrequencyChange]);
 
-    // Effect to reset quantity if invalid for Curated or Masterpiece
+
+    // Effect to reset quantity if invalid for specific types
     useEffect(() => {
+        let isValidQty = true;
         if (selectedCoffeeType === 'Curated' && finalSelectionDetail) {
-            const isValidQty = curatedQuantityOptions.some(o => o.value === finalSelectionDetail);
-            if (!isValidQty) {
-                 console.warn(`Curated selected with invalid quantity '${finalSelectionDetail}', resetting quantity.`);
-                 if (typeof onQuantityChange === 'function') {
-                     try { onQuantityChange(''); } catch (error) { console.error(`Error resetting quantity for Curated:`, error); }
-                 }
-            }
+            isValidQty = curatedQuantityOptions.some(o => o.value === finalSelectionDetail);
         } else if (selectedCoffeeType === 'Masterpiece' && finalSelectionDetail) {
-            const isValidQty = masterpieceQuantityOptions.some(o => o.value === finalSelectionDetail);
-             if (!isValidQty) {
-                 console.warn(`Masterpiece selected with invalid quantity '${finalSelectionDetail}', resetting quantity.`);
-                 if (typeof onQuantityChange === 'function') {
-                     try { onQuantityChange(''); } catch (error) { console.error(`Error resetting quantity for Masterpiece:`, error); }
-                 }
-            }
+            isValidQty = masterpieceQuantityOptions.some(o => o.value === finalSelectionDetail);
+        }
+        // Low-Caf uses standardQuantityOptions (1-5), so specific invalidation isn't strictly needed here
+        // unless its quantity range differs from standard. It does not for now.
+
+        if (!isValidQty) {
+             console.warn(`${selectedCoffeeType} selected with invalid quantity '${finalSelectionDetail}', resetting quantity.`);
+             if (typeof onQuantityChange === 'function') {
+                 try { onQuantityChange(''); } catch (error) { console.error(`Error resetting quantity for ${selectedCoffeeType}:`, error); }
+             }
         }
     }, [selectedCoffeeType, finalSelectionDetail, onQuantityChange]);
 
@@ -203,11 +216,11 @@ const MiddleContainer = ({
     // Determine if Quantity dropdown should be shown
     const showQuantity =
         (selectedMethod === 'Capsules' && selectedEdition) ||
-        (selectedMethod !== 'Capsules' && selectedCoffeeType && // Check if a non-capsule type is selected
+        (selectedMethod !== 'Capsules' && selectedCoffeeType &&
          (selectedCoffeeType === 'Roasters Choice' ||
           selectedCoffeeType === 'Curated' ||
-          selectedCoffeeType === 'Masterpiece' || // Masterpiece now shows quantity
-          selectedCoffeeType === 'Low-Caf' ||
+          selectedCoffeeType === 'Masterpiece' ||
+          selectedCoffeeType === 'Low-Caf' || // Low-Caf now follows this path
           (selectedCoffeeType === 'Office' && selectedSizeOption) ||
           (selectedCoffeeType === 'Regional' && selectedRegion)
          )
@@ -222,27 +235,30 @@ const MiddleContainer = ({
 
 
     // Determine which frequency options to display (for dropdown)
-    const currentFrequencyOptions = ['Roasters Choice', 'Curated'].includes(selectedCoffeeType)
-        ? baseFrequencyOptions.filter(option => allowedLimitedFrequencies.includes(option.value))
-        : baseFrequencyOptions;
+    const currentFrequencyOptions =
+        selectedCoffeeType === 'Roasters Choice' || selectedCoffeeType === 'Curated'
+            ? baseFrequencyOptions.filter(option => allowedRCorCuratedFrequencies.includes(option.value))
+            : selectedCoffeeType === 'Low-Caf' // <-- ADDED Low-Caf frequency filter
+                ? baseFrequencyOptions.filter(option => allowedLowCafFrequencies.includes(option.value))
+                : baseFrequencyOptions;
 
     // Determine which quantity options to display
-    const currentQuantityOptions = selectedCoffeeType === 'Curated'
-        ? curatedQuantityOptions
-        : selectedCoffeeType === 'Masterpiece'
-            ? masterpieceQuantityOptions // <-- Use Masterpiece options
-            : standardQuantityOptions; // Default
+    const currentQuantityOptions =
+        selectedCoffeeType === 'Curated' ? curatedQuantityOptions
+        : selectedCoffeeType === 'Masterpiece' ? masterpieceQuantityOptions
+        : standardQuantityOptions; // Low-Caf uses standard options (1-5 values)
 
     // Helper function to get the display label for the selected quantity value
     const getQuantityDisplayLabel = (value) => {
         if (!value) return "Select Quantity...";
         if (selectedCoffeeType === 'Curated') return curatedQuantityLabelMap[value] || value;
-        if (selectedCoffeeType === 'Masterpiece') return masterpieceQuantityLabelMap[value] || value; // <-- Use Masterpiece map
+        if (selectedCoffeeType === 'Masterpiece') return masterpieceQuantityLabelMap[value] || value;
+        if (selectedCoffeeType === 'Low-Caf') return `${value}x 250g`; // <-- ADDED Low-Caf label format
         // Other types...
         if (selectedMethod === 'Capsules') return `${value} box${parseInt(value) > 1 ? 'es' : ''}`;
         if (selectedCoffeeType === 'Roasters Choice') return `${value} x 250g`;
         if (selectedCoffeeType === 'Office') return value;
-        if (selectedCoffeeType === 'Regional' || selectedCoffeeType === 'Low-Caf') return `${value} ${parseInt(value) > 1 ? 'bags' : 'bag'}`;
+        if (selectedCoffeeType === 'Regional') return `${value} ${parseInt(value) > 1 ? 'bags' : 'bag'}`; // Regional uses "bag(s)"
         return value; // Default
     };
 
@@ -272,7 +288,7 @@ const MiddleContainer = ({
                     {/* Step 1: Method Selection */}
                     <div className='dropdown-row'>
                        <h3 className='dropdown-label'>Method</h3>
-                       <DropdownMenu>
+                       <DropdownMenu> {/* ... Method Dropdown ... */}
                             <DropdownMenuTrigger asChild>
                                 <Button variant="outline" className='dropdown-trigger-button'>
                                     {selectedMethod || "Select Method..."}
@@ -287,7 +303,7 @@ const MiddleContainer = ({
                                 </DropdownMenuRadioGroup>
                             </DropdownMenuContent>
                         </DropdownMenu>
-                    </div>
+                       </div>
 
                     {/* Step 2: Conditional Type OR Edition */}
                     {selectedMethod === 'Capsules' && (
@@ -310,7 +326,7 @@ const MiddleContainer = ({
                                     </DropdownMenuRadioGroup>
                                 </DropdownMenuContent>
                             </DropdownMenu>
-                        </div>
+                           </div>
                     )}
 
                     {['Filter', 'Espresso'].includes(selectedMethod) && (
@@ -333,7 +349,7 @@ const MiddleContainer = ({
                                     </DropdownMenuRadioGroup>
                                 </DropdownMenuContent>
                             </DropdownMenu>
-                        </div>
+                           </div>
                     )}
 
                     {/* Step 3: Conditional Options / Info Text */}
@@ -376,24 +392,35 @@ const MiddleContainer = ({
                                         </div>
                                     )}
 
-                                     {/* --- ADDED: Masterpiece Info Text --- */}
+                                     {/* Masterpiece Info Text */}
                                      {selectedCoffeeType === 'Masterpiece' && (
-                                        <div className='dropdown-row' style={{ justifyContent: 'center' }} key="masterpiece-info">
+                                        <div className='dropdown-row' style={{ justifyContent: 'center' }} key="masterpiece-info"> {/* ... Masterpiece Info ... */}
                                             <div className='w-fit'>
-                                                <ul className='text-white bg-[#161616] w-full rounded-sm border border-[#A67C52] roasters-info-list'> {/* Reusing class */}
+                                                <ul className='text-white bg-[#161616] w-full rounded-sm border border-[#A67C52] roasters-info-list'>
                                                     <li className='w-full p-1 text-lg'><span className='text-[#A67C52]'>Every month,</span> We send you one bag of the most extraordinary coffee</li>
                                                 </ul>
                                             </div>
                                         </div>
                                     )}
-                                    {/* --- END ADDED: Masterpiece Info Text --- */}
+
+                                    {/* --- ADDED: Low-Caf Info Text --- */}
+                                    {selectedCoffeeType === 'Low-Caf' && (
+                                        <div className='dropdown-row' style={{ justifyContent: 'center' }} key="lowcaf-info">
+                                            <div className='w-fit'>
+                                                <ul className='text-white bg-[#161616] w-full rounded-sm border border-[#A67C52] roasters-info-list'> {/* Reusing styles */}
+                                                    <li className='w-full p-1 text-lg'><span className='text-[#A67C52]'>Receive our</span> low-caf varietal coffee on repeat</li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    )}
+                                    {/* --- END ADDED: Low-Caf Info Text --- */}
 
                                     {/* Office Size Dropdown */}
                                     {selectedCoffeeType === 'Office' && (
                                          <div className='dropdown-row' key="office-size"> {/* ... Office Size ... */}
                                             <h3 className='dropdown-label'>Size</h3>
                                             <DropdownMenu>
-                                                 <DropdownMenuTrigger asChild>
+                                                <DropdownMenuTrigger asChild>
                                                     <Button variant="outline" className='dropdown-trigger-button'>
                                                         {selectedSizeOption || "Select Size..."}
                                                         <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
@@ -417,7 +444,7 @@ const MiddleContainer = ({
                                         <div className='dropdown-row' key="regional-region"> {/* ... Regional Region ... */}
                                             <h3 className='dropdown-label'>Region</h3>
                                             <DropdownMenu>
-                                                 <DropdownMenuTrigger asChild>
+                                                <DropdownMenuTrigger asChild>
                                                     <Button variant="outline" className='dropdown-trigger-button'>
                                                         {selectedRegion || "Select Region..."}
                                                         <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
@@ -435,7 +462,6 @@ const MiddleContainer = ({
                                             </DropdownMenu>
                                         </div>
                                    )}
-                                   {/* Low-Caf skips this step */}
                                 </>
                             )}
                         </>
@@ -445,45 +471,44 @@ const MiddleContainer = ({
                     {showQuantity && (
                         <div className='dropdown-row'>
                             <h3 className='dropdown-label'>Quantity of Coffee</h3>
-                            <DropdownMenu>
+                            <DropdownMenu> {/* ... Quantity Dropdown ... */}
                                 <DropdownMenuTrigger asChild>
                                     <Button variant="outline" className='dropdown-trigger-button'>
-                                        {getQuantityDisplayLabel(finalSelectionDetail)} {/* Use helper for display */}
+                                        {getQuantityDisplayLabel(finalSelectionDetail)}
                                         <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                                     </Button>
                                 </DropdownMenuTrigger>
                                 <DropdownMenuContent className='dropdown-content-panel'>
                                     <DropdownMenuRadioGroup value={finalSelectionDetail} onValueChange={onQuantityChange}>
-                                        {/* Use conditional quantity options */}
                                         {currentQuantityOptions.map((option) => (
                                             <DropdownMenuRadioItem key={option.value} value={option.value}>
-                                               {/* Generate item label based on type */}
                                                {selectedCoffeeType === 'Curated'
-                                                    ? option.label // e.g., "2x 250g"
+                                                    ? option.label
                                                     : selectedCoffeeType === 'Masterpiece'
-                                                        ? option.label // e.g., "1x bag (100-150g)" <-- UPDATED
-                                                        : selectedMethod === 'Capsules'
-                                                            ? `${option.label} box${parseInt(option.value) > 1 ? 'es' : ''} (30 caps each)`
-                                                            : selectedCoffeeType === 'Office'
-                                                                ? option.label // Office size already specified
-                                                                : selectedCoffeeType === 'Regional'
-                                                                    ? `${option.label} ${parseInt(option.value) > 1 ? 'bags' : 'bag'} (250g each)`
-                                                                    : selectedCoffeeType === 'Roasters Choice'
-                                                                        ? `${option.label} x 250g`
-                                                                        // Fallback for Low-Caf etc. (assuming 250g)
-                                                                        : `${option.label} ${parseInt(option.value) > 1 ? 'bags' : 'bag'} (250g each)`
+                                                        ? option.label
+                                                        : selectedCoffeeType === 'Low-Caf' // <-- ADDED Low-Caf quantity label
+                                                            ? `${option.label}x 250g`
+                                                            : selectedMethod === 'Capsules'
+                                                                ? `${option.label} box${parseInt(option.value) > 1 ? 'es' : ''} (30 caps each)`
+                                                                : selectedCoffeeType === 'Office'
+                                                                    ? option.label
+                                                                    : selectedCoffeeType === 'Regional'
+                                                                        ? `${option.label} ${parseInt(option.value) > 1 ? 'bags' : 'bag'} (250g each)`
+                                                                        : selectedCoffeeType === 'Roasters Choice'
+                                                                            ? `${option.label} x 250g`
+                                                                            // Fallback for any other unexpected type (shouldn't happen)
+                                                                            : `${option.label} ${parseInt(option.value) > 1 ? 'bags' : 'bag'} (250g each)`
                                                 }
                                             </DropdownMenuRadioItem>
                                         ))}
                                     </DropdownMenuRadioGroup>
                                 </DropdownMenuContent>
                             </DropdownMenu>
-                        </div>
+                               </div>
                     )}
 
                     {/* Step 5: Frequency Selection / Display */}
-                    {/* Show interactive dropdown only if needed */}
-                    {showFrequencyDropdown && (
+                    {showFrequencyDropdown && ( // Interactive dropdown
                         <div className='dropdown-row'>
                             <h3 className='dropdown-label'>Frequency</h3>
                             <DropdownMenu> {/* ... Frequency Dropdown ... */}
@@ -503,16 +528,15 @@ const MiddleContainer = ({
                                     </DropdownMenuRadioGroup>
                                 </DropdownMenuContent>
                             </DropdownMenu>
-                        </div>
+                           </div>
                     )}
 
-                    {/* Show fixed frequency info only for Masterpiece */}
-                     {showMasterpieceFrequencyInfo && (
+                    {showMasterpieceFrequencyInfo && ( // Masterpiece fixed info
                         <div className='dropdown-row masterpiece-frequency-info'>
                             <h3 className='dropdown-label'>Frequency</h3>
                             <div className='info-text-container flex items-center justify-center'>
                                 <div className='static-text-value h-10 px-3 py-2 bg-[#161616] text-[#A67C52] font-bold rounded-md flex items-center w-full justify-center border-1 border-[#A67C52]'>
-                                     4 weeks {/* <-- UPDATED TEXT */}
+                                     4 weeks
                                 </div>
                             </div>
                         </div>
@@ -526,7 +550,7 @@ const MiddleContainer = ({
                            {selectedMethod !== 'Capsules' && selectedCoffeeType && ` - ${selectedCoffeeType}`}
                            {selectedCoffeeType === 'Regional' && selectedRegion && ` - ${selectedRegion}`}
                            {selectedCoffeeType === 'Office' && selectedSizeOption && ` - ${selectedSizeOption}`}
-                           {' '}- Qty: {getQuantityDisplayLabel(finalSelectionDetail)} {/* Use helper */}
+                           {' '}- Qty: {getQuantityDisplayLabel(finalSelectionDetail)}
                            {selectedFrequency && ` - Every ${selectedFrequency.replace(' (Recommended)', '')}`}
                        </div>
                    )}
