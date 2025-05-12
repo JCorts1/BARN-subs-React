@@ -1,5 +1,6 @@
 // src/components/RightContainer.jsx
-// FINAL VERSION: Includes Capsule logic/data, uses AJAX POST, and reflects removal of Roasters Choice 'Option'.
+// FINAL VERSION: Includes Capsule logic/data, uses AJAX POST, reflects removal of Roasters Choice 'Option',
+// and updates summary sentence quantity display.
 
 import React from 'react';
 import './RightContainer.css'; // Make sure this CSS file exists and is styled appropriately
@@ -238,7 +239,7 @@ const RightContainer = ({ method, type, region, edition, sizeOption, quantity, f
             if (edition) {
                 sentenceParts.push(' - ');
                 sentenceParts.push(<span key="edition" className={highlightClass}>{edition}</span>);
-                sentenceParts.push(' (30 capsules)');
+                // Size is fixed for capsules, mentioned with quantity below
             } else {
                 sentenceParts.push(' (select edition)');
             }
@@ -253,7 +254,7 @@ const RightContainer = ({ method, type, region, edition, sizeOption, quantity, f
                      if (sizeOption) { sentenceParts.push(' - '); sentenceParts.push(<span key="amount" className={highlightClass}>{sizeOption}</span>); }
                      else { sentenceParts.push(' (select size)'); }
                 }
-                 // Roasters Choice, Masterpiece, Low-Caf don't display size/region here
+                 // Roasters Choice, Masterpiece, Low-Caf don't display size/region here, handled with quantity
             } else {
                  sentenceParts.push(' (select type)');
             }
@@ -261,16 +262,28 @@ const RightContainer = ({ method, type, region, edition, sizeOption, quantity, f
 
         sentenceParts.push(' subscription'); // Generic term
 
+        // --- UPDATED Quantity and Unit/Size display logic ---
         if (quantity) {
             sentenceParts.push(' - Qty: ');
             sentenceParts.push(<span key="qty-val" className={highlightClass}>{quantity}</span>);
+
+            // Append unit/size based on type/method (excluding Office size which is added earlier)
             if (method === 'Capsules') {
-                 sentenceParts.push(parseInt(quantity) > 1 ? ' boxes' : ' box');
+                 // Add specificity matching MiddleContainer label
+                 sentenceParts.push(parseInt(quantity) > 1 ? ' boxes (30 caps each)' : ' box (30 caps each)');
+            } else if (type === 'Roasters Choice' || type === 'Regional' || type === 'Low-Caf') {
+                // Match the "N x 250g" format requested
+                sentenceParts.push(` x 250g`);
+            } else if (type === 'Masterpiece') {
+                // Match the approximate size from MiddleContainer label
+                sentenceParts.push(parseInt(quantity) > 1 ? ` bags (100-200g each)` : ` bag (100-200g)`);
             }
-            // Bag count is implied or handled in MiddleContainer label
+            // Note: Office size ('sizeOption') is displayed earlier, after the type name.
         } else {
             sentenceParts.push(' (select quantity)');
         }
+        // --- End UPDATED Quantity section ---
+
 
         if (frequency) {
             sentenceParts.push(', delivered every ');
@@ -299,11 +312,11 @@ const RightContainer = ({ method, type, region, edition, sizeOption, quantity, f
             // Determine frequency details and correct selling plan ID
              // ** TODO: Verify if Capsules/Office/Regional/Low-Caf use the Roasters Choice sellingPlanMapping IDs or require specific ones **
             if (method !== 'Capsules' && type === 'Masterpiece') {
-                subscriptionInterval = 1; subscriptionUnit = 'Months';
+                subscriptionInterval = 1; subscriptionUnit = 'Months'; // Assuming Masterpiece is always monthly based on prior logic/IDs
                 sellingPlanIdForProps = MASTERPIECE_SELLING_PLAN_ID; // Use specific ID
                 console.log("Using specific Masterpiece Selling Plan ID (Monthly):", sellingPlanIdForProps);
             } else {
-                // Use the general mapping (ASSUMPTION!)
+                // Use the general mapping (ASSUMPTION! Verify this matches Shopify setup)
                 const selectedPlanInfo = sellingPlanMapping[frequency];
                 if (!selectedPlanInfo || !selectedPlanInfo.interval || !selectedPlanInfo.unit || !selectedPlanInfo.planId) {
                     alert(`Error: Could not find full subscription plan details for frequency: "${frequency}". Check sellingPlanMapping.`); return;
@@ -325,7 +338,7 @@ const RightContainer = ({ method, type, region, edition, sizeOption, quantity, f
             const rechargeProperties = {
                 'shipping_interval_frequency': subscriptionInterval.toString(),
                 'shipping_interval_unit_type': subscriptionUnit,
-                'selling_plan': sellingPlanIdForProps
+                'selling_plan': sellingPlanIdForProps // Pass the determined Selling Plan ID
             };
             const formData = { items: [{ id: selectedVariantId, quantity: selectedQuantity, properties: rechargeProperties }] };
 

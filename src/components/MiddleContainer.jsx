@@ -1,5 +1,6 @@
 // src/components/MiddleContainer.jsx
 // FINAL VERSION: Adds Capsule flow AND removes Roasters Choice "Option" dropdown.
+// Includes updated quantity label format for Roasters Choice ("N x 250g").
 
 import React, { useState, useEffect } from 'react';
 import {
@@ -263,18 +264,14 @@ const MiddleContainer = ({
                                     {/* --- Roasters Choice Specific Flow (Option Dropdown REMOVED) --- */}
                                     {selectedCoffeeType === 'Roasters Choice' && (
                                         <React.Fragment key="roasters-choice-flow">
-                                            {/* Informational Container */}
-                                            <div className='dropdown-row roasters-choice-info'>
-                                                <h3 className='dropdown-label'>Roaster's Pick</h3>
-                                                <div className='info-text-container'>
-                                                    {/* User will update this text later to reflect 1 bag only */}
-                                                    <ul className='text-sm text-white bg-[#161616] w-full p-2 rounded-sm border border-[#A67C52] roasters-info-list'>
-                                                        <li><span className='text-[#A67C52]'>1 Bag</span> 250 grams of our rotating monthly coffee.</li>
-                                                    </ul>
-                                                </div>
+                                        <div className='dropdown-row' style={{ justifyContent: 'center' }}>
+                                            <div className='w-fit'>
+                                                <ul className='text-white bg-[#161616] w-full rounded-sm border border-[#A67C52] roasters-info-list'>
+                                                    <li className='w-full p-1 text-lg'><span className='text-[#A67C52]'>Every Month,</span> Our Roasters Pick a New Coffee for You</li>
+                                                </ul>
                                             </div>
-                                            {/* The "Option" dropdown that was here is now removed */}
-                                        </React.Fragment>
+                                        </div>
+                                    </React.Fragment>
                                     )}
 
                                    {/* --- Office Specific Flow (Complete and Unchanged from original) --- */}
@@ -362,8 +359,8 @@ const MiddleContainer = ({
                                                             ? option.label // Office size specified elsewhere
                                                             : selectedCoffeeType === 'Regional'
                                                                 ? `${option.label} ${parseInt(option.value) > 1 ? 'bags' : 'bag'} (250g each)`
-                                                                : selectedCoffeeType === 'Roasters Choice' // Default for Roasters Choice (now always 1x250g)
-                                                                    ? `${option.label} bag${parseInt(option.value) > 1 ? 's' : ''} (250g each)`
+                                                                : selectedCoffeeType === 'Roasters Choice' // <<< Label format updated here (added spaces)
+                                                                    ? `${option.label} x 250g`
                                                                     // Fallback for Low-Caf etc. (assuming 250g)
                                                                     : `${option.label} ${parseInt(option.value) > 1 ? 'bags' : 'bag'} (250g each)`
                                                }
@@ -424,7 +421,8 @@ const MiddleContainer = ({
                            {selectedCoffeeType === 'Regional' && selectedRegion && ` - ${selectedRegion}`}
                            {/* Only show sizeOption if it's Office and selected */}
                            {selectedCoffeeType === 'Office' && selectedSizeOption && ` - ${selectedSizeOption}`}
-                           {' '}- Qty: {finalSelectionDetail}
+                           {' '}- Qty: {finalSelectionDetail} {/* Quantity value */}
+                           {/* Size/Unit appended based on type in RightContainer now */}
                            {selectedFrequency && ` - Every ${selectedFrequency.replace(' (Recommended)', '')}`}
                        </div>
                    )}
