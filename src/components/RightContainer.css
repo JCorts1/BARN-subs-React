@@ -1,49 +1,96 @@
+/* Original Styles */
 .intro-list li {
-    padding-bottom: 0.5rem;
+  padding-bottom: 0.5rem;
 }
 
 .final-selection-display h2 {
-  margin: 1rem;
-  font-family: "Antonio", sans-serif;
-  font-weight: 900;
-  font-size: 2rem;
+margin: 1rem;
+font-family: "Antonio", sans-serif;
+font-weight: 900;
+font-size: 2rem;
 }
 
+/* Styles below were commented out as potentially unused */
+/*
 .selection-details-list {
-  background-color: #3a3c3d;
-  width: 80%;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: baseline;
-  border: 1px solid #A67C52;
-  padding: 1rem;
+background-color: #3a3c3d;
+width: 80%;
+display: flex;
+flex-direction: column;
+justify-content: center;
+align-items: baseline;
+border: 1px solid #A67C52;
+padding: 1rem;
 }
 
 .selection-details-list li {
-  display: flex;
-  align-items: center;
-  font-family: "Raleway", sans-serif;
-  font-weight: 300;
-  font-size: large;
+display: flex;
+align-items: center;
+font-family: "Raleway", sans-serif;
+font-weight: 300;
+font-size: large;
 }
+*/
 
 .selection-span {
-  margin-left: 3px;
-  margin-right: 3px;
-  color: #A67C52;
-  font-weight: bold;
+margin-left: 3px;
+margin-right: 3px;
+color: #A67C52;
+font-weight: bold;
 }
 
 .cart-btn {
-  width: 90%;
-  margin-top: 0.7rem;
-  display: flex;
-  justify-content: end;
-  font-family: "Raleway", sans-serif;
-  font-display: bold;
+width: 90%; /* Consider adjusting if parent container changes width */
+margin-top: 0.7rem;
+display: flex;
+justify-content: end;
+font-family: "Raleway", sans-serif;
+font-weight: bold; /* Corrected from font-display */
 }
 
+/* --- Animation Styles --- */
+
+/* Container for the animation (targets the LAST div inside .subscription-description) */
+/* Adjust selector if your JSX structure changes */
+.subscription-description > div:last-child {
+width: 100%;          /* Ensure it spans the full width */
+overflow: hidden;      /* Hide the text when it moves outside the boundaries */
+white-space: nowrap;   /* Prevent the h1 text itself from wrapping to a new line */
+position: relative;    /* Optional but often good practice */
+margin-top: 1rem;      /* Add space above it */
+/* Optional: Add background/padding for visibility during testing */
+/* background-color: #444; */
+/* padding: 0.5rem 0; */
+}
+
+/* The animated element itself */
+.words-animation {
+display: inline-block;
+position: relative;
+animation: move-words 15s linear infinite;
+margin: 0;             /* Reset margin */
+padding: 0;            /* Reset padding */
+padding-left: 100%;    /* Push text off-screen right initially */
+font-size: 1.4rem;       /* Adjust font size as needed */
+color: #A67C52;
+font-weight: 500;          
+}
+
+/* Keyframes definition for the animation */
+@keyframes move-words {
+0% {
+  transform: translateX(0%); /* Start at the padded position (off-screen right) */
+}
+100% {
+  /* Move left by its own width PLUS the initial padding */
+  transform: translateX(-200%);
+}
+}
+
+/* --- End Animation Styles --- */
+
+
+/* Media Queries (Keep as needed) */
 @media screen and (max-width: 720px) {
-  
+/* Add responsive styles here if necessary */
 }
