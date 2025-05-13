@@ -1,5 +1,6 @@
 // src/components/MiddleContainer.jsx
-// Corrected syntax error in conditional for quantity dropdown.
+// Adds info text for Capsules. Updates Capsules flow: "Taste Profile",
+// new options, new quantity structure, and specific frequencies.
 
 import React, { useState, useEffect } from 'react';
 import {
@@ -32,11 +33,8 @@ const espressoOptions = [
 ];
 
 const officeSizeOptions = [
-    { value: "1x 1kg", label: "1x 1kg" },
-    { value: "2x 1kg", label: "2x 1kg" },
-    { value: "3x 1kg", label: "3x 1kg" },
-    { value: "4x 1kg", label: "4x 1kg" },
-    { value: "5x 1kg", label: "5x 1kg" },
+    { value: "1x 1kg", label: "1x 1kg" }, { value: "2x 1kg", label: "2x 1kg" }, { value: "3x 1kg", label: "3x 1kg" },
+    { value: "4x 1kg", label: "4x 1kg" }, { value: "5x 1kg", label: "5x 1kg" },
 ];
 
 const standardQuantityOptions = [
@@ -54,15 +52,10 @@ const masterpieceQuantityOptions = [
 const masterpieceQuantityLabelMap = masterpieceQuantityOptions.reduce((acc, o) => { acc[o.value] = o.label; return acc; }, {});
 
 const capsuleTasteProfileOptions = [
-    { value: "Brazil", label: "Brazil" },
-    { value: "Ethiopia", label: "Ethiopia" },
-    { value: "Masterpiece", label: "Masterpiece" },
+    { value: "Brazil", label: "Brazil" }, { value: "Ethiopia", label: "Ethiopia" }, { value: "Masterpiece", label: "Masterpiece" },
 ];
-
 const capsuleQuantityOptions = [
-    { value: "3", label: "3x 10 capsules" },
-    { value: "4", label: "4x 10 capsules" },
-    { value: "5", label: "5x 10 capsules" },
+    { value: "3", label: "3x 10 capsules" }, { value: "4", label: "4x 10 capsules" }, { value: "5", label: "5x 10 capsules" },
 ];
 const capsuleQuantityLabelMap = capsuleQuantityOptions.reduce((acc, o) => { acc[o.value] = o.label; return acc; }, {});
 
@@ -191,8 +184,6 @@ const MiddleContainer = ({
 
     const currentCoffeeTypeOptions = selectedMethod === 'Filter' ? filterOptions : espressoOptions;
 
-    // Determine if Quantity dropdown should be shown
-    // (This is for the generic quantity dropdown, not Office's "Size" or Capsules' specific quantity)
     const showGenericQuantityDropdown =
         selectedMethod !== 'Capsules' && selectedCoffeeType && selectedCoffeeType !== 'Office' &&
          (selectedCoffeeType === 'Roasters Choice' ||
@@ -201,12 +192,9 @@ const MiddleContainer = ({
           selectedCoffeeType === 'Low-Caf' ||
           (selectedCoffeeType === 'Regional' && selectedRegion)
          );
-
-    // Specific condition for Capsule Quantity Dropdown
-    const showCapsuleQuantityDropdown = selectedMethod === 'Capsules' && selectedEdition;
+    const showCapsuleQuantityDropdown = selectedMethod === 'Capsules' && selectedEdition; // selectedEdition is Taste Profile
 
 
-    // Determine if Frequency step should be shown
     const officeIsReadyForFrequency = selectedCoffeeType === 'Office' && selectedSizeOption;
     const capsuleIsReadyForFrequency = selectedMethod === 'Capsules' && selectedEdition && finalSelectionDetail;
     const genericIsReadyForFrequency = finalSelectionDetail && selectedCoffeeType && !['Office'].includes(selectedCoffeeType) && selectedMethod !== 'Capsules';
@@ -216,7 +204,6 @@ const MiddleContainer = ({
     const showMasterpieceFrequencyInfo = showFrequencyStep && selectedMethod !== 'Capsules' && selectedCoffeeType === 'Masterpiece';
 
 
-    // Determine which frequency options to display for the dropdown
     const currentFrequencyOptions =
         selectedMethod === 'Capsules'
             ? baseFrequencyOptions.filter(option => allowedCapsuleFrequencies.includes(option.value))
@@ -228,14 +215,12 @@ const MiddleContainer = ({
                         ? baseFrequencyOptions.filter(option => allowedLowCafRegionalFrequencies.includes(option.value))
                         : baseFrequencyOptions;
 
-    // Determine which quantity options to display
     const currentQuantityOptions =
         selectedMethod === 'Capsules' ? capsuleQuantityOptions
         : selectedCoffeeType === 'Curated' ? curatedQuantityOptions
         : selectedCoffeeType === 'Masterpiece' ? masterpieceQuantityOptions
-        : standardQuantityOptions; // Default for RC, Low-Caf, Regional
+        : standardQuantityOptions;
 
-    // Helper to get display label for selected quantity/size
     const getQuantityDisplayLabel = (value) => {
         if (!value) {
             if (selectedCoffeeType === 'Office') return "Select Size...";
@@ -293,6 +278,19 @@ const MiddleContainer = ({
                         </DropdownMenu>
                     </div>
 
+                    {/* --- ADDED: Info text for Capsules (appears after method selection) --- */}
+                    {selectedMethod === 'Capsules' && (
+                        <div className='dropdown-row' style={{ justifyContent: 'center' }} key="capsule-method-info">
+                            <div className='w-fit'>
+                                <ul className='text-white bg-[#161616] w-full rounded-sm border border-[#A67C52] roasters-info-list'>
+                                    <li className='w-full p-1 text-lg'><span className='text-[#A67C52]'>Receive our</span> Sustainable Capsules on repeat</li>
+                                </ul>
+                            </div>
+                        </div>
+                    )}
+                    {/* --- END ADDED --- */}
+
+
                     {/* Step 2: Conditional Type OR Taste Profile (for Capsules) */}
                     {selectedMethod === 'Capsules' && (
                         <div className='dropdown-row'>
@@ -300,7 +298,7 @@ const MiddleContainer = ({
                            <DropdownMenu>
                                 <DropdownMenuTrigger asChild>
                                     <Button variant="outline" className='dropdown-trigger-button'>
-                                        {selectedEdition || "Select Profile..."}
+                                        {selectedEdition || "Select Profile..."} {/* selectedEdition is Taste Profile */}
                                         <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                                     </Button>
                                 </DropdownMenuTrigger>
@@ -340,7 +338,7 @@ const MiddleContainer = ({
                     )}
 
                     {/* Step 3: Info Texts & Type-Specific Options (like Office Size, Regional Region) */}
-                    {/* Info texts that appear right after type/edition selection */}
+                    {/* These info texts appear AFTER type selection for Filter/Espresso */}
                     {selectedMethod !== 'Capsules' && selectedCoffeeType && (
                         <>
                             {selectedCoffeeType === 'Roasters Choice' && (
@@ -448,9 +446,7 @@ const MiddleContainer = ({
                     )}
 
                     {/* Step 4: Quantity Dropdown */}
-                    {/* Show for Capsules after Taste Profile is selected */}
-                    {/* Show for other non-Office types after their specific Step 3 is done */}
-                    {(showCapsuleQuantityDropdown || showGenericQuantityDropdown) && ( // CORRECTED PARENTHESES HERE
+                    {(showCapsuleQuantityDropdown || showGenericQuantityDropdown) && (
                         <div className='dropdown-row'>
                             <h3 className='dropdown-label'>Quantity of Coffee</h3>
                             <DropdownMenu>
@@ -465,7 +461,7 @@ const MiddleContainer = ({
                                         {currentQuantityOptions.map((option) => (
                                             <DropdownMenuRadioItem key={option.value} value={option.value}>
                                                {selectedMethod === 'Capsules'
-                                                    ? option.label
+                                                    ? option.label // e.g., "3x 10 capsules"
                                                     : selectedCoffeeType === 'Curated'
                                                         ? option.label
                                                         : selectedCoffeeType === 'Masterpiece'
