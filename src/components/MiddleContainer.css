@@ -8,6 +8,9 @@
 }
 
 .recipient-buttons-container {
+  /* This font can serve as a general fallback if needed, but h2 and p will have more specific fonts.
+     Verify "Chalet Comprime" and "chalet" if this is still desired as a container-level font. */
+  font-family: "Chalet Comprime", chalet, sans-serif;
   display: flex;
   width: 80%; /* Desktop width */
   justify-content: center;
@@ -22,168 +25,186 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  color: #fff;
+  color: #fff; /* Default text color for content (h2, p) when NOT selected */
   padding: 0.5rem 1rem;
   cursor: pointer;
   text-align: center;
-  background-color: transparent; /* Ensure no default background */
-  transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out; /* Add transition */
+  background-color: transparent;
+  transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
 }
+
+/* === UPDATED Rules for consistent font family and size === */
+/* Default styles for h2 within ANY recipient-button */
+.recipient-button h2 {
+  /* IMPORTANT: Replace "Chalet Comprime" with your theme's actual heading font-family if different */
+  font-family: "Chalet Comprime", sans-serif; /* ALWAYS Chalet Comprime */
+  font-weight: 800;
+  font-size: x-large; /* ALWAYS x-large. If you want it bigger, change this value (e.g., 2em, 32px) */
+  /* Color will be inherited from .recipient-button (#fff) by default */
+}
+
+/* Default styles for p within ANY recipient-button */
+.recipient-button p {
+  /* IMPORTANT: Replace "Raleway" with your theme's actual body/paragraph font-family if different */
+  font-family: "Raleway", sans-serif; /* ALWAYS Raleway */
+  /* Color will be inherited from .recipient-button (#fff) by default */
+  /* You might want to set a specific font-size for p as well */
+  /* font-size: 0.9rem; */
+}
+/* === END UPDATED Rules === */
 
 .recipient-button.selected {
   background-color: #A57C52;
-  color: #000;
   border-radius: 6px;
+  /* The color of child h2 and p elements will be handled by more specific rules below */
 }
 
-.recipient-button h2 {
-font-family: "Antonio", sans-serif;
-font-weight: 800;
-font-size: x-large;
+/* Specific styles for h2 INSIDE a selected recipient-button */
+.recipient-button.selected h2 {
+  color: #000; /* Make h2 text black when selected */
+  /* font-family is already set by ".recipient-button h2" to be always Chalet Comprime */
+  /* font-size is already set by ".recipient-button h2" to be always x-large */
+}
+
+/* Specific styles for p INSIDE a selected recipient-button */
+.recipient-button.selected p {
+  color: #000; /* Make p text black when selected */
+  /* font-family is already set by ".recipient-button p" to be always Raleway */
 }
 
 .recipient-button:not(.selected):hover {
   background-color: #5e473a;
   border-radius: 6px;
-  color: #fff;
+  /* Text color for h2 and p will remain #fff due to inheritance from .recipient-button */
 }
 
 /* --- Dropdown Row Styles --- */
 .dropdown-row {
-display: flex;
-align-items: center; /* Vertically align label and control */
-justify-content: space-between; /* Default for desktop */
-background-color: #4b4d4e;
-padding: 1rem;
-border: 1px solid #555555;
-border-radius: 6px;
-gap: 1.5rem; /* Adjusted gap */
-width: 95%;
-margin-bottom: 1rem;
-box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #4b4d4e;
+  padding: 1rem;
+  border: 1px solid #555555;
+  border-radius: 6px;
+  gap: 1.5rem;
+  width: 95%;
+  margin-bottom: 1rem;
+  box-sizing: border-box;
 }
 
 .dropdown-label {
-font-size: 1.125rem;
-line-height: 1.75rem;
-color: #fff;
-font-weight: 600;
-width: auto;
-flex-shrink: 0; /* Prevent label from shrinking */
-margin-right: auto; /* Push control to the right */
+  font-size: 1.125rem;
+  line-height: 1.75rem;
+  color: #fff;
+  font-weight: 600;
+  width: auto;
+  flex-shrink: 0;
+  margin-right: auto;
 }
 
 .final-selection {
-display: none;
-margin-top: 1rem;
+  margin-top: 1rem;
+  padding: 0.75rem;
+  border: 1px dashed #ccc;
+  border-radius: 6px;
+  background-color: #f9f9f9;
+  color: #333;
+  text-align: center;
 }
 
 /* --- DESKTOP Specific Styles for Controls --- */
-
-/* Style for the Dropdown Button */
 .dropdown-trigger-button {
-display: inline-flex !important;
-align-items: center;
-justify-content: space-between;
-background-color: #5a5c5d;
-border: 1px solid #A57C52;
-color: #fff;
-width: 280px; /* Desktop fixed width */
-flex-shrink: 0; /* Prevent shrinking */
-text-align: left;
-padding: 0.5rem 1rem;
-box-sizing: border-box;
-border-radius: 0.375rem;
-height: 2.5rem; /* Standard height */
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #5a5c5d;
+  border: 1px solid #A57C52;
+  color: #fff;
+  width: 280px;
+  flex-shrink: 0;
+  text-align: left;
+  padding: 0.5rem 1rem;
+  box-sizing: border-box;
+  border-radius: 0.375rem;
+  height: 2.5rem;
 }
 
-/* Style for the container holding the Roaster's Choice UL */
 .info-text-container {
-display: flex;       /* Use flex for alignment */
-align-items: center;  /* Vertically center UL */
-justify-content: flex-start; /* Align UL to start of container */
-width: 280px;         /* Match button width */
-flex-shrink: 0;       /* Match button shrink */
-box-sizing: border-box;
-height: auto;         /* Auto height based on UL */
-padding: 0;           /* Reset padding */
-background-color: transparent;
-border: none;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  width: 280px;
+  flex-shrink: 0;
+  box-sizing: border-box;
+  height: auto;
+  padding: 0;
+  background-color: transparent;
+  border: none;
 }
 
-/* Styles for the UL within the info container */
 .roasters-info-list {
-list-style: none;
-padding: 0.5rem; /* From p-2 class */
-margin: 0;
-width: 100%; /* Fill the info-text-container */
-box-sizing: border-box;
-/* Styles from JSX: bg-[#161616] border border-[#A67C52] text-white text-sm rounded-sm */
-background-color: #161616;
-border: 1px solid #A67C52;
-color: #fff;
-font-size: 0.875rem; /* text-sm */
-line-height: 1.25rem; /* text-sm */
-border-radius: 6px; /* rounded-sm */
+  list-style: none;
+  padding: 0.5rem;
+  margin: 0;
+  width: 100%;
+  box-sizing: border-box;
+  background-color: #161616;
+  border: 1px solid #A67C52;
+  color: #fff;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  border-radius: 6px;
 }
 .roasters-info-list li span {
   color: #A67C52;
   font-weight: 600;
 }
 
-/* Dropdown Panel */
 .dropdown-content-panel {
-width: 280px; /* Match trigger width */
-max-width: 90vw;
-color: #fff;
-background: #5a5c5d;
-border: 1px solid #A57C52;
-z-index: 50;
-border-radius: 0.375rem;
+  width: 280px;
+  max-width: 90vw;
+  color: #fff;
+  background: #5a5c5d;
+  border: 1px solid #A57C52;
+  z-index: 50;
+  border-radius: 0.375rem;
 }
 
 /* --- Mobile Styles --- */
 @media screen and (max-width: 720px) {
-
-.recipient-buttons-container { width: 100%; }
-
-.coffee-type-container {
-  width: 100%;
-  padding-left: 1rem;
-  padding-right: 1rem;
-  box-sizing: border-box;
-}
-
-.dropdown-row {
-  width: 100%;
-  justify-content: center; /* Center the control wrapper */
-  padding: 0.75rem 0;
-  gap: 0;
-}
-
-.dropdown-label { display: none; }
-
-/* Common mobile style for button and info container */
-.dropdown-trigger-button,
-.info-text-container {
-  width: 100%;        /* Take full width */
-  max-width: 400px;   /* Limit max width */
-  flex-shrink: 1;  
-  margin: 10px;   /* Allow shrinking if needed (overrides desktop shrink:0) */
-}
-
-/* Mobile specific alignment for info container's content (the UL) */
-.info-text-container {
-  justify-content: center; /* Center the UL inside */
-}
-
-/* UL takes full width of its sized container */
-.roasters-info-list {
+  .recipient-buttons-container { width: 100%; }
+  .coffee-type-container {
     width: 100%;
-}
-
-.dropdown-content-panel {
-   width: 80vw;
-   max-width: 350px;
- }
+    padding-left: 1rem;
+    padding-right: 1rem;
+    box-sizing: border-box;
+  }
+  .dropdown-row {
+    width: 100%;
+    justify-content: center;
+    padding: 0.75rem 0;
+    gap: 0;
+  }
+  .dropdown-label { display: none; }
+  .dropdown-trigger-button,
+  .info-text-container {
+    width: 100%;
+    max-width: 400px;
+    flex-shrink: 1;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 10px;
+    margin-bottom: 10px;
+  }
+  .info-text-container {
+    justify-content: center;
+  }
+  .roasters-info-list {
+      width: 100%;
+  }
+  .dropdown-content-panel {
+     width: 80vw;
+     max-width: 350px;
+   }
 }
