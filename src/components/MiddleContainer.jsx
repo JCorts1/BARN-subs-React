@@ -241,7 +241,6 @@ const MiddleContainer = ({
     // --- Component Render ---
     return (
         <div className="middle-content-wrapper flex flex-col justify-center items-center">
-            {/* ... Recipient Selection ... */}
             <div className='recipient-container mt-10'>
                <div className='recipient-buttons-container'>
                     <div className={`recipient-button ${showOptionsContainer === true ? 'selected' : ''}`} onClick={handleSelectSelf}>
