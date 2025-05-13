@@ -78,19 +78,19 @@ const subscriptionDescriptions = {
     },
     // --- UPDATED: Capsule Descriptions for new Taste Profiles ---
     "Capsules": {
-        _default: { // Shown when method is Capsules but no taste profile selected
+        _default: { 
             description: "Select a taste profile to continue.",
             currentOffering: "Receive our Sustainable Capsules on repeat."
         },
-        "Brazil": { // Taste Profile: Brazil (selectedEdition === "Brazil")
+        "Brazil": { 
             description: "Text to update",
             currentOffering: "Text to update" // Placeholder
         },
-        "Ethiopia": { // Taste Profile: Ethiopia (selectedEdition === "Ethiopia")
+        "Ethiopia": { 
             description: "Text to update",
             currentOffering: "Text to update" // Placeholder
         },
-        "Masterpiece": { // Taste Profile: Masterpiece (selectedEdition === "Masterpiece")
+        "Masterpiece": { 
             description: "Text to update",
             currentOffering: "Text to update" // Placeholder
         }
