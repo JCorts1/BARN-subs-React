@@ -13,7 +13,7 @@ function App() {
   const [selectedRegion, setSelectedRegion] = useState('');
   const [selectedEdition, setSelectedEdition] = useState('');
   const [selectedSizeOption, setSelectedSizeOption] = useState(''); // For Office: "1x 1kg", "2x 1kg", etc.
-  const [finalSelectionDetail, setFinalSelectionDetail] = useState(''); // Generic Quantity OR Office Size
+  const [finalSelectionDetail, setFinalSelectionDetail] = useState(''); 
   const [selectedFrequency, setSelectedFrequency] = useState('');
 
   // --- Handlers ---
