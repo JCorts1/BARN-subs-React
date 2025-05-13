@@ -1,96 +1,193 @@
-/* Original Styles */
+/* --- General Right Container Font Size Adjustments --- */
+/* Apply a base font size increase to common text elements within the right container if needed.
+   This acts as a default if more specific rules below or Tailwind classes in JSX aren't sufficient.
+   Remember, Tailwind classes like text-lg, text-xl in your JSX will also be affected by Shopify's
+   root rem size. You may need to use larger Tailwind classes OR override them here for specific elements.
+*/
+.right-container .default-intro-content,
+.right-container .final-selection-display {
+  /* Example: Setting a base font size for these sections.
+     This will be inherited by p, li etc. unless they have their own more specific size.
+     1.6rem would be ~16px if 1rem=10px in Shopify. Adjust as needed. */
+  font-size: 1.6rem;
+  line-height: 1.6;
+}
+
+
+/* --- Original and Scaled Styles --- */
 .intro-list li {
   padding-bottom: 0.5rem;
+  /* text-xl from Tailwind is 1.25rem. Scaled by 1.6 = 2rem.
+     sm:text-2xl from Tailwind is 1.5rem. Scaled by 1.6 = 2.4rem.
+     We'll set the base and let Tailwind's responsive prefix handle the sm if possible,
+     or add a media query here. */
+  font-size: 2rem; /* Target for text-xl equivalent */
+  line-height: 1.5;
 }
 
-.final-selection-display h2 {
-margin: 1rem;
-font-family: "Antonio", sans-serif;
-font-weight: 900;
-font-size: 2rem;
+/* If you need to explicitly control the sm:text-2xl size from CSS: */
+@media (min-width: 640px) { /* sm breakpoint in Tailwind */
+  .intro-list li {
+    /* font-size: 2.4rem; */ /* Target for text-2xl equivalent - uncomment if needed */
+  }
 }
 
-/* Styles below were commented out as potentially unused */
+.final-selection-display h2.summary-init { /* Made selector more specific */
+  margin-bottom: 1rem; /* Changed margin from 1rem (all sides) to just bottom */
+  font-family: "Chalet Comprime", chalet, sans-serif; /* VERIFY FONT NAME */
+  font-weight: 700; /* Typical bold for headings */
+  font-size: 2.4rem; /* text-2xl from Tailwind is 1.5rem. Scaled by 1.6 = 2.4rem. */
+  color: #A67C52; /* Color from Tailwind class text-[#A67C52] */
+  text-transform: uppercase; /* ADDED: Make "Subscription Summary" uppercase */
+}
+
+/* Text within the subscription description box */
+/* JSX applies text-base sm:text-lg to the container div,
+   and then p has mb-3, and the "Current Offering" p has text-sm sm:text-base */
+.subscription-description .bg-\[\#3a3c3d\] { /* Targeting the box */
+  /* text-base from Tailwind is 1rem. Scaled by 1.6 = 1.6rem */
+  font-size: 1.6rem;
+  line-height: 1.6;
+}
+@media (min-width: 640px) { /* sm breakpoint */
+  .subscription-description .bg-\[\#3a3c3d\] {
+    /* text-lg from Tailwind is 1.125rem. Scaled by 1.6 = 1.8rem */
+    /* font-size: 1.8rem; */ /* Uncomment if Tailwind class isn't scaling enough or you want CSS control */
+  }
+}
+/* Specific override for the "Current Offering" paragraph if its Tailwind classes aren't scaling enough */
+.subscription-description .whitespace-pre-wrap { /* This p has text-sm sm:text-base */
+   /* text-sm from Tailwind is 0.875rem. Scaled by 1.6 = 1.4rem */
+  font-size: 1.4rem;
+}
+@media (min-width: 640px) { /* sm breakpoint */
+  .subscription-description .whitespace-pre-wrap {
+    /* text-base from Tailwind is 1rem. Scaled by 1.6 = 1.6rem */
+    /* font-size: 1.6rem; */ /* Uncomment if Tailwind class isn't scaling enough */
+  }
+}
+
+
+.selection-span {
+  margin-left: 3px;
+  margin-right: 3px;
+  color: #A67C52;
+  font-weight: bold;
+  /* Inherits font-size from parent .summary-sentence */
+}
+
+.summary-sentence {
+  /* JSX has text-base sm:text-lg */
+  /* text-base -> 1rem -> scaled to 1.6rem */
+  font-size: 1.6rem;
+  line-height: 1.6;
+  /* color: #fff; */ /* Already white from parent if not overridden */
+}
+@media (min-width: 640px) { /* sm breakpoint */
+  .summary-sentence {
+    /* text-lg -> 1.125rem -> scaled to 1.8rem */
+    /* font-size: 1.8rem; */ /* Uncomment if Tailwind class isn't scaling enough */
+  }
+}
+
+
+.cart-btn {
+  width: 90%;
+  margin-top: 0.7rem;
+  display: flex;
+  justify-content: flex-end; /* Corrected from 'end' */
+}
+
+/* Styling the button text itself */
+.cart-btn button {
+  font-family: "Raleway", sans-serif; /* From your original CSS for cart-btn */
+  font-weight: bold;
+  /* JSX has text-base sm:text-md. Assuming text-md is like text-base or slightly larger.
+     Let's use text-base equivalent for default. */
+  font-size: 1.6rem; /* Scaled from 1rem (text-base) */
+  /* color: #fff; */ /* Should be set by Tailwind class text-white */
+  /* text-transform: uppercase; */ /* Already uppercase in your JSX button text "ADD TO CART" */
+}
+/* If sm:text-md meant something specific and larger: */
 /*
-.selection-details-list {
-background-color: #3a3c3d;
-width: 80%;
-display: flex;
-flex-direction: column;
-justify-content: center;
-align-items: baseline;
-border: 1px solid #A67C52;
-padding: 1rem;
-}
-
-.selection-details-list li {
-display: flex;
-align-items: center;
-font-family: "Raleway", sans-serif;
-font-weight: 300;
-font-size: large;
+@media (min-width: 640px) { // sm breakpoint
+  .cart-btn button {
+    font-size: 1.8rem; // Example for a slightly larger size
+  }
 }
 */
 
-.selection-span {
-margin-left: 3px;
-margin-right: 3px;
-color: #A67C52;
-font-weight: bold;
-}
-
-.cart-btn {
-width: 90%; /* Consider adjusting if parent container changes width */
-margin-top: 0.7rem;
-display: flex;
-justify-content: end;
-font-family: "Raleway", sans-serif;
-font-weight: bold; /* Corrected from font-display */
-}
 
 /* --- Animation Styles --- */
-
-/* Container for the animation (targets the LAST div inside .subscription-description) */
-/* Adjust selector if your JSX structure changes */
 .subscription-description > div:last-child {
-width: 100%;          /* Ensure it spans the full width */
-overflow: hidden;      /* Hide the text when it moves outside the boundaries */
-white-space: nowrap;   /* Prevent the h1 text itself from wrapping to a new line */
-position: relative;    /* Optional but often good practice */
-margin-top: 1rem;      /* Add space above it */
-/* Optional: Add background/padding for visibility during testing */
-/* background-color: #444; */
-/* padding: 0.5rem 0; */
+  width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+  position: relative;
+  margin-top: 1rem;
 }
 
-/* The animated element itself */
 .words-animation {
-display: inline-block;
-position: relative;
-animation: move-words 15s linear infinite;
-margin: 0;             /* Reset margin */
-padding: 0;            /* Reset padding */
-padding-left: 100%;    /* Push text off-screen right initially */
-font-size: 1.4rem;       /* Adjust font size as needed */
-color: #A67C52;
-font-weight: 500;          
+  display: inline-block;
+  position: relative;
+  /* UPDATED: Animation duration shortened from 15s to 8s to make it reappear faster */
+  animation: move-words 8s linear infinite;
+  margin: 0;
+  padding: 0;
+  padding-left: 100%;
+  font-size: 2.24rem; /* Was 1.4rem. Scaled by 1.6 = 2.24rem */
+  color: #A67C52;
+  font-weight: 500;
 }
 
-/* Keyframes definition for the animation */
 @keyframes move-words {
-0% {
-  transform: translateX(0%); /* Start at the padded position (off-screen right) */
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-200%);
+  }
 }
-100% {
-  /* Move left by its own width PLUS the initial padding */
-  transform: translateX(-200%);
-}
+/* --- End Animation Styles --- */
+
+
+/* === ADDED: Carousel Arrow Styling === */
+.right-container .CarouselPrevious,
+.right-container .CarouselNext {
+  color: #A67C52 !important;
 }
 
-/* --- End Animation Styles --- */
+.right-container .CarouselPrevious svg,
+.right-container .CarouselNext svg {
+  fill: #A67C52 !important;
+  stroke: #A67C52 !important; /* Added important here too for good measure */
+  width: 2rem;
+  height: 2rem;
+}
+/* === END Carousel Arrow Styling === */
 
 
 /* Media Queries (Keep as needed) */
 @media screen and (max-width: 720px) {
-/* Add responsive styles here if necessary */
+  .intro-list li {
+    font-size: 1.8rem;
+  }
+  .final-selection-display h2.summary-init {
+    font-size: 2rem;
+  }
+  .words-animation {
+    font-size: 1.8rem;
+  }
+  .subscription-description .bg-\[\#3a3c3d\] {
+    font-size: 1.5rem;
+  }
+  .subscription-description .whitespace-pre-wrap {
+    font-size: 1.3rem;
+  }
+  .summary-sentence {
+    font-size: 1.5rem;
+  }
+  .cart-btn button {
+    font-size: 1.5rem;
+  }
 }
