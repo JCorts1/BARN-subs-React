@@ -1,14 +1,6 @@
 /* --- General Right Container Font Size Adjustments --- */
-/* Apply a base font size increase to common text elements within the right container if needed.
-   This acts as a default if more specific rules below or Tailwind classes in JSX aren't sufficient.
-   Remember, Tailwind classes like text-lg, text-xl in your JSX will also be affected by Shopify's
-   root rem size. You may need to use larger Tailwind classes OR override them here for specific elements.
-*/
 .right-container .default-intro-content,
 .right-container .final-selection-display {
-  /* Example: Setting a base font size for these sections.
-     This will be inherited by p, li etc. unless they have their own more specific size.
-     1.6rem would be ~16px if 1rem=10px in Shopify. Adjust as needed. */
   font-size: 1.6rem;
   line-height: 1.6;
 }
@@ -17,106 +9,72 @@
 /* --- Original and Scaled Styles --- */
 .intro-list li {
   padding-bottom: 0.5rem;
-  /* text-xl from Tailwind is 1.25rem. Scaled by 1.6 = 2rem.
-     sm:text-2xl from Tailwind is 1.5rem. Scaled by 1.6 = 2.4rem.
-     We'll set the base and let Tailwind's responsive prefix handle the sm if possible,
-     or add a media query here. */
-  font-size: 2rem; /* Target for text-xl equivalent */
+  font-size: 2rem; 
   line-height: 1.5;
 }
 
-/* If you need to explicitly control the sm:text-2xl size from CSS: */
 @media (min-width: 640px) { /* sm breakpoint in Tailwind */
   .intro-list li {
-    /* font-size: 2.4rem; */ /* Target for text-2xl equivalent - uncomment if needed */
+    /* font-size: 2.4rem; */ 
   }
 }
 
-.final-selection-display h2.summary-init { /* Made selector more specific */
-  margin-bottom: 1rem; /* Changed margin from 1rem (all sides) to just bottom */
-  font-family: "Chalet Comprime", chalet, sans-serif; /* VERIFY FONT NAME */
-  font-weight: 700; /* Typical bold for headings */
-  font-size: 2.4rem; /* text-2xl from Tailwind is 1.5rem. Scaled by 1.6 = 2.4rem. */
-  color: #A67C52; /* Color from Tailwind class text-[#A67C52] */
-  text-transform: uppercase; /* ADDED: Make "Subscription Summary" uppercase */
+.final-selection-display h2.summary-init {
+  margin-bottom: 1rem; 
+  font-family: "Chalet Comprime", chalet, sans-serif; 
+  font-weight: 700; 
+  font-size: 3rem; /* UPDATED: Increased font size */
+  color: #A67C52; 
+  text-transform: uppercase; 
 }
 
-/* Text within the subscription description box */
-/* JSX applies text-base sm:text-lg to the container div,
-   and then p has mb-3, and the "Current Offering" p has text-sm sm:text-base */
-.subscription-description .bg-\[\#3a3c3d\] { /* Targeting the box */
-  /* text-base from Tailwind is 1rem. Scaled by 1.6 = 1.6rem */
+.subscription-description .bg-\[\#3a3c3d\] {
   font-size: 1.6rem;
   line-height: 1.6;
 }
-@media (min-width: 640px) { /* sm breakpoint */
+@media (min-width: 640px) { 
   .subscription-description .bg-\[\#3a3c3d\] {
-    /* text-lg from Tailwind is 1.125rem. Scaled by 1.6 = 1.8rem */
-    /* font-size: 1.8rem; */ /* Uncomment if Tailwind class isn't scaling enough or you want CSS control */
+    /* font-size: 1.8rem; */ 
   }
 }
-/* Specific override for the "Current Offering" paragraph if its Tailwind classes aren't scaling enough */
-.subscription-description .whitespace-pre-wrap { /* This p has text-sm sm:text-base */
-   /* text-sm from Tailwind is 0.875rem. Scaled by 1.6 = 1.4rem */
+.subscription-description .whitespace-pre-wrap {
   font-size: 1.4rem;
 }
-@media (min-width: 640px) { /* sm breakpoint */
+@media (min-width: 640px) { 
   .subscription-description .whitespace-pre-wrap {
-    /* text-base from Tailwind is 1rem. Scaled by 1.6 = 1.6rem */
-    /* font-size: 1.6rem; */ /* Uncomment if Tailwind class isn't scaling enough */
+    /* font-size: 1.6rem; */ 
   }
 }
-
 
 .selection-span {
   margin-left: 3px;
   margin-right: 3px;
   color: #A67C52;
   font-weight: bold;
-  /* Inherits font-size from parent .summary-sentence */
 }
 
 .summary-sentence {
-  /* JSX has text-base sm:text-lg */
-  /* text-base -> 1rem -> scaled to 1.6rem */
   font-size: 1.6rem;
   line-height: 1.6;
-  /* color: #fff; */ /* Already white from parent if not overridden */
 }
-@media (min-width: 640px) { /* sm breakpoint */
+@media (min-width: 640px) { 
   .summary-sentence {
-    /* text-lg -> 1.125rem -> scaled to 1.8rem */
-    /* font-size: 1.8rem; */ /* Uncomment if Tailwind class isn't scaling enough */
+    /* font-size: 1.8rem; */ 
   }
 }
-
 
 .cart-btn {
-  width: 90%;
+  width: 90%; /* This is relative to its parent which is now max-w-4xl */
   margin-top: 0.7rem;
   display: flex;
-  justify-content: flex-end; /* Corrected from 'end' */
+  justify-content: flex-end; 
 }
 
-/* Styling the button text itself */
 .cart-btn button {
-  font-family: "Raleway", sans-serif; /* From your original CSS for cart-btn */
+  font-family: "Raleway", sans-serif; 
   font-weight: bold;
-  /* JSX has text-base sm:text-md. Assuming text-md is like text-base or slightly larger.
-     Let's use text-base equivalent for default. */
-  font-size: 1.6rem; /* Scaled from 1rem (text-base) */
-  /* color: #fff; */ /* Should be set by Tailwind class text-white */
-  /* text-transform: uppercase; */ /* Already uppercase in your JSX button text "ADD TO CART" */
+  font-size: 1.6rem; 
 }
-/* If sm:text-md meant something specific and larger: */
-/*
-@media (min-width: 640px) { // sm breakpoint
-  .cart-btn button {
-    font-size: 1.8rem; // Example for a slightly larger size
-  }
-}
-*/
-
 
 /* --- Animation Styles --- */
 .subscription-description > div:last-child {
@@ -130,12 +88,11 @@
 .words-animation {
   display: inline-block;
   position: relative;
-  /* UPDATED: Animation duration shortened from 15s to 8s to make it reappear faster */
-  animation: move-words 8s linear infinite;
+  animation: move-words 12s linear infinite; /* UPDATED: Animation duration changed from 8s to 12s */
   margin: 0;
   padding: 0;
   padding-left: 100%;
-  font-size: 2.24rem; /* Was 1.4rem. Scaled by 1.6 = 2.24rem */
+  font-size: 2.24rem;
   color: #A67C52;
   font-weight: 500;
 }
@@ -145,24 +102,31 @@
     transform: translateX(0%);
   }
   100% {
-    transform: translateX(-200%);
+    transform: translateX(-200%); 
   }
 }
 /* --- End Animation Styles --- */
 
 
-/* === ADDED: Carousel Arrow Styling === */
+/* === Carousel Arrow Styling === */
 .right-container .CarouselPrevious,
 .right-container .CarouselNext {
-  color: #A67C52 !important;
+  color: #A67C52 !important; 
 }
 
 .right-container .CarouselPrevious svg,
 .right-container .CarouselNext svg {
-  fill: #A67C52 !important;
-  stroke: #A67C52 !important; /* Added important here too for good measure */
-  width: 2rem;
-  height: 2rem;
+  fill: #A67C52 !important; 
+  stroke: #A67C52 !important; 
+  width: 2.8rem; /* UPDATED: Increased size from 2rem */
+  height: 2.8rem; /* UPDATED: Increased size from 2rem */
+}
+
+/* If the above doesn't work for SVG color, try targeting path elements more directly */
+.right-container .CarouselPrevious svg path,
+.right-container .CarouselNext svg path {
+    fill: #A67C52 !important;
+    stroke: #A67C52 !important; /* Only if paths use stroke for color, otherwise fill is enough */
 }
 /* === END Carousel Arrow Styling === */
 
@@ -170,24 +134,24 @@
 /* Media Queries (Keep as needed) */
 @media screen and (max-width: 720px) {
   .intro-list li {
-    font-size: 1.8rem;
+    font-size: 1.8rem; 
   }
   .final-selection-display h2.summary-init {
-    font-size: 2rem;
+    font-size: 2.4rem; /* Adjusted from 2rem for a bit more hierarchy on mobile */
   }
   .words-animation {
-    font-size: 1.8rem;
+    font-size: 1.8rem; 
   }
   .subscription-description .bg-\[\#3a3c3d\] {
-    font-size: 1.5rem;
+    font-size: 1.5rem; 
   }
   .subscription-description .whitespace-pre-wrap {
-    font-size: 1.3rem;
+    font-size: 1.3rem; 
   }
   .summary-sentence {
-    font-size: 1.5rem;
+    font-size: 1.5rem; 
   }
   .cart-btn button {
-    font-size: 1.5rem;
+    font-size: 1.5rem; 
   }
 }

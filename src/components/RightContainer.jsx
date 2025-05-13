@@ -180,7 +180,7 @@ const RightContainer = ({ method, type, region, edition, sizeOption, quantity, f
         return (
             <div className='default-intro-content text-white w-[90%] h-full flex flex-col items-center'>
                 <div className='mt-8'>
-                    {/* UPDATED: Logo max-width reduced */}
+                    {/* UPDATED: Logo max-width further reduced */}
                     <img src={defaultImageUrl} alt="The Barn Coffee Roasters Logo" style={{ width: '100%', maxWidth: '220px', height: 'auto', margin: '1rem 0' }} />
                 </div>
                 {/* UPDATED: Changed max-w-xl to max-w-4xl for "much more" width */}
@@ -372,10 +372,12 @@ const RightContainer = ({ method, type, region, edition, sizeOption, quantity, f
                         <div> <h1 className='words-animation'>{animationText}</h1> </div>
                     </div>
                 )}
-                <p className="summary-sentence text-base sm:text-lg leading-relaxed my-4 w-full max-w-md min-h-[3em]">
+                {/* UPDATED: summary-sentence container to max-w-4xl */}
+                <p className="summary-sentence text-base sm:text-lg leading-relaxed my-4 w-full max-w-4xl min-h-[3em]">
                     {sentenceParts}
                 </p>
-                <div className="cart-btn mt-auto pt-4 w-full max-w-md flex justify-center sm:justify-end">
+                {/* UPDATED: cart-btn container to max-w-4xl */}
+                <div className="cart-btn mt-auto pt-4 w-full max-w-4xl flex justify-center sm:justify-end">
                      <button
                         className={`bg-[#A67C52] py-2 px-5 rounded-md border-[1.5px] border-transparent hover:border-[#3a3c3d] transition-all duration-300 ease-in-out transform text-white font-semibold text-base sm:text-md disabled:opacity-50 disabled:cursor-not-allowed enabled:hover:brightness-110 enabled:active:scale-95`}
                         disabled={!canAddToCart}
