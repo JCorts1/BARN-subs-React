@@ -171,6 +171,15 @@
   font-size: 1.6rem; /* Scaled up - example, adjust as needed */
 }
 
+/* --- Styles for Text Inside Dropdown Menu Items --- */
+.dropdown-content-panel [role="menuitemradio"] {
+  font-family: "Raleway", sans-serif; 
+  font-size: 1.6rem;
+  line-height: 1.5;  
+}
+
+
+
 /* --- Mobile Styles --- */
 @media screen and (max-width: 720px) {
   .recipient-buttons-container { width: 100%; }
