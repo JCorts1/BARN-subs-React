@@ -245,11 +245,11 @@ const MiddleContainer = ({
             <div className='recipient-container mt-10'>
                <div className='recipient-buttons-container'>
                     <div className={`recipient-button ${showOptionsContainer === true ? 'selected' : ''}`} onClick={handleSelectSelf}>
-                        <h2>Pay per Delivery</h2>
+                        <h2>PAY PER DELIVERY</h2>
                         <p>(Flexible Subscriptions)</p>
                     </div>
                     <div className={`recipient-button ${showOptionsContainer === false ? 'selected' : ''}`} onClick={handleSelectGift}>
-                        <h2>Upfront Payment</h2>
+                        <h2>UPFRONT PAYMENT</h2>
                         <p>(Term / Gift)</p>
                     </div>
                 </div>
