@@ -46,8 +46,11 @@ const curatedQuantityOptions = [
 ];
 const curatedQuantityLabelMap = curatedQuantityOptions.reduce((acc, o) => { acc[o.value] = o.label; return acc; }, {});
 
+// UPDATED: Masterpiece quantity labels
 const masterpieceQuantityOptions = [
-    { value: "1", label: "1x bag (100-150g)" }, { value: "2", label: "2x bags (100-150g)" }, { value: "3", label: "3x bags (100-150g)" },
+    { value: "1", label: "1 bag" },
+    { value: "2", label: "2 bags" },
+    { value: "3", label: "3 bags" },
 ];
 const masterpieceQuantityLabelMap = masterpieceQuantityOptions.reduce((acc, o) => { acc[o.value] = o.label; return acc; }, {});
 
@@ -229,7 +232,7 @@ const MiddleContainer = ({
         }
         if (selectedMethod === 'Capsules') return capsuleQuantityLabelMap[value] || value;
         if (selectedCoffeeType === 'Curated') return curatedQuantityLabelMap[value] || value;
-        if (selectedCoffeeType === 'Masterpiece') return masterpieceQuantityLabelMap[value] || value;
+        if (selectedCoffeeType === 'Masterpiece') return masterpieceQuantityLabelMap[value] || value; // Will now use "1 bag", "2 bags", etc.
         if (selectedCoffeeType === 'Low-Caf') return `${value}x 250g`;
         if (selectedCoffeeType === 'Regional') return `${value}x 250g`;
         if (selectedCoffeeType === 'Office') return value;
@@ -362,7 +365,8 @@ const MiddleContainer = ({
                                 <div className='dropdown-row' style={{ justifyContent: 'center' }} key="masterpiece-info">
                                     <div className='w-fit'>
                                         <ul className='text-white bg-[#161616] w-full rounded-sm border border-[#A67C52] roasters-info-list'>
-                                            <li className='w-full p-1 text-lg'><span className='text-[#A67C52]'>Every month,</span> We send you one bag of the most extraordinary coffee</li>
+                                            {/* UPDATED: Masterpiece info text */}
+                                            <li className='w-full p-1 text-lg'><span className='text-[#A67C52]'>Every month,</span> We send you one bag of the most extraordinary coffee. Each bag contains 100 - 150g</li>
                                         </ul>
                                     </div>
                                 </div>
@@ -460,11 +464,11 @@ const MiddleContainer = ({
                                         {currentQuantityOptions.map((option) => (
                                             <DropdownMenuRadioItem key={option.value} value={option.value}>
                                                {selectedMethod === 'Capsules'
-                                                    ? option.label // e.g., "3x 10 capsules"
+                                                    ? option.label
                                                     : selectedCoffeeType === 'Curated'
                                                         ? option.label
                                                         : selectedCoffeeType === 'Masterpiece'
-                                                            ? option.label
+                                                            ? option.label // This will now show "1 bag", "2 bags", etc.
                                                             : selectedCoffeeType === 'Low-Caf'
                                                                 ? `${option.label}x 250g`
                                                                 : selectedCoffeeType === 'Regional'

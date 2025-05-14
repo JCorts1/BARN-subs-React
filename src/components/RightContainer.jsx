@@ -1,8 +1,9 @@
 // src/components/RightContainer.jsx
-// Updates Capsules: Taste Profile descriptions, variant ID lookup, summary sentence, and AJAX quantity.
+// Updates Capsules: Taste Profile descriptions, variant ID lookup, summary sentence,
+// and uses Shopify Permalink for checkout opening in a new tab.
 
 import React from 'react';
-import './RightContainer.css';
+import './RightContainer.css'; // Your CSS file for RightContainer
 
 import {
     Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious,
@@ -96,71 +97,37 @@ const subscriptionDescriptions = {
 };
 
 const getVariantIdFromSelections = (method, type, region, sizeOption, edition, quantity) => {
-  console.log("Looking up Variant ID for:", { method, type, region, sizeOption, edition, quantity });
+  console.log("Looking up Variant ID for Permalink:", { method, type, region, sizeOption, edition, quantity });
 
   if (method === 'Capsules') {
-      const qty = quantity;
-      if (!['3', '4', '5'].includes(qty)) { console.error(`Invalid quantity '${qty}' for Capsules.`); return null; }
-
-      if (edition === 'Brazil') {
-          if (qty === '3') { /* TODO */ console.error("Missing Capsule ID: Brazil, 3x10"); return null; }
-          if (qty === '4') { /* TODO */ console.error("Missing Capsule ID: Brazil, 4x10"); return null; }
-          if (qty === '5') { /* TODO */ console.error("Missing Capsule ID: Brazil, 5x10"); return null; }
-      } else if (edition === 'Ethiopia') {
-          if (qty === '3') { /* TODO */ console.error("Missing Capsule ID: Ethiopia, 3x10"); return null; }
-          if (qty === '4') { /* TODO */ console.error("Missing Capsule ID: Ethiopia, 4x10"); return null; }
-          if (qty === '5') { /* TODO */ console.error("Missing Capsule ID: Ethiopia, 5x10"); return null; }
-      } else if (edition === 'Masterpiece') {
-          if (qty === '3') { /* TODO */ console.error("Missing Capsule ID: Masterpiece, 3x10"); return null; }
-          if (qty === '4') { /* TODO */ console.error("Missing Capsule ID: Masterpiece, 4x10"); return null; }
-          if (qty === '5') { /* TODO */ console.error("Missing Capsule ID: Masterpiece, 5x10"); return null; }
-      } else {
-          console.warn("Capsules method selected but taste profile (edition) is missing or invalid:", edition); return null;
-      }
+      console.error("Capsule variant ID lookup not fully implemented for permalinks.");
+      if (edition === 'Brazil' && quantity === '3') return null;
       return null;
   } else if (type === 'Roasters Choice') {
       if (method === 'Filter') return 45910178332939;
       if (method === 'Espresso') return 45910178398475;
       console.warn("Roasters Choice selected but method is invalid:", method); return null;
   } else if (type === 'Curated') {
-      const qty = quantity;
-      if (!['2', '4', '6'].includes(qty)) { console.error(`Invalid quantity '${qty}' for Curated.`); return null; }
-      if (method === 'Filter') {
-          if (qty === '2') { console.error("Missing Curated ID: Filter, 2x250g"); return null; }
-          if (qty === '4') { console.error("Missing Curated ID: Filter, 4x250g"); return null; }
-          if (qty === '6') { console.error("Missing Curated ID: Filter, 6x250g"); return null; }
-      } else if (method === 'Espresso') {
-          if (qty === '2') { console.error("Missing Curated ID: Espresso, 2x250g"); return null; }
-          if (qty === '4') { console.error("Missing Curated ID: Espresso, 4x250g"); return null; }
-          if (qty === '6') { console.error("Missing Curated ID: Espresso, 6x250g"); return null; }
-      } else { console.warn("Curated type selected but method is invalid:", method); return null; }
+      console.error("Curated variant ID lookup not implemented for permalinks.");
       return null;
   } else if (type === 'Masterpiece') {
-      const qty = quantity;
-      if (!['1', '2', '3'].includes(qty)) { console.error(`Invalid quantity '${qty}' for Masterpiece.`); return null; }
-      if (qty === '1') { console.error("Missing Masterpiece ID: Qty 1"); return 45969541562635; }
-      if (qty === '2') { console.error("Missing Masterpiece ID: Qty 2"); return null; }
-      if (qty === '3') { console.error("Missing Masterpiece ID: Qty 3"); return null; }
-       console.warn("Masterpiece selected but variant ID for quantity not found:", qty); return null;
+      if (quantity === '1') return 45969541562635;
+      console.error("Masterpiece variant ID lookup for quantity > 1 not implemented for permalinks.");
+      return null;
   } else if (type === 'Office') {
-     if (method === 'Espresso') {
-         if (sizeOption === '1x 1kg') { console.error("Missing Office ID: 1x 1kg"); return null; }
-         if (sizeOption === '2x 1kg') { console.error("Missing Office ID: 2x 1kg"); return null; }
-         if (sizeOption === '3x 1kg') { console.error("Missing Office ID: 3x 1kg"); return null; }
-         if (sizeOption === '4x 1kg') { console.error("Missing Office ID: 4x 1kg"); return null; }
-         if (sizeOption === '5x 1kg') { console.error("Missing Office ID: 5x 1kg"); return null; }
-         console.warn("Office selected but sizeOption is invalid or unmapped:", sizeOption); return null;
-     } else { console.error("Office type selected but method is not Espresso"); return null; }
+      console.error("Office variant ID lookup not implemented for permalinks.");
+      if (method === 'Espresso' && sizeOption === '1x 1kg') return null;
+      return null;
   } else if (type === 'Regional') {
-     if (region === 'Brazil') { console.error("Missing Regional ID: Brazil"); return null; }
-     if (region === 'Ethiopia') { console.error("Missing Regional ID: Ethiopia"); return null; }
-     if (region === 'Center America') { console.error("Missing Regional ID: Center America"); return null; }
-     console.warn("Regional type selected but region is missing or invalid:", region); return null;
+      console.error("Regional variant ID lookup not implemented for permalinks.");
+      if (region === 'Brazil') return null;
+      return null;
   } else if (type === 'Low-Caf') {
-     console.error("Missing Variant ID: Low-Caf"); return null;
+      console.error("Low-Caf variant ID lookup not implemented for permalinks.");
+      return null;
   }
 
-  console.warn(`Variant ID lookup end: M=${method},T=${type},R=${region},S=${sizeOption},E=${edition},Q=${quantity}`);
+  console.warn(`Variant ID lookup fallback: M=${method},T=${type},R=${region},S=${sizeOption},E=${edition},Q=${quantity}`);
   return null;
 };
 
@@ -175,15 +142,15 @@ const sellingPlanMapping = {
 
 const RightContainer = ({ method, type, region, edition, sizeOption, quantity, frequency }) => {
 
+    const SHOP_DOMAIN = "thebarn.de";
+
     const DefaultIntroContent = () => {
         const defaultImageUrl = "https://cdn.shopify.com/s/files/1/0831/4141/files/LOGO-NAME.png?v=1710576883";
         return (
             <div className='default-intro-content text-white w-[90%] h-full flex flex-col items-center'>
                 <div className='mt-8'>
-                    {/* UPDATED: Logo max-width further reduced */}
                     <img src={defaultImageUrl} alt="The Barn Coffee Roasters Logo" style={{ width: '100%', maxWidth: '220px', height: 'auto', margin: '1rem 0' }} />
                 </div>
-                {/* UPDATED: Changed max-w-xl to max-w-4xl for "much more" width */}
                 <div className='p-5 border border-[#A57C62] rounded-md mt-8 w-full max-w-4xl'>
                     <ul className="intro-list text-xl sm:text-2xl" style={{ listStyle: 'none', padding: 0 }}>
                         <li className="my-2">🌱 Sustainably sourced from top farms</li>
@@ -260,7 +227,7 @@ const RightContainer = ({ method, type, region, edition, sizeOption, quantity, f
                 if (type === 'Curated') {
                     sentenceParts.push(<span key="qty-val" className={highlightClass}>{`${qtyValue}x 250g`}</span>);
                 } else if (type === 'Masterpiece') {
-                    sentenceParts.push(<span key="qty-val" className={highlightClass}>{`${qtyValue}x bag${qtyValue > 1 ? 's' : ''} (100-150g)`}</span>);
+                    sentenceParts.push(<span key="qty-val" className={highlightClass}>{`${qtyValue} bag${qtyValue > 1 ? 's' : ''}`}</span>);
                 } else {
                     sentenceParts.push(<span key="qty-val" className={highlightClass}>{quantity}</span>);
                     sentenceParts.push(` x 250g`);
@@ -279,49 +246,68 @@ const RightContainer = ({ method, type, region, edition, sizeOption, quantity, f
         }
         sentenceParts.push('.');
 
-        const handleAddToCartClick = async () => {
-            console.log("Add to cart clicked (AJAX). State:", { method, type, region, edition, sizeOption, quantity, frequency });
-            if (!canAddToCart) { alert("Please complete your subscription selections."); console.warn("Add to cart blocked by canAddToCart."); return; }
-            const selectedVariantId = getVariantIdFromSelections(method, type, region, sizeOption, edition, quantity);
-            let quantityForAjax;
-            if (method === 'Capsules') {
-                quantityForAjax = parseInt(quantity, 10);
-                if (isNaN(quantityForAjax) || ![3,4,5].includes(quantityForAjax)) { alert("Error: Invalid quantity for Capsules."); return; }
-            } else if (type === 'Office') {
-                const match = sizeOption.match(/^(\d+)x/);
-                if (match && match[1]) quantityForAjax = parseInt(match[1], 10);
-                else { alert("Error: Could not determine quantity for Office."); return; }
-                if (isNaN(quantityForAjax) || quantityForAjax < 1) { alert("Error: Invalid quantity parsed for Office."); return; }
-            } else if (type === 'Curated') {
-                 quantityForAjax = parseInt(quantity, 10);
-                 if (isNaN(quantityForAjax) || ![2, 4, 6].includes(quantityForAjax)) { alert("Error: Invalid quantity for Curated."); return; }
-            } else if (type === 'Masterpiece') {
-                 quantityForAjax = parseInt(quantity, 10);
-                 if (isNaN(quantityForAjax) || ![1, 2, 3].includes(quantityForAjax)) { alert("Error: Invalid quantity for Masterpiece."); return; }
-            } else {
-                 quantityForAjax = parseInt(quantity, 10);
-                 if (isNaN(quantityForAjax) || quantityForAjax < 1) { alert("Error: Invalid quantity."); return; }
+        const handleAddToCartClick = () => {
+            console.log("Attempting to generate Permalink for State:", { method, type, region, edition, sizeOption, quantity, frequency });
+
+            if (!canAddToCart) {
+                alert("Please complete your subscription selections to proceed.");
+                console.warn("Permalink generation blocked by canAddToCart check.");
+                return;
             }
+
+            const variantId = getVariantIdFromSelections(method, type, region, sizeOption, edition, quantity);
+
+            if (!variantId) {
+                alert("Error: Product variant could not be determined for your selection. Please ensure all options are selected or check configuration (ensure Variant IDs are mapped).");
+                console.error("Permalink Error: Missing Variant ID for selections:", { method, type, region, edition, sizeOption, quantity });
+                return;
+            }
+
+            let quantityForLink;
+            if (type === 'Office') {
+                const match = sizeOption.match(/^(\d+)x/);
+                if (match && match[1]) {
+                    quantityForLink = parseInt(match[1], 10);
+                } else {
+                    alert("Error: Could not determine quantity for Office subscription from the size option.");
+                    console.error("Permalink Error: Could not parse quantity from Office sizeOption:", sizeOption);
+                    return;
+                }
+            } else {
+                quantityForLink = parseInt(quantity, 10);
+            }
+
+            if (isNaN(quantityForLink) || quantityForLink < 1) {
+                alert("Error: Invalid or missing quantity for the selected product.");
+                console.error("Permalink Error: Invalid quantityForLink:", quantityForLink, "from quantity prop:", quantity);
+                return;
+            }
+
             const selectedPlanInfo = sellingPlanMapping[frequency];
-            if (!selectedPlanInfo) { alert(`Error: Plan details not found for frequency: "${frequency}".`); return; }
-            if (!selectedVariantId) { alert("Error: Product variant not found. Check TODOs in getVariantIdFromSelections."); return; }
-            if (!quantityForAjax) { alert("Error: Quantity for AJAX not determined."); return; }
-            const { interval: subscriptionInterval, unit: subscriptionUnit, planId: sellingPlanIdForProps } = selectedPlanInfo;
-            console.log("Resolved Data for AJAX:", { variantId: selectedVariantId, quantity: quantityForAjax, interval: subscriptionInterval, unit: subscriptionUnit, sellingPlanIdForProps });
-            const rechargeProperties = {
-                'shipping_interval_frequency': subscriptionInterval.toString(),
-                'shipping_interval_unit_type': subscriptionUnit,
-                'selling_plan': sellingPlanIdForProps
-            };
-            const formData = { items: [{ id: selectedVariantId, quantity: quantityForAjax, properties: rechargeProperties }] };
-            try {
-                console.log("Sending AJAX POST to /cart/add.js with data:", JSON.stringify(formData));
-                const response = await fetch('/cart/add.js', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' }, body: JSON.stringify(formData) });
-                const responseData = await response.json();
-                if (!response.ok) { console.error('Shopify cart/add error:', response.status, responseData); alert(`Error adding to cart: ${responseData.description || responseData.message || 'Inventory issue or invalid selection.'}`); return; }
-                console.log('Successfully added to cart via AJAX:', responseData);
-                alert('Subscription added to your cart!');
-            } catch (error) { console.error("AJAX request failed:", error); alert("Could not add subscription to cart (network issue)."); }
+            if (!selectedPlanInfo || !selectedPlanInfo.planId) {
+                alert(`Error: Subscription plan details not found for the selected frequency: "${frequency}".`);
+                console.error("Permalink Error: Missing selling plan ID for frequency:", frequency);
+                return;
+            }
+            const sellingPlanId = selectedPlanInfo.planId;
+            
+            const cartAddParams = new URLSearchParams();
+            cartAddParams.append("items[][id]", variantId.toString());
+            cartAddParams.append("items[][quantity]", quantityForLink.toString());
+            cartAddParams.append("items[][selling_plan]", sellingPlanId.toString());
+            cartAddParams.append("return_to", "/checkout");
+
+            const permalinkUrl = `https://${SHOP_DOMAIN}/cart/clear?return_to=${encodeURIComponent(`/cart/add?${cartAddParams.toString()}`)}`;
+            
+            console.log("Opening Permalink in new tab:", permalinkUrl);
+            // UPDATED: Open in a new tab and try to focus it
+            const newTab = window.open(permalinkUrl, '_blank');
+            if (newTab) {
+                newTab.focus();
+            } else {
+                // Fallback or alert if pop-up was blocked
+                alert("Your browser may have blocked the new tab. Please check your pop-up blocker settings.");
+            }
         };
 
         const animationText = type === 'Masterpiece'
@@ -332,7 +318,6 @@ const RightContainer = ({ method, type, region, edition, sizeOption, quantity, f
             <div className="final-selection-display w-[100%] flex flex-col items-center text-white text-center px-4">
                 <h2 className="summary-init text-2xl font-semibold text-[#A67C52] mb-4">Subscription Summary</h2>
                 {imagesToShow.length > 0 ? (
-                     // UPDATED: Carousel max-w-sm to max-w-md for "just a bit bigger" images
                      <Carousel className="w-full max-w-md mx-auto mb-6" opts={{ align: "start", loop: imagesToShow.length > 1 }}>
                         <CarouselContent>
                             {imagesToShow.map((imageUrl, index) => (
@@ -359,7 +344,6 @@ const RightContainer = ({ method, type, region, edition, sizeOption, quantity, f
                      </div>
                  )}
                 {currentDescriptionData && currentDescriptionData.description && (
-                    // UPDATED: Changed max-w-xl to max-w-4xl for "much more" width
                     <div className="subscription-description text-white my-4 text-left w-full max-w-4xl flex justify-center flex-col">
                         <div className="bg-[#3a3c3d] p-4 rounded-md border border-[#A67C52] text-base sm:text-lg w-full">
                             <p className="mb-3">{currentDescriptionData.description}</p>
@@ -372,11 +356,9 @@ const RightContainer = ({ method, type, region, edition, sizeOption, quantity, f
                         <div> <h1 className='words-animation'>{animationText}</h1> </div>
                     </div>
                 )}
-                {/* UPDATED: summary-sentence container to max-w-4xl */}
                 <p className="summary-sentence text-base sm:text-lg leading-relaxed my-4 w-full max-w-4xl min-h-[3em]">
                     {sentenceParts}
                 </p>
-                {/* UPDATED: cart-btn container to max-w-4xl */}
                 <div className="cart-btn mt-auto pt-4 w-full max-w-4xl flex justify-center sm:justify-end">
                      <button
                         className={`bg-[#A67C52] py-2 px-5 rounded-md border-[1.5px] border-transparent hover:border-[#3a3c3d] transition-all duration-300 ease-in-out transform text-white font-semibold text-base sm:text-md disabled:opacity-50 disabled:cursor-not-allowed enabled:hover:brightness-110 enabled:active:scale-95`}
