@@ -1,6 +1,6 @@
 // src/components/RightContainer.jsx
 // Uses Shopify Permalink for checkout, opening in a new tab.
-// Includes specific Selling Plan IDs for Low-Caf, Masterpiece, Regional - Center America, and other product types.
+// Includes specific Selling Plan IDs for Low-Caf, Masterpiece, Regional - Center America, Regional - Ethiopia, and Regional - Brazil.
 
 import React from 'react';
 import './RightContainer.css'; // Your CSS file for RightContainer styles
@@ -42,13 +42,13 @@ const carouselImageData = {
             "https://cdn.shopify.com/s/files/1/0831/4141/files/Image_26.04.24_at_14.12.jpg?v=1728375513",
             "https://cdn.shopify.com/s/files/1/0831/4141/files/2_v60_6c2d62af-96c2-4e95-a9f9-5d66eb85efb8.png?v=1712752891",
         ],
-        "Ethiopia": [
+        "Ethiopia": [ 
             "https://cdn.shopify.com/s/files/1/0831/4141/files/BAG_Chelbesa_Natural_2024.png?v=1729679115",
             "https://cdn.shopify.com/s/files/1/0831/4141/files/Image_26.04.24_at_14.12.jpg?v=1728375513",
             "https://cdn.shopify.com/s/files/1/0831/4141/files/2_v60_6c2d62af-96c2-4e95-a9f9-5d66eb85efb8.png?v=1712752891",
         ],
-        "Center America": [ // Assuming these images are for Regional - Center America
-            "https://cdn.shopify.com/s/files/1/0831/4141/files/BAG_Volcan_Azul_Caturra_OMNI_3a40d3d4-a185-4da0-99ff-b8d0f43479b7.png?v=1743674027", // Example, replace with actual
+        "Center America": [
+            "https://cdn.shopify.com/s/files/1/0831/4141/files/BAG_Volcan_Azul_Caturra_OMNI_3a40d3d4-a185-4da0-99ff-b8d0f43479b7.png?v=1743674027",
             "https://cdn.shopify.com/s/files/1/0831/4141/files/Image_26.04.24_at_14.12.jpg?v=1728375513",
             "https://cdn.shopify.com/s/files/1/0831/4141/files/2_v60_6c2d62af-96c2-4e95-a9f9-5d66eb85efb8.png?v=1712752891",
         ],
@@ -73,7 +73,7 @@ const subscriptionDescriptions = {
     "Regional": {
         "Brazil": { description: "People love Brazilian Coffees for their sweetness, low acidity and chocolate notes.", currentOffering: "Current Offering:\n\n🇧🇷 Elemental, Brazil: Milk Chocolate. Macadamia. Smooth." },
         "Ethiopia": { description: "People love Ethiopian Coffees for their floral notes and its tea-like character.", currentOffering: "Current Offering:\n\n🇪🇹 Chelbesa, Ethiopia: Peach. Fudge. Jasmine." },
-        "Center America": { description: "People like Central Coffees for their exciting acidity and clean notes of terroir.", currentOffering: "Current Offering:\n\n🇨🇷 Volcan Azul, Costa Rica: Dried Fig. Vanilla." }, // Example, update if needed
+        "Center America": { description: "People like Central Coffees for their exciting acidity and clean notes of terroir.", currentOffering: "Current Offering:\n\n🇨🇷 Volcan Azul, Costa Rica: Dried Fig. Vanilla." },
         _default: { description: "Select a region to see details about the specific coffee offering for this type.", currentOffering: "" }
     },
     "Capsules": {
@@ -113,19 +113,22 @@ const getVariantIdFromSelections = (method, type, region, sizeOption, edition, q
       console.error("Curated variant ID lookup not implemented.");
       return null;
   } else if (type === 'Masterpiece') {
-      return 45969541562635; // Masterpiece Variant ID (assumed same for Qty 1, 2, 3)
+      return 45969541562635;
   } else if (type === 'Office') {
       console.error("Office variant ID lookup not implemented.");
       return null;
   } else if (type === 'Regional') {
       if (region === 'Center America') {
-          return 45972274381067; // ADDED: Regional - Center America Variant ID
+          return 45972274381067;
+      } else if (region === 'Ethiopia') {
+          return 45972211695883;
+      } else if (region === 'Brazil') { // ADDED: Regional - Brazil Variant ID
+          return 45969588617483;
       }
-      // TODO: Add other regional variant IDs (e.g., Brazil, Ethiopia)
       console.warn(`Regional variant ID lookup not implemented for region: ${region}`);
       return null;
   } else if (type === 'Low-Caf') {
-      return 45972282409227; // Low-Caf Variant ID
+      return 45972282409227;
   }
 
   console.warn(`Variant ID lookup fallback: M=${method},T=${type},R=${region},S=${sizeOption},E=${edition},Q=${quantity}`);
@@ -142,7 +145,7 @@ const sellingPlanMapping = {
   "6 Weeks":                 { planId: 710364365175, interval: 6, unit: 'Weeks' },
 };
 
-// Specific Selling Plan IDs for different types, if they vary
+// Specific Selling Plan IDs for different types
 const lowCafSellingPlanIds = {
     "2 Weeks": 710464045431,
     "4 Weeks (Recommended)": 710464143735,
@@ -151,12 +154,24 @@ const lowCafSellingPlanIds = {
 
 const MASTERPIECE_SELLING_PLAN_ID = 710364397943;
 
-// ADDED: Specific Selling Plan IDs for Regional - Center America
 const regionalCenterAmericaSellingPlanIds = {
-    "1 Week": 710364823927, // From your previous working magic link for 1 week
+    "1 Week": 710364823927,
     "2 Weeks": 710364856695,
-    "4 Weeks (Recommended)": 710364922231, // Assuming "4 Weeks (Recommended)" is the key for 4 weeks
+    "4 Weeks (Recommended)": 710364922231,
     "6 Weeks": 710364987767,
+};
+
+const regionalEthiopiaSellingPlanIds = {
+    "2 Weeks": 710364463479,
+    "4 Weeks (Recommended)": 710364529015,
+    "6 Weeks": 710364594551,
+};
+
+// ADDED: Specific Selling Plan IDs for Regional - Brazil
+const regionalBrazilSellingPlanIds = {
+    "2 Weeks": 710364660087,
+    "4 Weeks (Recommended)": 710364725623, // Key needs to match frequency selected, usually "4 Weeks (Recommended)"
+    "6 Weeks": 710364791159,
 };
 
 
@@ -189,7 +204,7 @@ const RightContainer = ({ method, type, region, edition, sizeOption, quantity, f
           (method === 'Capsules' && edition) ||
           (method !== 'Capsules' && type &&
             ( (type === 'Office' && sizeOption) ||
-              (type === 'Regional' && region) || // This will allow Regional to proceed if region is selected
+              (type === 'Regional' && region) || 
               (['Roasters Choice', 'Masterpiece', 'Low-Caf', 'Curated'].includes(type))
             )
           )
@@ -248,7 +263,7 @@ const RightContainer = ({ method, type, region, edition, sizeOption, quantity, f
                     sentenceParts.push(<span key="qty-val" className={highlightClass}>{`${qtyValue}x 250g`}</span>);
                 } else if (type === 'Masterpiece') {
                     sentenceParts.push(<span key="qty-val" className={highlightClass}>{`${qtyValue} bag${qtyValue > 1 ? 's' : ''}`}</span>);
-                } else { // Roasters Choice, Regional, Low-Caf
+                } else { 
                     sentenceParts.push(<span key="qty-val" className={highlightClass}>{quantity}</span>);
                     sentenceParts.push(` x 250g`);
                 }
@@ -307,16 +322,21 @@ const RightContainer = ({ method, type, region, edition, sizeOption, quantity, f
             if (type === 'Low-Caf') {
                 sellingPlanId = lowCafSellingPlanIds[frequency];
             } else if (type === 'Masterpiece') {
-                if (frequency === "4 Weeks (Recommended)") { // Masterpiece is fixed to 4 weeks
+                if (frequency === "4 Weeks (Recommended)") { 
                     sellingPlanId = MASTERPIECE_SELLING_PLAN_ID;
                 } else {
-                     console.warn(`Masterpiece selected with frequency "${frequency}", but its permalink will use the dedicated Masterpiece selling plan ID which is typically associated with a 4-week cycle.`);
-                    sellingPlanId = MASTERPIECE_SELLING_PLAN_ID; // Default to Masterpiece ID
+                    console.warn(`Masterpiece selected with frequency "${frequency}", but its permalink will use the dedicated Masterpiece selling plan ID which is typically associated with a 4-week cycle.`);
+                    sellingPlanId = MASTERPIECE_SELLING_PLAN_ID; 
                 }
-            } else if (type === 'Regional' && region === 'Center America') { // ADDED: Specific logic for Regional - Center America
+            } else if (type === 'Regional' && region === 'Center America') { 
                 sellingPlanId = regionalCenterAmericaSellingPlanIds[frequency];
-            } else {
-                // For other types, use the generic mapping
+            } else if (type === 'Regional' && region === 'Ethiopia') { 
+                sellingPlanId = regionalEthiopiaSellingPlanIds[frequency];
+            } else if (type === 'Regional' && region === 'Brazil') { // ADDED: Specific logic for Regional - Brazil
+                sellingPlanId = regionalBrazilSellingPlanIds[frequency];
+            }
+             else {
+                // For other types (e.g., Roasters Choice, Curated, etc.) use the generic mapping
                 const selectedPlanInfo = sellingPlanMapping[frequency];
                 if (selectedPlanInfo && selectedPlanInfo.planId) {
                     sellingPlanId = selectedPlanInfo.planId;
@@ -324,8 +344,9 @@ const RightContainer = ({ method, type, region, edition, sizeOption, quantity, f
             }
             
             // Fallback/error for types that got specific mapping but frequency didn't match
-            if ((type === 'Low-Caf' || (type === 'Regional' && region === 'Center America')) && !sellingPlanId) {
-                 const fallbackPlanInfo = sellingPlanMapping[frequency];
+            // This now correctly includes 'Brazil' in the condition.
+            if ((type === 'Low-Caf' || (type === 'Regional' && (region === 'Center America' || region === 'Ethiopia' || region === 'Brazil'))) && !sellingPlanId) {
+                 const fallbackPlanInfo = sellingPlanMapping[frequency]; 
                  if (fallbackPlanInfo && fallbackPlanInfo.planId) {
                      sellingPlanId = fallbackPlanInfo.planId;
                      console.warn(`${type} ${region || ''} specific selling plan ID not found for frequency "${frequency}". Attempting to use generic plan ID: ${sellingPlanId}. This might be incorrect.`);
@@ -335,7 +356,6 @@ const RightContainer = ({ method, type, region, edition, sizeOption, quantity, f
                      return;
                  }
             }
-
 
             if (!sellingPlanId) {
                 alert(`Error: Subscription plan details not found for the selected frequency: "${frequency}" and type: "${type}".`);
