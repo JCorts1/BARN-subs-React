@@ -1,6 +1,6 @@
 // src/components/RightContainer.jsx
 // Uses Shopify Permalink for checkout, opening in a new tab.
-// Includes specific Selling Plan IDs for Low-Caf and other product types.
+// Includes specific Selling Plan IDs for Low-Caf, Masterpiece, and other product types.
 
 import React from 'react';
 import './RightContainer.css'; // Your CSS file for RightContainer styles
@@ -9,7 +9,7 @@ import {
     Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious,
 } from "@/components/ui/carousel";
 
-// --- Image Data for Carousel ( 그대로 두었습니다 ) ---
+// --- Image Data for Carousel ( 그대로 두었습니다 - Kept as is) ---
 const carouselImageData = {
     "Roasters Choice": [
         "https://cdn.shopify.com/s/files/1/0831/4141/files/Ralf-coffee_1.jpg?v=1713252187",
@@ -102,9 +102,7 @@ const getVariantIdFromSelections = (method, type, region, sizeOption, edition, q
   console.log("Looking up Variant ID for Permalink:", { method, type, region, sizeOption, edition, quantity });
 
   if (method === 'Capsules') {
-      // TODO: Implement your logic to get Capsule Variant ID based on edition and quantity
-      console.error("Capsule variant ID lookup not fully implemented.");
-      // Example: if (edition === 'Brazil' && quantity === '3') return YOUR_CAPSULE_BRAZIL_3PACK_VARIANT_ID;
+      console.error("Capsule variant ID lookup not fully implemented for permalinks.");
       return null;
   } else if (type === 'Roasters Choice') {
       if (method === 'Filter') return 45910178332939;
@@ -112,24 +110,17 @@ const getVariantIdFromSelections = (method, type, region, sizeOption, edition, q
       console.warn("Roasters Choice selected but method is invalid:", method);
       return null;
   } else if (type === 'Curated') {
-      // TODO: Map Curated variant IDs based on method and quantity (e.g., quantity "2" means 2x250g)
       console.error("Curated variant ID lookup not implemented.");
       return null;
   } else if (type === 'Masterpiece') {
-      // 'quantity' prop is "1", "2", or "3" (bags)
-      if (quantity === '1') return 45969541562635;
-      // TODO: Add Variant IDs for Masterpiece Qty 2 and Qty 3 if they are different variants
-      console.error("Masterpiece variant ID lookup for quantity > 1 not implemented.");
-      return null;
+      // Assuming quantity "1", "2", or "3" for Masterpiece uses the same variant ID,
+      // and quantity is handled in the permalink.
+      return 45969541562635; // Masterpiece Variant ID
   } else if (type === 'Office') {
-      // TODO: Map Office variant IDs based on sizeOption (e.g., "1x 1kg", "2x 1kg")
       console.error("Office variant ID lookup not implemented.");
-      // Example: if (method === 'Espresso' && sizeOption === '1x 1kg') return YOUR_OFFICE_1KG_VARIANT_ID;
       return null;
   } else if (type === 'Regional') {
-      // TODO: Map Regional variant IDs based on region and method
       console.error("Regional variant ID lookup not implemented.");
-      // Example: if (region === 'Brazil' && method === 'Filter') return YOUR_REGIONAL_BRAZIL_FILTER_VARIANT_ID;
       return null;
   } else if (type === 'Low-Caf') {
       return 45972282409227; // Low-Caf Variant ID
@@ -139,7 +130,7 @@ const getVariantIdFromSelections = (method, type, region, sizeOption, edition, q
   return null;
 };
 
-// General selling plan mapping (used if not overridden for a specific type like Low-Caf)
+// General selling plan mapping
 const sellingPlanMapping = {
   "1 Week":                  { planId: 710364201335, interval: 1, unit: 'Weeks' },
   "2 Weeks":                 { planId: 710364234103, interval: 2, unit: 'Weeks' },
@@ -149,17 +140,20 @@ const sellingPlanMapping = {
   "6 Weeks":                 { planId: 710364365175, interval: 6, unit: 'Weeks' },
 };
 
-// Specific Selling Plan IDs for Low-Caf, as you provided
+// Specific Selling Plan IDs for different types, if they vary from the general mapping above
 const lowCafSellingPlanIds = {
     "2 Weeks": 710464045431,
-    "4 Weeks (Recommended)": 710464143735, // Ensure this key matches the 'frequency' state value
+    "4 Weeks (Recommended)": 710464143735,
     "6 Weeks": 710464110967,
 };
+
+// Masterpiece always uses its own specific selling plan ID, likely for "4 Weeks (Recommended)" frequency
+const MASTERPIECE_SELLING_PLAN_ID = 710364397943;
 
 
 const RightContainer = ({ method, type, region, edition, sizeOption, quantity, frequency }) => {
 
-    const SHOP_DOMAIN = "thebarn.de"; // Your Shopify domain
+    const SHOP_DOMAIN = "thebarn.de";
 
     const DefaultIntroContent = () => {
         const defaultImageUrl = "https://cdn.shopify.com/s/files/1/0831/4141/files/LOGO-NAME.png?v=1710576883";
@@ -233,22 +227,19 @@ const RightContainer = ({ method, type, region, edition, sizeOption, quantity, f
         }
         sentenceParts.push(' subscription');
 
-        if (quantity) { // quantity is finalSelectionDetail from App.jsx
+        if (quantity) {
             sentenceParts.push(' - Qty: ');
             if (type === 'Office') {
                 sentenceParts.push(<span key="qty-val" className={highlightClass}>{sizeOption}</span>);
             } else if (method === 'Capsules') {
-                // Assuming 'quantity' prop is the numeric value for packs like "3", "4", "5"
                 sentenceParts.push(<span key="qty-val" className={highlightClass}>{`${quantity}x 10 capsules`}</span>);
             } else {
                 const qtyValue = parseInt(quantity);
                 if (type === 'Curated') {
-                    // Assuming 'quantity' prop is "2", "4", "6" representing packs
                     sentenceParts.push(<span key="qty-val" className={highlightClass}>{`${qtyValue}x 250g`}</span>);
                 } else if (type === 'Masterpiece') {
-                     // Assuming 'quantity' prop is "1", "2", "3" representing bags
                     sentenceParts.push(<span key="qty-val" className={highlightClass}>{`${qtyValue} bag${qtyValue > 1 ? 's' : ''}`}</span>);
-                } else { // Roasters Choice, Regional, Low-Caf - assuming 'quantity' is number of 250g bags
+                } else {
                     sentenceParts.push(<span key="qty-val" className={highlightClass}>{quantity}</span>);
                     sentenceParts.push(` x 250g`);
                 }
@@ -294,7 +285,7 @@ const RightContainer = ({ method, type, region, edition, sizeOption, quantity, f
                     return;
                 }
             } else {
-                quantityForLink = parseInt(quantity, 10); // 'quantity' is finalSelectionDetail from App.jsx
+                quantityForLink = parseInt(quantity, 10);
             }
 
             if (isNaN(quantityForLink) || quantityForLink < 1) {
@@ -306,19 +297,15 @@ const RightContainer = ({ method, type, region, edition, sizeOption, quantity, f
             let sellingPlanId;
             if (type === 'Low-Caf') {
                 sellingPlanId = lowCafSellingPlanIds[frequency];
-                if (!sellingPlanId) {
-                    // Fallback or error if frequency for Low-Caf is not one of the mapped ones
-                    // This should ideally be prevented by allowedLowCafRegionalFrequencies in MiddleContainer
-                    // For safety, we can check or try to use the generic one, though it might be wrong.
-                    const fallbackPlanInfo = sellingPlanMapping[frequency];
-                    if (fallbackPlanInfo && fallbackPlanInfo.planId) {
-                        sellingPlanId = fallbackPlanInfo.planId;
-                        console.warn(`Low-Caf specific selling plan ID not found for frequency "${frequency}". Attempting to use generic plan ID: ${sellingPlanId}. This might be incorrect.`);
-                    } else {
-                        alert(`Error: Low-Caf is not available for the selected frequency: "${frequency}", or mapping is missing.`);
-                        console.error("Permalink Error: Low-Caf frequency not mapped for specific plan IDs and no fallback:", frequency);
-                        return;
-                    }
+            } else if (type === 'Masterpiece') {
+                // Masterpiece uses a specific plan ID, and its frequency is typically fixed to "4 Weeks (Recommended)"
+                // by the logic in MiddleContainer.jsx
+                if (frequency === "4 Weeks (Recommended)") {
+                    sellingPlanId = MASTERPIECE_SELLING_PLAN_ID;
+                } else {
+                    // This case should ideally not be reached if MiddleContainer correctly sets frequency for Masterpiece
+                    console.warn(`Masterpiece selected with frequency "${frequency}", but expected "4 Weeks (Recommended)". Using specific Masterpiece plan ID.`);
+                    sellingPlanId = MASTERPIECE_SELLING_PLAN_ID; 
                 }
             } else {
                 const selectedPlanInfo = sellingPlanMapping[frequency];
