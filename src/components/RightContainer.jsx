@@ -1,15 +1,15 @@
 // src/components/RightContainer.jsx
-// Updates Capsules: Taste Profile descriptions, variant ID lookup, summary sentence,
-// and uses Shopify Permalink for checkout opening in a new tab.
+// Uses Shopify Permalink for checkout, opening in a new tab.
+// Includes specific Selling Plan IDs for Low-Caf and other product types.
 
 import React from 'react';
-import './RightContainer.css'; // Your CSS file for RightContainer
+import './RightContainer.css'; // Your CSS file for RightContainer styles
 
 import {
     Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious,
 } from "@/components/ui/carousel";
 
-// --- Image Data for Carousel ---
+// --- Image Data for Carousel ( 그대로 두었습니다 ) ---
 const carouselImageData = {
     "Roasters Choice": [
         "https://cdn.shopify.com/s/files/1/0831/4141/files/Ralf-coffee_1.jpg?v=1713252187",
@@ -96,41 +96,50 @@ const subscriptionDescriptions = {
     }
 };
 
+// Function to get Variant ID based on selections
+// IMPORTANT: You need to populate this with all your actual Variant IDs
 const getVariantIdFromSelections = (method, type, region, sizeOption, edition, quantity) => {
   console.log("Looking up Variant ID for Permalink:", { method, type, region, sizeOption, edition, quantity });
 
   if (method === 'Capsules') {
-      console.error("Capsule variant ID lookup not fully implemented for permalinks.");
-      if (edition === 'Brazil' && quantity === '3') return null;
+      // TODO: Implement your logic to get Capsule Variant ID based on edition and quantity
+      console.error("Capsule variant ID lookup not fully implemented.");
+      // Example: if (edition === 'Brazil' && quantity === '3') return YOUR_CAPSULE_BRAZIL_3PACK_VARIANT_ID;
       return null;
   } else if (type === 'Roasters Choice') {
       if (method === 'Filter') return 45910178332939;
       if (method === 'Espresso') return 45910178398475;
-      console.warn("Roasters Choice selected but method is invalid:", method); return null;
+      console.warn("Roasters Choice selected but method is invalid:", method);
+      return null;
   } else if (type === 'Curated') {
-      console.error("Curated variant ID lookup not implemented for permalinks.");
+      // TODO: Map Curated variant IDs based on method and quantity (e.g., quantity "2" means 2x250g)
+      console.error("Curated variant ID lookup not implemented.");
       return null;
   } else if (type === 'Masterpiece') {
+      // 'quantity' prop is "1", "2", or "3" (bags)
       if (quantity === '1') return 45969541562635;
-      console.error("Masterpiece variant ID lookup for quantity > 1 not implemented for permalinks.");
+      // TODO: Add Variant IDs for Masterpiece Qty 2 and Qty 3 if they are different variants
+      console.error("Masterpiece variant ID lookup for quantity > 1 not implemented.");
       return null;
   } else if (type === 'Office') {
-      console.error("Office variant ID lookup not implemented for permalinks.");
-      if (method === 'Espresso' && sizeOption === '1x 1kg') return null;
+      // TODO: Map Office variant IDs based on sizeOption (e.g., "1x 1kg", "2x 1kg")
+      console.error("Office variant ID lookup not implemented.");
+      // Example: if (method === 'Espresso' && sizeOption === '1x 1kg') return YOUR_OFFICE_1KG_VARIANT_ID;
       return null;
   } else if (type === 'Regional') {
-      console.error("Regional variant ID lookup not implemented for permalinks.");
-      if (region === 'Brazil') return null;
+      // TODO: Map Regional variant IDs based on region and method
+      console.error("Regional variant ID lookup not implemented.");
+      // Example: if (region === 'Brazil' && method === 'Filter') return YOUR_REGIONAL_BRAZIL_FILTER_VARIANT_ID;
       return null;
   } else if (type === 'Low-Caf') {
-      console.error("Low-Caf variant ID lookup not implemented for permalinks.");
-      return null;
+      return 45972282409227; // Low-Caf Variant ID
   }
 
   console.warn(`Variant ID lookup fallback: M=${method},T=${type},R=${region},S=${sizeOption},E=${edition},Q=${quantity}`);
   return null;
 };
 
+// General selling plan mapping (used if not overridden for a specific type like Low-Caf)
 const sellingPlanMapping = {
   "1 Week":                  { planId: 710364201335, interval: 1, unit: 'Weeks' },
   "2 Weeks":                 { planId: 710364234103, interval: 2, unit: 'Weeks' },
@@ -140,18 +149,26 @@ const sellingPlanMapping = {
   "6 Weeks":                 { planId: 710364365175, interval: 6, unit: 'Weeks' },
 };
 
+// Specific Selling Plan IDs for Low-Caf, as you provided
+const lowCafSellingPlanIds = {
+    "2 Weeks": 710464045431,
+    "4 Weeks (Recommended)": 710464143735, // Ensure this key matches the 'frequency' state value
+    "6 Weeks": 710464110967,
+};
+
+
 const RightContainer = ({ method, type, region, edition, sizeOption, quantity, frequency }) => {
 
-    const SHOP_DOMAIN = "thebarn.de";
+    const SHOP_DOMAIN = "thebarn.de"; // Your Shopify domain
 
     const DefaultIntroContent = () => {
         const defaultImageUrl = "https://cdn.shopify.com/s/files/1/0831/4141/files/LOGO-NAME.png?v=1710576883";
         return (
             <div className='default-intro-content text-white w-[90%] h-full flex flex-col items-center'>
                 <div className='mt-8'>
-                    <img src={defaultImageUrl} alt="The Barn Coffee Roasters Logo" style={{ width: '100%', maxWidth: '220px', height: 'auto', margin: '1rem 0' }} />
+                    <img src={defaultImageUrl} alt="The Barn Coffee Roasters Logo" style={{ width: '100%', maxWidth: '180px', height: 'auto', margin: '1rem 0' }} />
                 </div>
-                <div className='p-5 border border-[#A57C62] rounded-md mt-8 w-full max-w-4xl'>
+                <div className='p-5 border border-[#A57C62] rounded-md mt-8 w-full max-w-5xl'>
                     <ul className="intro-list text-xl sm:text-2xl" style={{ listStyle: 'none', padding: 0 }}>
                         <li className="my-2">🌱 Sustainably sourced from top farms</li>
                         <li className="my-2">🔥 Expertly roasted in Berlin</li>
@@ -216,19 +233,22 @@ const RightContainer = ({ method, type, region, edition, sizeOption, quantity, f
         }
         sentenceParts.push(' subscription');
 
-        if (quantity) {
+        if (quantity) { // quantity is finalSelectionDetail from App.jsx
             sentenceParts.push(' - Qty: ');
             if (type === 'Office') {
                 sentenceParts.push(<span key="qty-val" className={highlightClass}>{sizeOption}</span>);
             } else if (method === 'Capsules') {
+                // Assuming 'quantity' prop is the numeric value for packs like "3", "4", "5"
                 sentenceParts.push(<span key="qty-val" className={highlightClass}>{`${quantity}x 10 capsules`}</span>);
             } else {
                 const qtyValue = parseInt(quantity);
                 if (type === 'Curated') {
+                    // Assuming 'quantity' prop is "2", "4", "6" representing packs
                     sentenceParts.push(<span key="qty-val" className={highlightClass}>{`${qtyValue}x 250g`}</span>);
                 } else if (type === 'Masterpiece') {
+                     // Assuming 'quantity' prop is "1", "2", "3" representing bags
                     sentenceParts.push(<span key="qty-val" className={highlightClass}>{`${qtyValue} bag${qtyValue > 1 ? 's' : ''}`}</span>);
-                } else {
+                } else { // Roasters Choice, Regional, Low-Caf - assuming 'quantity' is number of 250g bags
                     sentenceParts.push(<span key="qty-val" className={highlightClass}>{quantity}</span>);
                     sentenceParts.push(` x 250g`);
                 }
@@ -274,7 +294,7 @@ const RightContainer = ({ method, type, region, edition, sizeOption, quantity, f
                     return;
                 }
             } else {
-                quantityForLink = parseInt(quantity, 10);
+                quantityForLink = parseInt(quantity, 10); // 'quantity' is finalSelectionDetail from App.jsx
             }
 
             if (isNaN(quantityForLink) || quantityForLink < 1) {
@@ -283,13 +303,35 @@ const RightContainer = ({ method, type, region, edition, sizeOption, quantity, f
                 return;
             }
 
-            const selectedPlanInfo = sellingPlanMapping[frequency];
-            if (!selectedPlanInfo || !selectedPlanInfo.planId) {
-                alert(`Error: Subscription plan details not found for the selected frequency: "${frequency}".`);
-                console.error("Permalink Error: Missing selling plan ID for frequency:", frequency);
+            let sellingPlanId;
+            if (type === 'Low-Caf') {
+                sellingPlanId = lowCafSellingPlanIds[frequency];
+                if (!sellingPlanId) {
+                    // Fallback or error if frequency for Low-Caf is not one of the mapped ones
+                    // This should ideally be prevented by allowedLowCafRegionalFrequencies in MiddleContainer
+                    // For safety, we can check or try to use the generic one, though it might be wrong.
+                    const fallbackPlanInfo = sellingPlanMapping[frequency];
+                    if (fallbackPlanInfo && fallbackPlanInfo.planId) {
+                        sellingPlanId = fallbackPlanInfo.planId;
+                        console.warn(`Low-Caf specific selling plan ID not found for frequency "${frequency}". Attempting to use generic plan ID: ${sellingPlanId}. This might be incorrect.`);
+                    } else {
+                        alert(`Error: Low-Caf is not available for the selected frequency: "${frequency}", or mapping is missing.`);
+                        console.error("Permalink Error: Low-Caf frequency not mapped for specific plan IDs and no fallback:", frequency);
+                        return;
+                    }
+                }
+            } else {
+                const selectedPlanInfo = sellingPlanMapping[frequency];
+                if (selectedPlanInfo && selectedPlanInfo.planId) {
+                    sellingPlanId = selectedPlanInfo.planId;
+                }
+            }
+
+            if (!sellingPlanId) {
+                alert(`Error: Subscription plan details not found for the selected frequency: "${frequency}" and type: "${type}".`);
+                console.error("Permalink Error: Missing selling plan ID for frequency:", frequency, "type:", type);
                 return;
             }
-            const sellingPlanId = selectedPlanInfo.planId;
             
             const cartAddParams = new URLSearchParams();
             cartAddParams.append("items[][id]", variantId.toString());
@@ -300,12 +342,10 @@ const RightContainer = ({ method, type, region, edition, sizeOption, quantity, f
             const permalinkUrl = `https://${SHOP_DOMAIN}/cart/clear?return_to=${encodeURIComponent(`/cart/add?${cartAddParams.toString()}`)}`;
             
             console.log("Opening Permalink in new tab:", permalinkUrl);
-            // UPDATED: Open in a new tab and try to focus it
             const newTab = window.open(permalinkUrl, '_blank');
             if (newTab) {
                 newTab.focus();
             } else {
-                // Fallback or alert if pop-up was blocked
                 alert("Your browser may have blocked the new tab. Please check your pop-up blocker settings.");
             }
         };
@@ -318,7 +358,7 @@ const RightContainer = ({ method, type, region, edition, sizeOption, quantity, f
             <div className="final-selection-display w-[100%] flex flex-col items-center text-white text-center px-4">
                 <h2 className="summary-init text-2xl font-semibold text-[#A67C52] mb-4">Subscription Summary</h2>
                 {imagesToShow.length > 0 ? (
-                     <Carousel className="w-full max-w-md mx-auto mb-6" opts={{ align: "start", loop: imagesToShow.length > 1 }}>
+                     <Carousel className="w-full max-w-lg mx-auto mb-6" opts={{ align: "start", loop: imagesToShow.length > 1 }}>
                         <CarouselContent>
                             {imagesToShow.map((imageUrl, index) => (
                                 <CarouselItem key={`${method}-${type || edition}-${region || ''}-${index}-${quantity}`}>
@@ -344,7 +384,7 @@ const RightContainer = ({ method, type, region, edition, sizeOption, quantity, f
                      </div>
                  )}
                 {currentDescriptionData && currentDescriptionData.description && (
-                    <div className="subscription-description text-white my-4 text-left w-full max-w-4xl flex justify-center flex-col">
+                    <div className="subscription-description text-white my-4 text-left w-full max-w-5xl flex justify-center flex-col">
                         <div className="bg-[#3a3c3d] p-4 rounded-md border border-[#A67C52] text-base sm:text-lg w-full">
                             <p className="mb-3">{currentDescriptionData.description}</p>
                             {currentDescriptionData.currentOffering && (
@@ -356,10 +396,10 @@ const RightContainer = ({ method, type, region, edition, sizeOption, quantity, f
                         <div> <h1 className='words-animation'>{animationText}</h1> </div>
                     </div>
                 )}
-                <p className="summary-sentence text-base sm:text-lg leading-relaxed my-4 w-full max-w-4xl min-h-[3em]">
+                <p className="summary-sentence text-base sm:text-lg leading-relaxed my-4 w-full max-w-5xl min-h-[3em]">
                     {sentenceParts}
                 </p>
-                <div className="cart-btn mt-auto pt-4 w-full max-w-4xl flex justify-center sm:justify-end">
+                <div className="cart-btn mt-auto pt-4 w-full max-w-5xl flex justify-center sm:justify-end">
                      <button
                         className={`bg-[#A67C52] py-2 px-5 rounded-md border-[1.5px] border-transparent hover:border-[#3a3c3d] transition-all duration-300 ease-in-out transform text-white font-semibold text-base sm:text-md disabled:opacity-50 disabled:cursor-not-allowed enabled:hover:brightness-110 enabled:active:scale-95`}
                         disabled={!canAddToCart}
