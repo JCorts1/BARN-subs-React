@@ -1,7 +1,6 @@
 // src/components/RightContainer.jsx
 // Uses Shopify Permalink for checkout, opening in a new tab.
-// Includes specific Selling Plan IDs for Low-Caf, Masterpiece, Regional - Center America, Regional - Ethiopia, and Regional - Brazil.
-// Implements Curated product permalink logic with correct quantity mapping.
+// Includes specific Selling Plan IDs and Variant IDs for various products including Office.
 
 import React from 'react';
 import './RightContainer.css'; // Your CSS file for RightContainer styles
@@ -32,7 +31,7 @@ const carouselImageData = {
         "https://cdn.shopify.com/s/files/1/0831/4141/products/NanoChalla_32c7ddc5-d7a5-4989-8483-b2a358c63eb5.jpg?v=1739301233",
         "https://cdn.shopify.com/s/files/1/0831/4141/products/caffeine_levels_d161625f-8c4c-4a27-86fb-b3c5b94a3414.jpg?v=1739301233"
     ],
-    "Office": [
+    "Office": [ // Assuming generic Office images for now
         "https://cdn.shopify.com/s/files/1/1657/3941/files/volcan_azul_1kg.webp?v=1743027540",
         "https://cdn.shopify.com/s/files/1/0831/4141/files/HANNES_1kg_BAG.png?v=1706179901",
         "https://cdn.shopify.com/s/files/1/0831/4141/products/espressoshotsCropped_60eb6865-fd62-43c7-90c5-2bc9050f167b.jpg?v=1741274114"
@@ -110,23 +109,21 @@ const getVariantIdFromSelections = (method, type, region, sizeOption, edition, q
       console.warn("Roasters Choice selected but method is invalid:", method);
       return null;
   } else if (type === 'Curated') {
-      if (method === 'Filter') return 54897259151735; // Curated - Filter Variant ID
-      if (method === 'Espresso') return 54897259184503; // Curated - Espresso Variant ID
+      if (method === 'Filter') return 54897259151735;
+      if (method === 'Espresso') return 54897259184503;
       console.warn("Curated subscription selected but method is invalid:", method);
       return null;
   } else if (type === 'Masterpiece') {
       return 45969541562635;
   } else if (type === 'Office') {
-      console.error("Office variant ID lookup not implemented.");
+      if (sizeOption === "1x 1kg") return 43658532192523;
+      if (sizeOption === "2x 1kg") return 43658532258059;
+      console.warn(`Office subscription selected with unsupported size: ${sizeOption}. Currently only 1x 1kg and 2x 1kg are mapped.`);
       return null;
   } else if (type === 'Regional') {
-      if (region === 'Center America') {
-          return 45972274381067;
-      } else if (region === 'Ethiopia') {
-          return 45972211695883;
-      } else if (region === 'Brazil') {
-          return 45969588617483;
-      }
+      if (region === 'Center America') return 45972274381067;
+      if (region === 'Ethiopia') return 45972211695883;
+      if (region === 'Brazil') return 45969588617483;
       console.warn(`Regional variant ID lookup not implemented for region: ${region}`);
       return null;
   } else if (type === 'Low-Caf') {
@@ -143,37 +140,48 @@ const sellingPlanMapping = {
   "2 Weeks":                 { planId: 710364234103, interval: 2, unit: 'Weeks' },
   "3 Weeks":                 { planId: 710364266871, interval: 3, unit: 'Weeks' },
   "4 Weeks (Recommended)": { planId: 710364299639, interval: 4, unit: 'Weeks' },
+  "4 Weeks":                 { planId: 710364299639, interval: 4, unit: 'Weeks' }, // Alias for "4 Weeks"
   "5 Weeks":                 { planId: 710364332407, interval: 5, unit: 'Weeks' },
   "6 Weeks":                 { planId: 710364365175, interval: 6, unit: 'Weeks' },
 };
 
-// Specific Selling Plan IDs for different types
+// Specific Selling Plan IDs
 const lowCafSellingPlanIds = {
     "2 Weeks": 710464045431,
     "4 Weeks (Recommended)": 710464143735,
+    "4 Weeks": 710464143735, // Alias
     "6 Weeks": 710464110967,
 };
 
-const MASTERPIECE_SELLING_PLAN_ID = 710364397943;
+const MASTERPIECE_SELLING_PLAN_ID = 710364397943; // Typically for 4 Weeks
 
 const regionalCenterAmericaSellingPlanIds = {
     "1 Week": 710364823927,
     "2 Weeks": 710364856695,
     "4 Weeks (Recommended)": 710364922231,
+    "4 Weeks": 710364922231, // Alias
     "6 Weeks": 710364987767,
 };
 
 const regionalEthiopiaSellingPlanIds = {
     "2 Weeks": 710364463479,
     "4 Weeks (Recommended)": 710364529015,
+    "4 Weeks": 710364529015, // Alias
     "6 Weeks": 710364594551,
 };
 
-// ADDED: Specific Selling Plan IDs for Regional - Brazil
 const regionalBrazilSellingPlanIds = {
     "2 Weeks": 710364660087,
     "4 Weeks (Recommended)": 710364725623,
+    "4 Weeks": 710364725623, // Alias
     "6 Weeks": 710364791159,
+};
+
+// Specific Selling Plan IDs for Office
+const officeSellingPlanIds = {
+    "2 Weeks": 710447038839,
+    "4 Weeks": 710447104375,
+    "4 Weeks (Recommended)": 710447104375, // Ensure this covers the prop value if it includes "(Recommended)"
 };
 
 
@@ -205,7 +213,7 @@ const RightContainer = ({ method, type, region, edition, sizeOption, quantity, f
         (
           (method === 'Capsules' && edition) ||
           (method !== 'Capsules' && type &&
-            ( (type === 'Office' && sizeOption) ||
+            ( (type === 'Office' && sizeOption) || // For Office, quantity prop still needs to be valid for this check
               (type === 'Regional' && region) ||
               (['Roasters Choice', 'Masterpiece', 'Low-Caf', 'Curated'].includes(type))
             )
@@ -223,7 +231,7 @@ const RightContainer = ({ method, type, region, edition, sizeOption, quantity, f
         } else if (type === 'Regional') {
             imagesToShow = carouselImageData.Regional?.[region] || carouselImageData.Regional?._default || carouselImageData._fallback || [];
             currentDescriptionData = subscriptionDescriptions.Regional?.[region] || subscriptionDescriptions.Regional?._default || null;
-        } else {
+        } else { // Includes Office here for images/description
             imagesToShow = carouselImageData[type] || carouselImageData._fallback || [];
             currentDescriptionData = subscriptionDescriptions[type] || null;
         }
@@ -239,7 +247,7 @@ const RightContainer = ({ method, type, region, edition, sizeOption, quantity, f
                 sentenceParts.push(' - Taste: ');
                 sentenceParts.push(<span key="edition" className={highlightClass}>{edition}</span>);
             } else { sentenceParts.push(' (select taste profile)'); }
-        } else {
+        } else { // Not Capsules
             if (type) {
                 sentenceParts.push(' - ');
                 sentenceParts.push(<span key="type" className={highlightClass}>{type}</span>);
@@ -253,13 +261,13 @@ const RightContainer = ({ method, type, region, edition, sizeOption, quantity, f
         }
         sentenceParts.push(' subscription');
 
-        if (quantity) {
+        if (quantity) { // quantity prop is still relevant for display and for canAddToCart
             sentenceParts.push(' - Qty: ');
-            // For Curated, 'quantity' prop is the actual number of bags (2, 4, or 6)
-            // For other types, 'quantity' is usually the number of units/bags directly.
-            const qtyValue = parseInt(quantity);
+            const qtyValue = parseInt(quantity); // Actual number of bags for Curated (2,4,6), direct count for others.
 
             if (type === 'Office') {
+                // For Office, sizeOption (e.g., "1x 1kg") is the primary quantity indicator shown.
+                // The 'quantity' prop might be '1' by default from the parent if not specifically varied for Office.
                 sentenceParts.push(<span key="qty-val" className={highlightClass}>{sizeOption}</span>);
             } else if (method === 'Capsules') {
                 sentenceParts.push(<span key="qty-val" className={highlightClass}>{`${qtyValue}x 10 capsules`}</span>);
@@ -272,9 +280,10 @@ const RightContainer = ({ method, type, region, edition, sizeOption, quantity, f
                 sentenceParts.push(<span key="qty-val" className={highlightClass}>{qtyValue}</span>);
                 sentenceParts.push(` x 250g`);
             }
-        } else {
+        } else { // Fallback if quantity prop is missing
             sentenceParts.push(type === 'Office' ? ' (select size)' : ' (select quantity)');
         }
+
 
         if (frequency) {
             sentenceParts.push(', delivered every ');
@@ -303,50 +312,46 @@ const RightContainer = ({ method, type, region, edition, sizeOption, quantity, f
             }
 
             let quantityForLink;
-            const parsedQuantity = parseInt(quantity, 10); // quantity prop from parent
+            const parsedQuantityFromProp = parseInt(quantity, 10);
 
             if (type === 'Office') {
-                const match = sizeOption.match(/^(\d+)x/);
-                if (match && match[1]) {
-                    quantityForLink = parseInt(match[1], 10);
-                } else {
-                    alert("Error: Could not determine quantity for Office subscription from the size option.");
-                    console.error("Permalink Error: Could not parse quantity from Office sizeOption:", sizeOption);
-                    return;
-                }
+                // For Office, we select a specific variant (e.g., "1x 1kg" or "2x 1kg") and add 1 unit of that variant.
+                quantityForLink = 1;
             } else if (type === 'Curated') {
-                // Map actual bag count (parsedQuantity = 2, 4, or 6) to permalink tier (1, 2, or 3)
-                if (parsedQuantity === 2) { // 2x 250g
+                // 'quantity' prop from parent is actual bag count (2, 4, or 6)
+                // Map this to permalink tier (1, 2, or 3)
+                if (parsedQuantityFromProp === 2) { // 2x 250g
                     quantityForLink = 1;
-                } else if (parsedQuantity === 4) { // 4x 250g
+                } else if (parsedQuantityFromProp === 4) { // 4x 250g
                     quantityForLink = 2;
-                } else if (parsedQuantity === 6) { // 6x 250g
+                } else if (parsedQuantityFromProp === 6) { // 6x 250g
                     quantityForLink = 3;
                 } else {
                     console.error(`Unexpected quantity value for Curated subscription: ${quantity}. Using raw value for permalink.`);
-                    quantityForLink = parsedQuantity; // Fallback, though this case should be avoided by correct parent prop
+                    quantityForLink = parsedQuantityFromProp; // Fallback, though this case should be avoided
                 }
             } else {
                 // For other types (Roasters Choice, Low-Caf, Masterpiece, Regional etc.)
-                // The parsedQuantity is the direct value for the permalink.
-                quantityForLink = parsedQuantity;
+                quantityForLink = parsedQuantityFromProp;
             }
 
             if (isNaN(quantityForLink) || quantityForLink < 1) {
                 alert("Error: Invalid or missing quantity for the selected product.");
-                console.error("Permalink Error: Invalid quantityForLink:", quantityForLink, "from quantity prop:", quantity, "parsed as:", parsedQuantity);
+                console.error("Permalink Error: Invalid quantityForLink:", quantityForLink, "from quantity prop:", quantity, "parsed as:", parsedQuantityFromProp);
                 return;
             }
 
             let sellingPlanId;
-            if (type === 'Low-Caf') {
+            if (type === 'Office') {
+                sellingPlanId = officeSellingPlanIds[frequency];
+            } else if (type === 'Low-Caf') {
                 sellingPlanId = lowCafSellingPlanIds[frequency];
             } else if (type === 'Masterpiece') {
-                if (frequency === "4 Weeks (Recommended)") {
-                    sellingPlanId = MASTERPIECE_SELLING_PLAN_ID;
-                } else {
-                    console.warn(`Masterpiece selected with frequency "${frequency}", but its permalink will use the dedicated Masterpiece selling plan ID which is typically associated with a 4-week cycle.`);
-                    sellingPlanId = MASTERPIECE_SELLING_PLAN_ID;
+                // Masterpiece uses a single selling plan ID, typically tied to 4 weeks
+                // The frequency selection might be for user info but permalink uses the fixed plan
+                sellingPlanId = MASTERPIECE_SELLING_PLAN_ID;
+                 if (frequency !== "4 Weeks (Recommended)" && frequency !== "4 Weeks") {
+                    console.warn(`Masterpiece selected with frequency "${frequency}", but permalink will use the dedicated Masterpiece selling plan ID (${MASTERPIECE_SELLING_PLAN_ID}) typically for a 4-week cycle.`);
                 }
             } else if (type === 'Regional' && region === 'Center America') {
                 sellingPlanId = regionalCenterAmericaSellingPlanIds[frequency];
@@ -354,8 +359,7 @@ const RightContainer = ({ method, type, region, edition, sizeOption, quantity, f
                 sellingPlanId = regionalEthiopiaSellingPlanIds[frequency];
             } else if (type === 'Regional' && region === 'Brazil') {
                 sellingPlanId = regionalBrazilSellingPlanIds[frequency];
-            }
-             else {
+            } else {
                 // For other types (e.g., Roasters Choice, Curated) use the generic mapping
                 const selectedPlanInfo = sellingPlanMapping[frequency];
                 if (selectedPlanInfo && selectedPlanInfo.planId) {
@@ -363,17 +367,17 @@ const RightContainer = ({ method, type, region, edition, sizeOption, quantity, f
                 }
             }
 
-            if ((type === 'Low-Caf' || (type === 'Regional' && (region === 'Center America' || region === 'Ethiopia' || region === 'Brazil'))) && !sellingPlanId) {
-                 const fallbackPlanInfo = sellingPlanMapping[frequency];
-                 if (fallbackPlanInfo && fallbackPlanInfo.planId) {
-                     sellingPlanId = fallbackPlanInfo.planId;
-                     console.warn(`${type} ${region || ''} specific selling plan ID not found for frequency "${frequency}". Attempting to use generic plan ID: ${sellingPlanId}. This might be incorrect.`);
-                 } else {
-                     alert(`Error: ${type} ${region || ''} is not available for the selected frequency: "${frequency}", or mapping is missing.`);
-                     console.error(`Permalink Error: ${type} ${region || ''} frequency not mapped for specific plan IDs and no fallback:`, frequency);
-                     return;
-                 }
+            // Fallback for types with specific mappings if frequency doesn't match a specific plan ID
+            // This check should ideally only be for types that *might* use generic plans as a fallback.
+            // For Office, Low-Caf, Regional, if !sellingPlanId, it means the frequency is not supported.
+            const typesWithSpecificPlans = ['Office', 'Low-Caf', 'Regional'];
+            if (typesWithSpecificPlans.includes(type) && !sellingPlanId) {
+                 // Attempt generic fallback only if explicitly desired, otherwise it's an unsupported frequency
+                console.error(`Permalink Error: ${type} ${region || ''} specific selling plan ID not found for frequency "${frequency}". This frequency may not be supported.`);
+                alert(`Error: The selected frequency "${frequency}" is not available for ${type} ${region || ''}.`);
+                return;
             }
+
 
             if (!sellingPlanId) {
                 alert(`Error: Subscription plan details not found for the selected frequency: "${frequency}" and type: "${type}".`);
