@@ -1,15 +1,17 @@
 // src/components/RightContainer.jsx
 // Uses Shopify Permalink for checkout, opening in a new tab.
 // Includes specific Selling Plan IDs and Variant IDs for various products including Office.
+// Adds slower fade transitions between intro and summary views.
 
-import React from 'react';
+import React, { useRef } from 'react';
+import { SwitchTransition, CSSTransition } from 'react-transition-group';
 import './RightContainer.css'; // Your CSS file for RightContainer styles
 
 import {
     Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious,
 } from "@/components/ui/carousel";
 
-// --- Image Data for Carousel ---
+// --- Data Constants (Assumed to be accessible or imported if they were outside this file originally) ---
 const carouselImageData = {
     "Roasters Choice": [
         "https://cdn.shopify.com/s/files/1/0831/4141/files/Ralf-coffee_1.jpg?v=1713252187",
@@ -63,7 +65,6 @@ const carouselImageData = {
         "https://cdn.shopify.com/s/files/1/0831/4141/files/LOGO-NAME.png?v=1710576883"
      ]
 };
-
 const subscriptionDescriptions = {
     "Roasters Choice": { description: "Our most popular Subscription. Seasonal coffee curated every month. The perfect way to explore stunning Single Origin flavour.", currentOffering: "Current Offering:\n\n🇪🇹 Spring Coffee, Ethiopia: Apricot Jam. Bergamot. Floral." },
     "Curated": { description: "Perfect for sharing or enjoying variety. Every month our Roasters select two exceptional 250g bags of different single origin coffees, roasted for Filter or Espresso.", currentOffering: "Current Pairings:\n\nPairing details coming soon!" },
@@ -95,365 +96,298 @@ const subscriptionDescriptions = {
         }
     }
 };
-
-// Function to get Variant ID based on selections
 const getVariantIdFromSelections = (method, type, region, sizeOption, edition, quantity) => {
-  console.log("Looking up Variant ID for Permalink:", { method, type, region, sizeOption, edition, quantity });
-
-  if (method === 'Capsules') {
-      console.error("Capsule variant ID lookup not fully implemented for permalinks.");
-      return null;
-  } else if (type === 'Roasters Choice') {
-      if (method === 'Filter') return 45910178332939;
-      if (method === 'Espresso') return 45910178398475;
-      console.warn("Roasters Choice selected but method is invalid:", method);
-      return null;
-  } else if (type === 'Curated') {
-      if (method === 'Filter') return 54897259151735;
-      if (method === 'Espresso') return 54897259184503;
-      console.warn("Curated subscription selected but method is invalid:", method);
-      return null;
-  } else if (type === 'Masterpiece') {
-      return 45969541562635;
-  } else if (type === 'Office') {
-      if (sizeOption === "1x 1kg") return 43658532192523;
-      if (sizeOption === "2x 1kg") return 43658532258059;
-      console.warn(`Office subscription selected with unsupported size: ${sizeOption}. Currently only 1x 1kg and 2x 1kg are mapped.`);
-      return null;
-  } else if (type === 'Regional') {
-      if (region === 'Center America') return 45972274381067;
-      if (region === 'Ethiopia') return 45972211695883;
-      if (region === 'Brazil') return 45969588617483;
-      console.warn(`Regional variant ID lookup not implemented for region: ${region}`);
-      return null;
-  } else if (type === 'Low-Caf') {
-      return 45972282409227;
-  }
-
-  console.warn(`Variant ID lookup fallback: M=${method},T=${type},R=${region},S=${sizeOption},E=${edition},Q=${quantity}`);
-  return null;
+  if (method === 'Capsules') { console.error("Capsule ID lookup not implemented."); return null; }
+  if (type === 'Roasters Choice') {
+      if (method === 'Filter') return 45910178332939; if (method === 'Espresso') return 45910178398475;
+      console.warn("Roasters Choice invalid method:", method); return null;
+  } if (type === 'Curated') {
+      if (method === 'Filter') return 54897259151735; if (method === 'Espresso') return 54897259184503;
+      console.warn("Curated invalid method:", method); return null;
+  } if (type === 'Masterpiece') return 45969541562635;
+  if (type === 'Office') {
+      if (sizeOption === "1x 1kg") return 43658532192523; if (sizeOption === "2x 1kg") return 43658532258059;
+      console.warn("Office unsupported size:", sizeOption); return null;
+  } if (type === 'Regional') {
+      if (region === 'Center America') return 45972274381067; if (region === 'Ethiopia') return 45972211695883; if (region === 'Brazil') return 45969588617483;
+      console.warn("Regional region not mapped:", region); return null;
+  } if (type === 'Low-Caf') return 45972282409227;
+  console.warn("Fallback: Variant ID lookup failed.", { method, type, region, sizeOption, edition, quantity }); return null;
 };
-
-// General selling plan mapping
 const sellingPlanMapping = {
-  "1 Week":                  { planId: 710364201335, interval: 1, unit: 'Weeks' },
-  "2 Weeks":                 { planId: 710364234103, interval: 2, unit: 'Weeks' },
-  "3 Weeks":                 { planId: 710364266871, interval: 3, unit: 'Weeks' },
-  "4 Weeks (Recommended)": { planId: 710364299639, interval: 4, unit: 'Weeks' },
-  "4 Weeks":                 { planId: 710364299639, interval: 4, unit: 'Weeks' }, // Alias for "4 Weeks"
-  "5 Weeks":                 { planId: 710364332407, interval: 5, unit: 'Weeks' },
-  "6 Weeks":                 { planId: 710364365175, interval: 6, unit: 'Weeks' },
+  "1 Week": { planId: 710364201335 }, "2 Weeks": { planId: 710364234103 }, "3 Weeks": { planId: 710364266871 },
+  "4 Weeks (Recommended)": { planId: 710364299639 }, "4 Weeks": { planId: 710364299639 },
+  "5 Weeks": { planId: 710364332407 }, "6 Weeks": { planId: 710364365175 },
 };
+const lowCafSellingPlanIds = {"2 Weeks": 710464045431, "4 Weeks (Recommended)": 710464143735, "4 Weeks": 710464143735, "6 Weeks": 710464110967 };
+const MASTERPIECE_SELLING_PLAN_ID = 710364397943;
+const regionalCenterAmericaSellingPlanIds = { "1 Week": 710364823927, "2 Weeks": 710364856695, "4 Weeks (Recommended)": 710364922231, "4 Weeks": 710364922231, "6 Weeks": 710364987767 };
+const regionalEthiopiaSellingPlanIds = { "2 Weeks": 710364463479, "4 Weeks (Recommended)": 710364529015, "4 Weeks": 710364529015, "6 Weeks": 710364594551 };
+const regionalBrazilSellingPlanIds = { "2 Weeks": 710364660087, "4 Weeks (Recommended)": 710364725623, "4 Weeks": 710364725623, "6 Weeks": 710364791159 };
+const officeSellingPlanIds = { "2 Weeks": 710447038839, "4 Weeks": 710447104375, "4 Weeks (Recommended)": 710447104375 };
+const SHOP_DOMAIN = "thebarn.de";
 
-// Specific Selling Plan IDs
-const lowCafSellingPlanIds = {
-    "2 Weeks": 710464045431,
-    "4 Weeks (Recommended)": 710464143735,
-    "4 Weeks": 710464143735, // Alias
-    "6 Weeks": 710464110967,
-};
-
-const MASTERPIECE_SELLING_PLAN_ID = 710364397943; // Typically for 4 Weeks
-
-const regionalCenterAmericaSellingPlanIds = {
-    "1 Week": 710364823927,
-    "2 Weeks": 710364856695,
-    "4 Weeks (Recommended)": 710364922231,
-    "4 Weeks": 710364922231, // Alias
-    "6 Weeks": 710364987767,
-};
-
-const regionalEthiopiaSellingPlanIds = {
-    "2 Weeks": 710364463479,
-    "4 Weeks (Recommended)": 710364529015,
-    "4 Weeks": 710364529015, // Alias
-    "6 Weeks": 710364594551,
-};
-
-const regionalBrazilSellingPlanIds = {
-    "2 Weeks": 710364660087,
-    "4 Weeks (Recommended)": 710364725623,
-    "4 Weeks": 710364725623, // Alias
-    "6 Weeks": 710364791159,
-};
-
-// Specific Selling Plan IDs for Office
-const officeSellingPlanIds = {
-    "2 Weeks": 710447038839,
-    "4 Weeks": 710447104375,
-    "4 Weeks (Recommended)": 710447104375,
-};
-
-
-const RightContainer = ({ method, type, region, edition, sizeOption, quantity, frequency }) => {
-
-    const SHOP_DOMAIN = "thebarn.de";
-
-    const DefaultIntroContent = () => {
-        const defaultImageUrl = "https://cdn.shopify.com/s/files/1/0831/4141/files/LOGO-NAME.png?v=1710576883";
-        return (
-            <div className='default-intro-content text-white w-[90%] h-full flex flex-col items-center'>
-                <div className='mt-8'>
-                    <img src={defaultImageUrl} alt="The Barn Coffee Roasters Logo" style={{ width: '100%', maxWidth: '180px', height: 'auto', margin: '1rem 0' }} />
-                </div>
-                <div className='p-5 border border-[#A57C62] rounded-md mt-8 max-w-2xl'> {/* Removed w-full, changed max-width */}
-                    <ul className="intro-list text-xl sm:text-2xl" style={{ listStyle: 'none', padding: 0 }}>
-                        <li className="my-2">🌱 Sustainably sourced from top farms</li>
-                        <li className="my-2">🔥 Expertly roasted in Berlin</li>
-                        <li className="my-2">📦 Delivered fresh, right when you need it</li>
-                        <li className="my-2">☕ Always rotating—always exceptional</li>
-                    </ul>
-                </div>
+// --- DefaultIntroContent Component ---
+const DefaultIntroContent = React.forwardRef((props, ref) => {
+    const defaultImageUrl = "https://cdn.shopify.com/s/files/1/0831/4141/files/LOGO-NAME.png?v=1710576883";
+    return (
+        <div ref={ref} className='default-intro-content text-white w-[90%] h-full flex flex-col items-center'>
+            <div className='mt-8'>
+                <img src={defaultImageUrl} alt="The Barn Coffee Roasters Logo" style={{ width: '100%', maxWidth: '180px', height: 'auto', margin: '1rem 0' }} />
             </div>
-        );
-    };
+            <div className='p-5 border border-[#A57C62] rounded-md mt-8 max-w-2xl'>
+                <ul className="intro-list text-xl sm:text-2xl" style={{ listStyle: 'none', padding: 0 }}>
+                    <li className="my-2">🌱 Sustainably sourced from top farms</li>
+                    <li className="my-2">🔥 Expertly roasted in Berlin</li>
+                    <li className="my-2">📦 Delivered fresh, right when you need it</li>
+                    <li className="my-2">☕ Always rotating—always exceptional</li>
+                </ul>
+            </div>
+        </div>
+    );
+});
+DefaultIntroContent.displayName = 'DefaultIntroContent'; // For better debugging
 
-    const showSummaryLayout = method && (type || edition);
-    const canAddToCart = method && quantity && frequency &&
-        (
-          (method === 'Capsules' && edition) ||
-          (method !== 'Capsules' && type &&
-            ( (type === 'Office' && sizeOption) ||
-              (type === 'Regional' && region) ||
-              (['Roasters Choice', 'Masterpiece', 'Low-Caf', 'Curated'].includes(type))
-            )
-          )
-        );
+// --- SummaryDisplay Component (Encapsulates summary view logic and JSX) ---
+const SummaryDisplay = React.forwardRef(({
+    method, type, region, edition, sizeOption, quantity, frequency, canAddToCartProp
+}, ref) => {
 
-    let contentToRender;
-    let imagesToShow = [];
-    let currentDescriptionData = null;
+    let imagesToShowInSummary = [];
+    let currentDescriptionDataInSummary = null;
 
-    if (showSummaryLayout) {
-        if (method === 'Capsules') {
-            imagesToShow = carouselImageData.Capsules || carouselImageData._fallback || [];
-            currentDescriptionData = subscriptionDescriptions.Capsules?.[edition] || subscriptionDescriptions.Capsules?._default || null;
-        } else if (type === 'Regional') {
-            imagesToShow = carouselImageData.Regional?.[region] || carouselImageData.Regional?._default || carouselImageData._fallback || [];
-            currentDescriptionData = subscriptionDescriptions.Regional?.[region] || subscriptionDescriptions.Regional?._default || null;
-        } else {
-            imagesToShow = carouselImageData[type] || carouselImageData._fallback || [];
-            currentDescriptionData = subscriptionDescriptions[type] || null;
-        }
-        if (!Array.isArray(imagesToShow)) { imagesToShow = carouselImageData._fallback || []; }
+    if (method === 'Capsules') {
+        imagesToShowInSummary = carouselImageData.Capsules || carouselImageData._fallback || [];
+        currentDescriptionDataInSummary = subscriptionDescriptions.Capsules?.[edition] || subscriptionDescriptions.Capsules?._default || null;
+    } else if (type === 'Regional') {
+        imagesToShowInSummary = carouselImageData.Regional?.[region] || carouselImageData.Regional?._default || carouselImageData._fallback || [];
+        currentDescriptionDataInSummary = subscriptionDescriptions.Regional?.[region] || subscriptionDescriptions.Regional?._default || null;
+    } else {
+        imagesToShowInSummary = carouselImageData[type] || carouselImageData._fallback || [];
+        currentDescriptionDataInSummary = subscriptionDescriptions[type] || null;
+    }
+    if (!Array.isArray(imagesToShowInSummary)) { imagesToShowInSummary = carouselImageData._fallback || []; }
 
-        const highlightClass = "text-[#A67C52] font-semibold";
-        const sentenceParts = [];
-        sentenceParts.push('Your selection: ');
-        sentenceParts.push(<span key="method" className={highlightClass}>{method}</span>);
+    const highlightClass = "text-[#A67C52] font-semibold";
+    const sentenceParts = [];
+    sentenceParts.push('Your selection: ');
+    sentenceParts.push(<span key="method" className={highlightClass}>{method}</span>);
 
-        if (method === 'Capsules') {
-            if (edition) {
-                sentenceParts.push(' - Taste: ');
-                sentenceParts.push(<span key="edition" className={highlightClass}>{edition}</span>);
-            } else { sentenceParts.push(' (select taste profile)'); }
-        } else {
-            if (type) {
-                sentenceParts.push(' - ');
-                sentenceParts.push(<span key="type" className={highlightClass}>{type}</span>);
-                if (type === 'Regional') {
-                    if (region) { sentenceParts.push(' - '); sentenceParts.push(<span key="region" className={highlightClass}>{region}</span>); }
-                    else { sentenceParts.push(' (select region)'); }
-                }
-            } else {
-                 sentenceParts.push(' (select type)');
-            }
-        }
-        sentenceParts.push(' subscription');
-
-        if (quantity) {
-            sentenceParts.push(' - Qty: ');
-            const qtyValue = parseInt(quantity);
-
-            if (type === 'Office') {
-                sentenceParts.push(<span key="qty-val" className={highlightClass}>{sizeOption}</span>);
-            } else if (method === 'Capsules') {
-                sentenceParts.push(<span key="qty-val" className={highlightClass}>{`${qtyValue}x 10 capsules`}</span>);
-            } else if (type === 'Curated') {
-                sentenceParts.push(<span key="qty-val" className={highlightClass}>{`${qtyValue}x 250g`}</span>);
-            } else if (type === 'Masterpiece') {
-                sentenceParts.push(<span key="qty-val" className={highlightClass}>{`${qtyValue} bag${qtyValue > 1 ? 's' : ''}`}</span>);
-            } else {
-                sentenceParts.push(<span key="qty-val" className={highlightClass}>{qtyValue}</span>);
-                sentenceParts.push(` x 250g`);
+    if (method === 'Capsules') {
+        if (edition) {
+            sentenceParts.push(' - Taste: ');
+            sentenceParts.push(<span key="edition" className={highlightClass}>{edition}</span>);
+        } else { sentenceParts.push(' (select taste profile)'); }
+    } else {
+        if (type) {
+            sentenceParts.push(' - ');
+            sentenceParts.push(<span key="type" className={highlightClass}>{type}</span>);
+            if (type === 'Regional') {
+                if (region) { sentenceParts.push(' - '); sentenceParts.push(<span key="region" className={highlightClass}>{region}</span>); }
+                else { sentenceParts.push(' (select region)'); }
             }
         } else {
-            sentenceParts.push(type === 'Office' ? ' (select size)' : ' (select quantity)');
+             sentenceParts.push(' (select type)');
         }
+    }
+    sentenceParts.push(' subscription');
 
-
-        if (frequency) {
-            sentenceParts.push(', delivered every ');
-            const displayFrequency = frequency.replace(' (Recommended)', '');
-            sentenceParts.push(<span key="freq" className={highlightClass}>{displayFrequency}</span>);
-         } else {
-            sentenceParts.push(' (select frequency)');
+    if (quantity) {
+        sentenceParts.push(' - Qty: ');
+        const qtyValue = parseInt(quantity);
+        if (type === 'Office') {
+            sentenceParts.push(<span key="qty-val" className={highlightClass}>{sizeOption}</span>);
+        } else if (method === 'Capsules') {
+            sentenceParts.push(<span key="qty-val" className={highlightClass}>{`${qtyValue}x 10 capsules`}</span>);
+        } else if (type === 'Curated') {
+            sentenceParts.push(<span key="qty-val" className={highlightClass}>{`${qtyValue}x 250g`}</span>);
+        } else if (type === 'Masterpiece') {
+            sentenceParts.push(<span key="qty-val" className={highlightClass}>{`${qtyValue} bag${qtyValue > 1 ? 's' : ''}`}</span>);
+        } else {
+            sentenceParts.push(<span key="qty-val" className={highlightClass}>{qtyValue}</span>);
+            sentenceParts.push(` x 250g`);
         }
-        sentenceParts.push('.');
+    } else {
+        sentenceParts.push(type === 'Office' ? ' (select size)' : ' (select quantity)');
+    }
 
-        const handleAddToCartClick = () => {
-            console.log("Attempting to generate Permalink for State:", { method, type, region, edition, sizeOption, quantity, frequency });
+    if (frequency) {
+        sentenceParts.push(', delivered every ');
+        const displayFrequency = frequency.replace(' (Recommended)', '');
+        sentenceParts.push(<span key="freq" className={highlightClass}>{displayFrequency}</span>);
+     } else {
+        sentenceParts.push(' (select frequency)');
+    }
+    sentenceParts.push('.');
 
-            if (!canAddToCart) {
-                alert("Please complete your subscription selections to proceed.");
-                console.warn("Permalink generation blocked by canAddToCart check.");
-                return;
-            }
-
-            const variantId = getVariantIdFromSelections(method, type, region, sizeOption, edition, quantity);
-
-            if (!variantId) {
-                alert("Error: Product variant could not be determined for your selection. Please ensure all options are selected or check configuration (ensure Variant IDs are mapped).");
-                console.error("Permalink Error: Missing Variant ID for selections:", { method, type, region, edition, sizeOption, quantity });
-                return;
-            }
-
-            let quantityForLink;
-            const parsedQuantityFromProp = parseInt(quantity, 10);
-
-            if (type === 'Office') {
-                quantityForLink = 1;
-            } else if (type === 'Curated') {
-                if (parsedQuantityFromProp === 2) {
-                    quantityForLink = 1;
-                } else if (parsedQuantityFromProp === 4) {
-                    quantityForLink = 2;
-                } else if (parsedQuantityFromProp === 6) {
-                    quantityForLink = 3;
-                } else {
-                    console.error(`Unexpected quantity value for Curated subscription: ${quantity}. Using raw value for permalink.`);
-                    quantityForLink = parsedQuantityFromProp;
-                }
-            } else {
+    const handleAddToCartClick = () => {
+        console.log("Add to cart clicked from SummaryDisplay. State:", { method, type, region, edition, sizeOption, quantity, frequency, canAddToCartProp });
+        if (!canAddToCartProp) {
+            alert("Please complete your subscription selections to proceed.");
+            console.warn("Permalink generation blocked by canAddToCartProp check in SummaryDisplay.");
+            return;
+        }
+        const variantId = getVariantIdFromSelections(method, type, region, sizeOption, edition, quantity);
+        if (!variantId) {
+            alert("Error: Product variant could not be determined for your selection. Please ensure all options are selected or check configuration (ensure Variant IDs are mapped).");
+            console.error("Permalink Error in SummaryDisplay: Missing Variant ID for selections:", { method, type, region, edition, sizeOption, quantity });
+            return;
+        }
+        let quantityForLink;
+        const parsedQuantityFromProp = parseInt(quantity, 10);
+        if (type === 'Office') {
+            quantityForLink = 1;
+        } else if (type === 'Curated') {
+            if (parsedQuantityFromProp === 2) quantityForLink = 1;
+            else if (parsedQuantityFromProp === 4) quantityForLink = 2;
+            else if (parsedQuantityFromProp === 6) quantityForLink = 3;
+            else {
+                console.error(`Unexpected quantity value for Curated subscription: ${quantity}. Using raw value for permalink.`);
                 quantityForLink = parsedQuantityFromProp;
             }
+        } else {
+            quantityForLink = parsedQuantityFromProp;
+        }
 
-            if (isNaN(quantityForLink) || quantityForLink < 1) {
-                alert("Error: Invalid or missing quantity for the selected product.");
-                console.error("Permalink Error: Invalid quantityForLink:", quantityForLink, "from quantity prop:", quantity, "parsed as:", parsedQuantityFromProp);
-                return;
+        if (isNaN(quantityForLink) || quantityForLink < 1) {
+            alert("Error: Invalid or missing quantity for the selected product.");
+            console.error("Permalink Error in SummaryDisplay: Invalid quantityForLink:", quantityForLink, "from quantity prop:", quantity, "parsed as:", parsedQuantityFromProp);
+            return;
+        }
+        let sellingPlanId;
+        if (type === 'Office') sellingPlanId = officeSellingPlanIds[frequency];
+        else if (type === 'Low-Caf') sellingPlanId = lowCafSellingPlanIds[frequency];
+        else if (type === 'Masterpiece') {
+            sellingPlanId = MASTERPIECE_SELLING_PLAN_ID;
+            if (frequency !== "4 Weeks (Recommended)" && frequency !== "4 Weeks") {
+                console.warn(`Masterpiece selected with frequency "${frequency}", but permalink will use the dedicated Masterpiece selling plan ID (${MASTERPIECE_SELLING_PLAN_ID}) typically for a 4-week cycle.`);
             }
+        }
+        else if (type === 'Regional' && region === 'Center America') sellingPlanId = regionalCenterAmericaSellingPlanIds[frequency];
+        else if (type === 'Regional' && region === 'Ethiopia') sellingPlanId = regionalEthiopiaSellingPlanIds[frequency];
+        else if (type === 'Regional' && region === 'Brazil') sellingPlanId = regionalBrazilSellingPlanIds[frequency];
+        else { // For Roasters Choice, Curated
+            const selectedPlanInfo = sellingPlanMapping[frequency];
+            if (selectedPlanInfo && selectedPlanInfo.planId) sellingPlanId = selectedPlanInfo.planId;
+        }
 
-            let sellingPlanId;
-            if (type === 'Office') {
-                sellingPlanId = officeSellingPlanIds[frequency];
-            } else if (type === 'Low-Caf') {
-                sellingPlanId = lowCafSellingPlanIds[frequency];
-            } else if (type === 'Masterpiece') {
-                sellingPlanId = MASTERPIECE_SELLING_PLAN_ID;
-                 if (frequency !== "4 Weeks (Recommended)" && frequency !== "4 Weeks") {
-                    console.warn(`Masterpiece selected with frequency "${frequency}", but permalink will use the dedicated Masterpiece selling plan ID (${MASTERPIECE_SELLING_PLAN_ID}) typically for a 4-week cycle.`);
-                }
-            } else if (type === 'Regional' && region === 'Center America') {
-                sellingPlanId = regionalCenterAmericaSellingPlanIds[frequency];
-            } else if (type === 'Regional' && region === 'Ethiopia') {
-                sellingPlanId = regionalEthiopiaSellingPlanIds[frequency];
-            } else if (type === 'Regional' && region === 'Brazil') {
-                sellingPlanId = regionalBrazilSellingPlanIds[frequency];
-            } else { // For Roasters Choice, Curated
-                const selectedPlanInfo = sellingPlanMapping[frequency];
-                if (selectedPlanInfo && selectedPlanInfo.planId) {
-                    sellingPlanId = selectedPlanInfo.planId;
-                }
-            }
+        const typesWithSpecificPlans = ['Office', 'Low-Caf', 'Regional'];
+        if (typesWithSpecificPlans.includes(type) && !sellingPlanId) {
+            console.error(`Permalink Error in SummaryDisplay: ${type} ${region || ''} specific selling plan ID not found for frequency "${frequency}". This frequency may not be supported.`);
+            alert(`Error: The selected frequency "${frequency}" is not available for ${type} ${region || ''}.`);
+            return;
+        }
+        if (!sellingPlanId) {
+            alert(`Error: Subscription plan details not found for the selected frequency: "${frequency}" and type: "${type}".`);
+            console.error("Permalink Error in SummaryDisplay: Missing selling plan ID for frequency:", frequency, "type:", type);
+            return;
+        }
 
-            const typesWithSpecificPlans = ['Office', 'Low-Caf', 'Regional'];
-            if (typesWithSpecificPlans.includes(type) && !sellingPlanId) {
-                console.error(`Permalink Error: ${type} ${region || ''} specific selling plan ID not found for frequency "${frequency}". This frequency may not be supported.`);
-                alert(`Error: The selected frequency "${frequency}" is not available for ${type} ${region || ''}.`);
-                return;
-            }
+        const cartAddParams = new URLSearchParams();
+        cartAddParams.append("items[][id]", variantId.toString());
+        cartAddParams.append("items[][quantity]", quantityForLink.toString());
+        cartAddParams.append("items[][selling_plan]", sellingPlanId.toString());
+        cartAddParams.append("return_to", "/checkout");
+        const permalinkUrl = `https://${SHOP_DOMAIN}/cart/clear?return_to=${encodeURIComponent(`/cart/add?${cartAddParams.toString()}`)}`;
+        console.log("Opening Permalink in new tab from SummaryDisplay:", permalinkUrl);
+        const newTab = window.open(permalinkUrl, '_blank');
+        if (newTab) newTab.focus(); else alert("Your browser may have blocked the new tab. Please check your pop-up blocker settings.");
+    };
 
+    const animationText = type === 'Masterpiece'
+        ? "We roast this subscription only on the first Tuesday every month"
+        : "You can adjust your quantity any time!";
 
-            if (!sellingPlanId) {
-                alert(`Error: Subscription plan details not found for the selected frequency: "${frequency}" and type: "${type}".`);
-                console.error("Permalink Error: Missing selling plan ID for frequency:", frequency, "type:", type);
-                return;
-            }
-
-            const cartAddParams = new URLSearchParams();
-            cartAddParams.append("items[][id]", variantId.toString());
-            cartAddParams.append("items[][quantity]", quantityForLink.toString());
-            cartAddParams.append("items[][selling_plan]", sellingPlanId.toString());
-            cartAddParams.append("return_to", "/checkout");
-
-            const permalinkUrl = `https://${SHOP_DOMAIN}/cart/clear?return_to=${encodeURIComponent(`/cart/add?${cartAddParams.toString()}`)}`;
-
-            console.log("Opening Permalink in new tab:", permalinkUrl);
-            const newTab = window.open(permalinkUrl, '_blank');
-            if (newTab) {
-                newTab.focus();
-            } else {
-                alert("Your browser may have blocked the new tab. Please check your pop-up blocker settings.");
-            }
-        };
-
-        const animationText = type === 'Masterpiece'
-            ? "We roast this subscription only on the first Tuesday every month"
-            : "You can adjust your quantity any time!";
-
-        contentToRender = (
-            <div className="final-selection-display w-[100%] flex flex-col items-center text-white text-center px-4">
-                <h2 className="summary-init text-2xl font-semibold text-[#A67C52] mb-4">Subscription Summary</h2>
-                {imagesToShow.length > 0 ? (
-                     <Carousel className="w-full max-w-lg mx-auto mb-6" opts={{ align: "start", loop: imagesToShow.length > 1 }}>
-                        <CarouselContent>
-                            {imagesToShow.map((imageUrl, index) => (
-                                <CarouselItem key={`${method}-${type || edition}-${region || ''}-${index}-${quantity}`}>
-                                    <div className="p-1">
-                                        <img
-                                            src={imageUrl}
-                                            alt={`${method}${type ? ' - '+type : ''}${edition ? ' - Taste: '+edition : ''}${region ? ' - '+region : ''} image ${index + 1}`}
-                                            className="w-full h-auto aspect-square object-cover rounded-md block"
-                                            loading="lazy"
-                                        />
-                                    </div>
-                                </CarouselItem>
-                            ))}
-                        </CarouselContent>
-                        {imagesToShow.length > 1 && (<>
-                            <CarouselPrevious className="absolute left-[-25px] sm:left-[-40px] top-1/2 -translate-y-1/2 text-[#A67C52] bg-[#1a1a1a]/80 hover:bg-[#3a3c3d] border-none" />
-                            <CarouselNext className="absolute right-[-25px] sm:right-[-40px] top-1/2 -translate-y-1/2 text-[#A67C52] bg-[#1a1a1a]/80 hover:bg-[#3a3c3d] border-none" />
-                        </>)}
-                    </Carousel>
-                ) : (
-                     <div className="w-full max-w-xs h-[250px] bg-[#3a3c3d]/50 flex items-center justify-center rounded-md mb-6 border border-[#A67C52]/30">
-                         <p className="text-gray-400">Image Coming Soon</p>
-                     </div>
-                 )}
-                {currentDescriptionData && currentDescriptionData.description && (
-                    <div className="subscription-description text-white my-4 text-left w-full max-w-5xl flex justify-center flex-col">
-                        <div className="bg-[#3a3c3d] p-4 rounded-md border border-[#A67C52] text-base sm:text-lg w-full">
-                            <p className="mb-3">{currentDescriptionData.description}</p>
-                            {currentDescriptionData.currentOffering && (
-                                <p className="whitespace-pre-wrap text-sm sm:text-base">
-                                    {currentDescriptionData.currentOffering}
-                                </p>
-                            )}
-                        </div>
-                        <div> <h1 className='words-animation'>{animationText}</h1> </div>
+    return (
+        <div ref={ref} className="final-selection-display w-[100%] flex flex-col items-center text-white text-center px-4">
+            <h2 className="summary-init text-2xl font-semibold text-[#A67C52] mb-4">Subscription Summary</h2>
+            {imagesToShowInSummary.length > 0 ? (
+                 <Carousel className="w-full max-w-lg mx-auto mb-6" opts={{ align: "start", loop: imagesToShowInSummary.length > 1 }}>
+                    <CarouselContent>
+                        {imagesToShowInSummary.map((imageUrl, index) => (
+                            <CarouselItem key={`${method}-${type || edition}-${region || ''}-${index}-${quantity}`}>
+                                <div className="p-1">
+                                    <img src={imageUrl} alt={`${method}${type ? ' - '+type : ''}${edition ? ' - Taste: '+edition : ''}${region ? ' - '+region : ''} image ${index + 1}`}
+                                        className="w-full h-auto aspect-square object-cover rounded-md block" loading="lazy" />
+                                </div>
+                            </CarouselItem>
+                        ))}
+                    </CarouselContent>
+                    {imagesToShowInSummary.length > 1 && (<>
+                        <CarouselPrevious className="absolute left-[-25px] sm:left-[-40px] top-1/2 -translate-y-1/2 text-[#A67C52] bg-[#1a1a1a]/80 hover:bg-[#3a3c3d] border-none" />
+                        <CarouselNext className="absolute right-[-25px] sm:right-[-40px] top-1/2 -translate-y-1/2 text-[#A67C52] bg-[#1a1a1a]/80 hover:bg-[#3a3c3d] border-none" />
+                    </>)}
+                </Carousel>
+            ) : (
+                 <div className="w-full max-w-xs h-[250px] bg-[#3a3c3d]/50 flex items-center justify-center rounded-md mb-6 border border-[#A67C52]/30">
+                     <p className="text-gray-400">Image Coming Soon</p>
+                 </div>
+             )}
+            {currentDescriptionDataInSummary && currentDescriptionDataInSummary.description && (
+                <div className="subscription-description text-white my-4 text-left w-full max-w-5xl flex justify-center flex-col">
+                    <div className="bg-[#3a3c3d] p-4 rounded-md border border-[#A67C52] text-base sm:text-lg w-full">
+                        <p className="mb-3">{currentDescriptionDataInSummary.description}</p>
+                        {currentDescriptionDataInSummary.currentOffering && (
+                            <p className="whitespace-pre-wrap text-sm sm:text-base">{currentDescriptionDataInSummary.currentOffering}</p>
+                        )}
                     </div>
-                )}
-                <p className="summary-sentence text-base sm:text-lg leading-relaxed my-4 w-full max-w-5xl min-h-[3em]">
-                    {sentenceParts}
-                </p>
-                <div className="cart-btn mt-auto pt-4 w-full max-w-5xl flex justify-center sm:justify-end">
-                     <button
-                        className={`bg-[#A67C52] py-2 px-5 rounded-md border-[1.5px] border-transparent hover:border-[#3a3c3d] transition-all duration-300 ease-in-out transform text-white font-semibold text-base sm:text-md disabled:opacity-50 disabled:cursor-not-allowed enabled:hover:brightness-110 enabled:active:scale-95`}
-                        disabled={!canAddToCart}
-                        onClick={handleAddToCartClick} >
-                        ADD TO CART
-                    </button>
+                    <div> <h1 className='words-animation'>{animationText}</h1> </div>
                 </div>
+            )}
+            <p className="summary-sentence text-base sm:text-lg leading-relaxed my-4 w-full max-w-5xl min-h-[3em]">
+                {sentenceParts.map((part, index) => <React.Fragment key={index}>{part}</React.Fragment>)}
+            </p>
+            <div className="cart-btn mt-auto pt-4 w-full max-w-5xl flex justify-center sm:justify-end">
+                 <button
+                    className={`bg-[#A67C52] py-2 px-5 rounded-md border-[1.5px] border-transparent hover:border-[#3a3c3d] transition-all duration-300 ease-in-out transform text-white font-semibold text-base sm:text-md disabled:opacity-50 disabled:cursor-not-allowed enabled:hover:brightness-110 enabled:active:scale-95`}
+                    disabled={!canAddToCartProp}
+                    onClick={handleAddToCartClick} >
+                    ADD TO CART
+                </button>
             </div>
-        );
-    } else {
-        contentToRender = <DefaultIntroContent />;
-    }
+        </div>
+    );
+});
+SummaryDisplay.displayName = 'SummaryDisplay'; // For better debugging
+
+
+// --- RightContainer Component ---
+const RightContainer = ({ method, type, region, edition, sizeOption, quantity, frequency }) => {
+    const showSummaryLayout = method && (type || edition);
+    const introRef = useRef(null);
+    const summaryRef = useRef(null);
+
+    const canAddToCart = method && quantity && frequency && (
+        (method === 'Capsules' && edition) ||
+        (method !== 'Capsules' && type && (
+            (type === 'Office' && sizeOption) ||
+            (type === 'Regional' && region) ||
+            (['Roasters Choice', 'Masterpiece', 'Low-Caf', 'Curated'].includes(type))
+        ))
+    );
 
     return (
         <div className={`right-container flex justify-center w-full min-h-screen bg-[#1a1a1a] ${!showSummaryLayout ? 'items-center' : 'items-start'}`}>
-            {contentToRender}
+            <SwitchTransition mode="out-in">
+                <CSSTransition
+                    key={showSummaryLayout ? "summary" : "intro"}
+                    nodeRef={showSummaryLayout ? summaryRef : introRef}
+                    timeout={1000} // Slower transition: 1000ms (1 second)
+                    classNames="fade-content"
+                    unmountOnExit
+                >
+                    {showSummaryLayout ? (
+                        <SummaryDisplay
+                            ref={summaryRef}
+                            method={method} type={type} region={region} edition={edition}
+                            sizeOption={sizeOption} quantity={quantity} frequency={frequency}
+                            canAddToCartProp={canAddToCart}
+                        />
+                    ) : (
+                        <DefaultIntroContent ref={introRef} />
+                    )}
+                </CSSTransition>
+            </SwitchTransition>
         </div>
     );
 };
