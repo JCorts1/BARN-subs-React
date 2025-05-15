@@ -1,3 +1,5 @@
+/* ./RightContainer.css */
+
 /* --- General Right Container Font Size Adjustments --- */
 .right-container .default-intro-content,
 .right-container .final-selection-display {
@@ -9,40 +11,42 @@
 /* --- Original and Scaled Styles --- */
 .intro-list li {
   padding-bottom: 0.5rem;
-  font-size: 2rem; 
+  font-size: 2rem;
   line-height: 1.5;
 }
 
 @media (min-width: 640px) { /* sm breakpoint in Tailwind */
   .intro-list li {
-    /* font-size: 2.4rem; */ 
+    /* font-size: 2.4rem; */
   }
 }
 
 .final-selection-display h2.summary-init {
-  margin-bottom: 1rem; 
-  font-family: "Chalet Comprime", chalet, sans-serif; 
-  font-weight: 700; 
-  font-size: 3rem; /* UPDATED: Increased font size */
-  color: #A67C52; 
-  text-transform: uppercase; 
+  margin-bottom: 1rem;
+  /* General: Chalet Comprime font for the "Subscription Summary" header */
+  font-family: "Chalet Comprime", chalet, sans-serif;
+  font-weight: 700;
+  font-size: 3rem; /* Default font size */
+  color: #A67C52;
+  text-transform: uppercase;
+  /* Default margin-top from browser for h2 elements will apply here */
 }
 
 .subscription-description .bg-\[\#3a3c3d\] {
   font-size: 1.6rem;
   line-height: 1.6;
 }
-@media (min-width: 640px) { 
+@media (min-width: 640px) {
   .subscription-description .bg-\[\#3a3c3d\] {
-    /* font-size: 1.8rem; */ 
+    /* font-size: 1.8rem; */
   }
 }
 .subscription-description .whitespace-pre-wrap {
   font-size: 1.4rem;
 }
-@media (min-width: 640px) { 
+@media (min-width: 640px) {
   .subscription-description .whitespace-pre-wrap {
-    /* font-size: 1.6rem; */ 
+    /* font-size: 1.6rem; */
   }
 }
 
@@ -57,9 +61,9 @@
   font-size: 1.6rem;
   line-height: 1.6;
 }
-@media (min-width: 640px) { 
+@media (min-width: 640px) {
   .summary-sentence {
-    /* font-size: 1.8rem; */ 
+    /* font-size: 1.8rem; */
   }
 }
 
@@ -67,13 +71,13 @@
   width: 90%; /* This is relative to its parent which is now max-w-4xl */
   margin-top: 0.7rem;
   display: flex;
-  justify-content: flex-end; 
+  justify-content: flex-end;
 }
 
 .cart-btn button {
-  font-family: "Raleway", sans-serif; 
+  font-family: "Raleway", sans-serif;
   font-weight: bold;
-  font-size: 1.6rem; 
+  font-size: 1.6rem;
 }
 
 /* --- Animation Styles --- */
@@ -88,7 +92,8 @@
 .words-animation {
   display: inline-block;
   position: relative;
-  animation: move-words 12s linear infinite; /* UPDATED: Animation duration changed from 8s to 12s */
+  /* Dynamic text moves slower - Animation duration increased to 20s */
+  animation: move-words 20s linear infinite;
   margin: 0;
   padding: 0;
   padding-left: 100%;
@@ -102,7 +107,7 @@
     transform: translateX(0%);
   }
   100% {
-    transform: translateX(-200%); 
+    transform: translateX(-200%);
   }
 }
 /* --- End Animation Styles --- */
@@ -111,13 +116,13 @@
 /* === Carousel Arrow Styling === */
 .right-container .CarouselPrevious,
 .right-container .CarouselNext {
-  color: #A67C52 !important; 
+  color: #A67C52 !important;
 }
 
 .right-container .CarouselPrevious svg,
 .right-container .CarouselNext svg {
-  fill: #A67C52 !important; 
-  stroke: #A67C52 !important; 
+  fill: #A67C52 !important;
+  stroke: #A67C52 !important;
   width: 2.8rem; /* UPDATED: Increased size from 2rem */
   height: 2.8rem; /* UPDATED: Increased size from 2rem */
 }
@@ -133,25 +138,52 @@
 
 /* Media Queries (Keep as needed) */
 @media screen and (max-width: 720px) {
+  .right-container {
+    /* Mobile: Set padding for the entire right container to 5px */
+    padding: 5px;
+  }
+
   .intro-list li {
-    font-size: 1.8rem; 
+    font-size: 1.8rem;
   }
+
   .final-selection-display h2.summary-init {
-    font-size: 2.4rem; /* Adjusted from 2rem for a bit more hierarchy on mobile */
+    /* Mobile: Make "Subscription Summary" bigger */
+    font-size: 3rem; /* Increased from 2.8rem (now same as desktop) */
+    /* Mobile: Set top margin to 0 to override production styles */
+    margin-top: 0px !important;
   }
+
+  /* Mobile: Make carousel pictures just a bit smaller */
+  .right-container .CarouselItem img {
+    width: 90%; /* Reduces image width from full width of its immediate container (div.p-1) */
+    margin-left: auto; /* Centers the image within the div.p-1 */
+    margin-right: auto; /* Centers the image */
+  }
+
   .words-animation {
-    font-size: 1.8rem; 
+    font-size: 1.8rem;
   }
+
+  /* Mobile: Subscription description text uses Raleway font style */
   .subscription-description .bg-\[\#3a3c3d\] {
-    font-size: 1.5rem; 
+    font-size: 1.5rem; /* Existing mobile font size */
+    font-family: "Raleway", sans-serif; /* Raleway font for description container */
   }
+  /* Ensure paragraphs within the description also adopt Raleway */
+  .subscription-description .bg-\[\#3a3c3d\] p, /* Targets the main description <p> */
+  .subscription-description .bg-\[\#3a3c3d\] .whitespace-pre-wrap { /* Targets the current offering <p> */
+    font-family: "Raleway", sans-serif; /* Explicitly set Raleway for these paragraphs */
+  }
+
   .subscription-description .whitespace-pre-wrap {
-    font-size: 1.3rem; 
+    font-size: 1.3rem; /* Existing mobile font size for current offering */
   }
+
   .summary-sentence {
-    font-size: 1.5rem; 
+    font-size: 1.5rem;
   }
   .cart-btn button {
-    font-size: 1.5rem; 
+    font-size: 1.5rem;
   }
 }
