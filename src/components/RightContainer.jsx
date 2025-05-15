@@ -1,6 +1,7 @@
 // src/components/RightContainer.jsx
 // Uses Shopify Permalink for checkout, opening in a new tab.
 // Includes specific Selling Plan IDs for Low-Caf, Masterpiece, Regional - Center America, Regional - Ethiopia, and Regional - Brazil.
+// Implements Curated product permalink logic with correct quantity mapping.
 
 import React from 'react';
 import './RightContainer.css'; // Your CSS file for RightContainer styles
@@ -9,7 +10,7 @@ import {
     Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious,
 } from "@/components/ui/carousel";
 
-// --- Image Data for Carousel ( 그대로 두었습니다 - Kept as is) ---
+// --- Image Data for Carousel ---
 const carouselImageData = {
     "Roasters Choice": [
         "https://cdn.shopify.com/s/files/1/0831/4141/files/Ralf-coffee_1.jpg?v=1713252187",
@@ -42,7 +43,7 @@ const carouselImageData = {
             "https://cdn.shopify.com/s/files/1/0831/4141/files/Image_26.04.24_at_14.12.jpg?v=1728375513",
             "https://cdn.shopify.com/s/files/1/0831/4141/files/2_v60_6c2d62af-96c2-4e95-a9f9-5d66eb85efb8.png?v=1712752891",
         ],
-        "Ethiopia": [ 
+        "Ethiopia": [
             "https://cdn.shopify.com/s/files/1/0831/4141/files/BAG_Chelbesa_Natural_2024.png?v=1729679115",
             "https://cdn.shopify.com/s/files/1/0831/4141/files/Image_26.04.24_at_14.12.jpg?v=1728375513",
             "https://cdn.shopify.com/s/files/1/0831/4141/files/2_v60_6c2d62af-96c2-4e95-a9f9-5d66eb85efb8.png?v=1712752891",
@@ -97,7 +98,6 @@ const subscriptionDescriptions = {
 };
 
 // Function to get Variant ID based on selections
-// IMPORTANT: You need to populate this with all your actual Variant IDs
 const getVariantIdFromSelections = (method, type, region, sizeOption, edition, quantity) => {
   console.log("Looking up Variant ID for Permalink:", { method, type, region, sizeOption, edition, quantity });
 
@@ -110,7 +110,9 @@ const getVariantIdFromSelections = (method, type, region, sizeOption, edition, q
       console.warn("Roasters Choice selected but method is invalid:", method);
       return null;
   } else if (type === 'Curated') {
-      console.error("Curated variant ID lookup not implemented.");
+      if (method === 'Filter') return 54897259151735; // Curated - Filter Variant ID
+      if (method === 'Espresso') return 54897259184503; // Curated - Espresso Variant ID
+      console.warn("Curated subscription selected but method is invalid:", method);
       return null;
   } else if (type === 'Masterpiece') {
       return 45969541562635;
@@ -122,7 +124,7 @@ const getVariantIdFromSelections = (method, type, region, sizeOption, edition, q
           return 45972274381067;
       } else if (region === 'Ethiopia') {
           return 45972211695883;
-      } else if (region === 'Brazil') { // ADDED: Regional - Brazil Variant ID
+      } else if (region === 'Brazil') {
           return 45969588617483;
       }
       console.warn(`Regional variant ID lookup not implemented for region: ${region}`);
@@ -170,7 +172,7 @@ const regionalEthiopiaSellingPlanIds = {
 // ADDED: Specific Selling Plan IDs for Regional - Brazil
 const regionalBrazilSellingPlanIds = {
     "2 Weeks": 710364660087,
-    "4 Weeks (Recommended)": 710364725623, // Key needs to match frequency selected, usually "4 Weeks (Recommended)"
+    "4 Weeks (Recommended)": 710364725623,
     "6 Weeks": 710364791159,
 };
 
@@ -204,7 +206,7 @@ const RightContainer = ({ method, type, region, edition, sizeOption, quantity, f
           (method === 'Capsules' && edition) ||
           (method !== 'Capsules' && type &&
             ( (type === 'Office' && sizeOption) ||
-              (type === 'Regional' && region) || 
+              (type === 'Regional' && region) ||
               (['Roasters Choice', 'Masterpiece', 'Low-Caf', 'Curated'].includes(type))
             )
           )
@@ -253,20 +255,22 @@ const RightContainer = ({ method, type, region, edition, sizeOption, quantity, f
 
         if (quantity) {
             sentenceParts.push(' - Qty: ');
+            // For Curated, 'quantity' prop is the actual number of bags (2, 4, or 6)
+            // For other types, 'quantity' is usually the number of units/bags directly.
+            const qtyValue = parseInt(quantity);
+
             if (type === 'Office') {
                 sentenceParts.push(<span key="qty-val" className={highlightClass}>{sizeOption}</span>);
             } else if (method === 'Capsules') {
-                sentenceParts.push(<span key="qty-val" className={highlightClass}>{`${quantity}x 10 capsules`}</span>);
-            } else {
-                const qtyValue = parseInt(quantity);
-                if (type === 'Curated') {
-                    sentenceParts.push(<span key="qty-val" className={highlightClass}>{`${qtyValue}x 250g`}</span>);
-                } else if (type === 'Masterpiece') {
-                    sentenceParts.push(<span key="qty-val" className={highlightClass}>{`${qtyValue} bag${qtyValue > 1 ? 's' : ''}`}</span>);
-                } else { 
-                    sentenceParts.push(<span key="qty-val" className={highlightClass}>{quantity}</span>);
-                    sentenceParts.push(` x 250g`);
-                }
+                sentenceParts.push(<span key="qty-val" className={highlightClass}>{`${qtyValue}x 10 capsules`}</span>);
+            } else if (type === 'Curated') {
+                // Display the actual number of bags based on the qtyValue (e.g., 2, 4, or 6)
+                sentenceParts.push(<span key="qty-val" className={highlightClass}>{`${qtyValue}x 250g`}</span>);
+            } else if (type === 'Masterpiece') {
+                sentenceParts.push(<span key="qty-val" className={highlightClass}>{`${qtyValue} bag${qtyValue > 1 ? 's' : ''}`}</span>);
+            } else { // For Roasters Choice, Low-Caf, Regional
+                sentenceParts.push(<span key="qty-val" className={highlightClass}>{qtyValue}</span>);
+                sentenceParts.push(` x 250g`);
             }
         } else {
             sentenceParts.push(type === 'Office' ? ' (select size)' : ' (select quantity)');
@@ -299,6 +303,8 @@ const RightContainer = ({ method, type, region, edition, sizeOption, quantity, f
             }
 
             let quantityForLink;
+            const parsedQuantity = parseInt(quantity, 10); // quantity prop from parent
+
             if (type === 'Office') {
                 const match = sizeOption.match(/^(\d+)x/);
                 if (match && match[1]) {
@@ -308,13 +314,27 @@ const RightContainer = ({ method, type, region, edition, sizeOption, quantity, f
                     console.error("Permalink Error: Could not parse quantity from Office sizeOption:", sizeOption);
                     return;
                 }
+            } else if (type === 'Curated') {
+                // Map actual bag count (parsedQuantity = 2, 4, or 6) to permalink tier (1, 2, or 3)
+                if (parsedQuantity === 2) { // 2x 250g
+                    quantityForLink = 1;
+                } else if (parsedQuantity === 4) { // 4x 250g
+                    quantityForLink = 2;
+                } else if (parsedQuantity === 6) { // 6x 250g
+                    quantityForLink = 3;
+                } else {
+                    console.error(`Unexpected quantity value for Curated subscription: ${quantity}. Using raw value for permalink.`);
+                    quantityForLink = parsedQuantity; // Fallback, though this case should be avoided by correct parent prop
+                }
             } else {
-                quantityForLink = parseInt(quantity, 10);
+                // For other types (Roasters Choice, Low-Caf, Masterpiece, Regional etc.)
+                // The parsedQuantity is the direct value for the permalink.
+                quantityForLink = parsedQuantity;
             }
 
             if (isNaN(quantityForLink) || quantityForLink < 1) {
                 alert("Error: Invalid or missing quantity for the selected product.");
-                console.error("Permalink Error: Invalid quantityForLink:", quantityForLink, "from quantity prop:", quantity);
+                console.error("Permalink Error: Invalid quantityForLink:", quantityForLink, "from quantity prop:", quantity, "parsed as:", parsedQuantity);
                 return;
             }
 
@@ -322,31 +342,29 @@ const RightContainer = ({ method, type, region, edition, sizeOption, quantity, f
             if (type === 'Low-Caf') {
                 sellingPlanId = lowCafSellingPlanIds[frequency];
             } else if (type === 'Masterpiece') {
-                if (frequency === "4 Weeks (Recommended)") { 
+                if (frequency === "4 Weeks (Recommended)") {
                     sellingPlanId = MASTERPIECE_SELLING_PLAN_ID;
                 } else {
                     console.warn(`Masterpiece selected with frequency "${frequency}", but its permalink will use the dedicated Masterpiece selling plan ID which is typically associated with a 4-week cycle.`);
-                    sellingPlanId = MASTERPIECE_SELLING_PLAN_ID; 
+                    sellingPlanId = MASTERPIECE_SELLING_PLAN_ID;
                 }
-            } else if (type === 'Regional' && region === 'Center America') { 
+            } else if (type === 'Regional' && region === 'Center America') {
                 sellingPlanId = regionalCenterAmericaSellingPlanIds[frequency];
-            } else if (type === 'Regional' && region === 'Ethiopia') { 
+            } else if (type === 'Regional' && region === 'Ethiopia') {
                 sellingPlanId = regionalEthiopiaSellingPlanIds[frequency];
-            } else if (type === 'Regional' && region === 'Brazil') { // ADDED: Specific logic for Regional - Brazil
+            } else if (type === 'Regional' && region === 'Brazil') {
                 sellingPlanId = regionalBrazilSellingPlanIds[frequency];
             }
              else {
-                // For other types (e.g., Roasters Choice, Curated, etc.) use the generic mapping
+                // For other types (e.g., Roasters Choice, Curated) use the generic mapping
                 const selectedPlanInfo = sellingPlanMapping[frequency];
                 if (selectedPlanInfo && selectedPlanInfo.planId) {
                     sellingPlanId = selectedPlanInfo.planId;
                 }
             }
-            
-            // Fallback/error for types that got specific mapping but frequency didn't match
-            // This now correctly includes 'Brazil' in the condition.
+
             if ((type === 'Low-Caf' || (type === 'Regional' && (region === 'Center America' || region === 'Ethiopia' || region === 'Brazil'))) && !sellingPlanId) {
-                 const fallbackPlanInfo = sellingPlanMapping[frequency]; 
+                 const fallbackPlanInfo = sellingPlanMapping[frequency];
                  if (fallbackPlanInfo && fallbackPlanInfo.planId) {
                      sellingPlanId = fallbackPlanInfo.planId;
                      console.warn(`${type} ${region || ''} specific selling plan ID not found for frequency "${frequency}". Attempting to use generic plan ID: ${sellingPlanId}. This might be incorrect.`);
@@ -362,7 +380,7 @@ const RightContainer = ({ method, type, region, edition, sizeOption, quantity, f
                 console.error("Permalink Error: Missing selling plan ID for frequency:", frequency, "type:", type);
                 return;
             }
-            
+
             const cartAddParams = new URLSearchParams();
             cartAddParams.append("items[][id]", variantId.toString());
             cartAddParams.append("items[][quantity]", quantityForLink.toString());
@@ -370,7 +388,7 @@ const RightContainer = ({ method, type, region, edition, sizeOption, quantity, f
             cartAddParams.append("return_to", "/checkout");
 
             const permalinkUrl = `https://${SHOP_DOMAIN}/cart/clear?return_to=${encodeURIComponent(`/cart/add?${cartAddParams.toString()}`)}`;
-            
+
             console.log("Opening Permalink in new tab:", permalinkUrl);
             const newTab = window.open(permalinkUrl, '_blank');
             if (newTab) {
