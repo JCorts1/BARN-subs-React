@@ -1,7 +1,7 @@
 // src/components/RightContainer.jsx
 // Uses Shopify Permalink for checkout, opening in a new tab.
 // Includes specific Selling Plan IDs and Variant IDs for various products including Office.
-// Adds slower fade transitions and updated summary sentence formatting.
+// Adds slower fade transitions, updated summary sentence formatting, and price display with new prices.
 
 import React, { useRef } from 'react';
 import { SwitchTransition, CSSTransition } from 'react-transition-group';
@@ -11,7 +11,7 @@ import {
     Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious,
 } from "@/components/ui/carousel";
 
-// --- Data Constants (Assumed to be accessible or imported if they were outside this file originally) ---
+// --- Data Constants ---
 const carouselImageData = {
     "Roasters Choice": [
         "https://cdn.shopify.com/s/files/1/0831/4141/files/Ralf-coffee_1.jpg?v=1713252187",
@@ -127,7 +127,37 @@ const regionalBrazilSellingPlanIds = { "2 Weeks": 710364660087, "4 Weeks (Recomm
 const officeSellingPlanIds = { "2 Weeks": 710447038839, "4 Weeks": 710447104375, "4 Weeks (Recommended)": 710447104375 };
 const SHOP_DOMAIN = "thebarn.de";
 
-// --- DefaultIntroContent Component ---
+const getPriceForSelection = (method, type, region, edition, sizeOption, quantity, frequency) => {
+    if (!method && !type && !edition && !sizeOption && !region) return "";
+    const qty = quantity ? parseInt(quantity) : 0;
+
+    if (type === 'Roasters Choice') {
+        if (qty === 1) return "€14.00";
+        if (qty === 2) return "€27.50";
+    } else if (type === 'Curated') {
+        if (qty === 2) return "€27.50";
+    } else if (type === 'Masterpiece') {
+        if (qty === 1) return "€33.00";
+    } else if (type === 'Regional') {
+        if (qty === 1) {
+            if (region === 'Brazil') return "€13.00";
+            if (region === 'Center America') return "€15.00";
+            if (region === 'Ethiopia') return "€14.00";
+        }
+    } else if (type === 'Office') {
+        if (sizeOption === "1x 1kg") return "€44.00";
+        if (sizeOption === "2x 1kg") return "€80.00";
+    } else if (type === 'Low-Caf') {
+        if (qty === 1) return "€15.50";
+    } else if (method === 'Capsules') {
+        if (edition && quantity) return "Price on selection";
+    }
+    if (method || type || edition || sizeOption || region) {
+        return "Select options for price";
+    }
+    return "";
+};
+
 const DefaultIntroContent = React.forwardRef((props, ref) => {
     const defaultImageUrl = "https://cdn.shopify.com/s/files/1/0831/4141/files/LOGO-NAME.png?v=1710576883";
     return (
@@ -148,14 +178,11 @@ const DefaultIntroContent = React.forwardRef((props, ref) => {
 });
 DefaultIntroContent.displayName = 'DefaultIntroContent';
 
-// --- SummaryDisplay Component (Encapsulates summary view logic and JSX) ---
 const SummaryDisplay = React.forwardRef(({
     method, type, region, edition, sizeOption, quantity, frequency, canAddToCartProp
 }, ref) => {
-
     let imagesToShowInSummary = [];
     let currentDescriptionDataInSummary = null;
-
     if (method === 'Capsules') {
         imagesToShowInSummary = carouselImageData.Capsules || carouselImageData._fallback || [];
         currentDescriptionDataInSummary = subscriptionDescriptions.Capsules?.[edition] || subscriptionDescriptions.Capsules?._default || null;
@@ -172,62 +199,39 @@ const SummaryDisplay = React.forwardRef(({
     const sentenceParts = [];
     sentenceParts.push('Your selection: ');
     sentenceParts.push(<span key="method" className={highlightClass}>{method}</span>);
-
     if (method === 'Capsules') {
-        if (edition) {
-            sentenceParts.push(' - Taste: ');
-            sentenceParts.push(<span key="edition" className={highlightClass}>{edition}</span>);
-        } else { sentenceParts.push(' (select taste profile)'); }
+        if (edition) { sentenceParts.push(' - Taste: '); sentenceParts.push(<span key="edition" className={highlightClass}>{edition}</span>); }
+        else { sentenceParts.push(' (select taste profile)'); }
     } else {
         if (type) {
-            sentenceParts.push(' - ');
-            sentenceParts.push(<span key="type" className={highlightClass}>{type}</span>);
+            sentenceParts.push(' - '); sentenceParts.push(<span key="type" className={highlightClass}>{type}</span>);
             if (type === 'Regional') {
                 if (region) { sentenceParts.push(' - '); sentenceParts.push(<span key="region" className={highlightClass}>{region}</span>); }
                 else { sentenceParts.push(' (select region)'); }
             }
-        } else {
-             sentenceParts.push(' (select type)');
-        }
+        } else { sentenceParts.push(' (select type)'); }
     }
     sentenceParts.push(' subscription');
-
     if (quantity) {
-        sentenceParts.push(' - Quantity: '); // UPDATED
+        sentenceParts.push(' - Quantity: ');
         const qtyValue = parseInt(quantity);
-        if (type === 'Office') {
-            sentenceParts.push(<span key="qty-val" className={highlightClass}>{sizeOption}</span>);
-        } else if (method === 'Capsules') {
-            sentenceParts.push(<span key="qty-val" className={highlightClass}>{`${qtyValue} box${qtyValue > 1 ? 'es' : ''} of 10 capsules`}</span>); // UPDATED
-        } else if (type === 'Curated') {
-            sentenceParts.push(<span key="qty-val" className={highlightClass}>{`${qtyValue} bag${qtyValue > 1 ? 's' : ''} of 250g each`}</span>); // UPDATED
-        } else if (type === 'Masterpiece') {
-            sentenceParts.push(<span key="qty-val" className={highlightClass}>{`${qtyValue} bag${qtyValue > 1 ? 's' : ''}`}</span>); // Remains as is (bag size varies)
-        } else { // For Roasters Choice, Low-Caf, Regional
-            sentenceParts.push(<span key="qty-val" className={highlightClass}>{`${qtyValue} bag${qtyValue > 1 ? 's' : ''} of 250g each`}</span>); // UPDATED
-        }
-    } else {
-        sentenceParts.push(type === 'Office' ? ' (select size)' : ' (select quantity)');
-    }
-
+        if (type === 'Office') { sentenceParts.push(<span key="qty-val" className={highlightClass}>{sizeOption}</span>); }
+        else if (method === 'Capsules') { sentenceParts.push(<span key="qty-val" className={highlightClass}>{`${qtyValue} box${qtyValue > 1 ? 'es' : ''} of 10 capsules`}</span>); }
+        else if (type === 'Curated') { sentenceParts.push(<span key="qty-val" className={highlightClass}>{`${qtyValue} bag${qtyValue > 1 ? 's' : ''} of 250g each`}</span>); }
+        else if (type === 'Masterpiece') { sentenceParts.push(<span key="qty-val" className={highlightClass}>{`${qtyValue} bag${qtyValue > 1 ? 's' : ''}`}</span>); }
+        else { sentenceParts.push(<span key="qty-val" className={highlightClass}>{`${qtyValue} bag${qtyValue > 1 ? 's' : ''} of 250g each`}</span>); }
+    } else { sentenceParts.push(type === 'Office' ? ' (select size)' : ' (select quantity)'); }
     if (frequency) {
         sentenceParts.push(', delivered every ');
         const displayFrequency = frequency.replace(' (Recommended)', '');
         sentenceParts.push(<span key="freq" className={highlightClass}>{displayFrequency}</span>);
-     } else {
-        sentenceParts.push(' (select frequency)');
-    }
+    } else { sentenceParts.push(' (select frequency)'); }
     sentenceParts.push('.');
 
     const handleAddToCartClick = () => {
-        if (!canAddToCartProp) {
-            alert("Please complete your subscription selections to proceed.");
-            return;
-        }
+        if (!canAddToCartProp) { alert("Please complete selections."); return; }
         const variantId = getVariantIdFromSelections(method, type, region, sizeOption, edition, quantity);
-        if (!variantId) {
-            alert("Error: Product variant could not be determined."); return;
-        }
+        if (!variantId) { alert("Error: Variant ID not found."); return; }
         let quantityForLink;
         const parsedQuantityFromProp = parseInt(quantity, 10);
         if (type === 'Office') quantityForLink = 1;
@@ -237,21 +241,17 @@ const SummaryDisplay = React.forwardRef(({
             else if (parsedQuantityFromProp === 6) quantityForLink = 3;
             else quantityForLink = parsedQuantityFromProp;
         } else quantityForLink = parsedQuantityFromProp;
-
-        if (isNaN(quantityForLink) || quantityForLink < 1) {
-            alert("Error: Invalid quantity."); return;
-        }
+        if (isNaN(quantityForLink) || quantityForLink < 1) { alert("Error: Invalid quantity."); return; }
         let sellingPlanId;
         if (type === 'Office') sellingPlanId = officeSellingPlanIds[frequency];
         else if (type === 'Low-Caf') sellingPlanId = lowCafSellingPlanIds[frequency];
         else if (type === 'Masterpiece') {
             sellingPlanId = MASTERPIECE_SELLING_PLAN_ID;
             if (frequency !== "4 Weeks (Recommended)" && frequency !== "4 Weeks") console.warn("Masterpiece frequency note.");
-        }
-        else if (type === 'Regional' && region === 'Center America') sellingPlanId = regionalCenterAmericaSellingPlanIds[frequency];
+        } else if (type === 'Regional' && region === 'Center America') sellingPlanId = regionalCenterAmericaSellingPlanIds[frequency];
         else if (type === 'Regional' && region === 'Ethiopia') sellingPlanId = regionalEthiopiaSellingPlanIds[frequency];
         else if (type === 'Regional' && region === 'Brazil') sellingPlanId = regionalBrazilSellingPlanIds[frequency];
-        else { // For Roasters Choice, Curated
+        else {
             const selectedPlanInfo = sellingPlanMapping[frequency];
             if (selectedPlanInfo) sellingPlanId = selectedPlanInfo.planId;
         }
@@ -259,9 +259,7 @@ const SummaryDisplay = React.forwardRef(({
         if (typesWithSpecificPlans.includes(type) && !sellingPlanId) {
             alert(`Error: Frequency "${frequency}" not available for ${type} ${region || ''}.`); return;
         }
-        if (!sellingPlanId) {
-            alert("Error: Subscription plan details not found."); return;
-        }
+        if (!sellingPlanId) { alert("Error: Plan details not found."); return; }
         const cartAddParams = new URLSearchParams();
         cartAddParams.append("items[][id]", variantId.toString());
         cartAddParams.append("items[][quantity]", quantityForLink.toString());
@@ -269,12 +267,11 @@ const SummaryDisplay = React.forwardRef(({
         cartAddParams.append("return_to", "/checkout");
         const permalinkUrl = `https://${SHOP_DOMAIN}/cart/clear?return_to=${encodeURIComponent(`/cart/add?${cartAddParams.toString()}`)}`;
         const newTab = window.open(permalinkUrl, '_blank');
-        if (newTab) newTab.focus(); else alert("Popup blocker may have prevented opening the cart.");
+        if (newTab) newTab.focus(); else alert("Popup blocker.");
     };
 
-    const animationText = type === 'Masterpiece'
-        ? "We roast this subscription only on the first Tuesday every month"
-        : "You can adjust your quantity any time!";
+    const animationText = type === 'Masterpiece' ? "We roast this subscription only on the first Tuesday every month" : "You can adjust your quantity any time!";
+    const calculatedPrice = getPriceForSelection(method, type, region, edition, sizeOption, quantity, frequency);
 
     return (
         <div ref={ref} className="final-selection-display w-[100%] flex flex-col items-center text-white text-center px-4">
@@ -296,18 +293,12 @@ const SummaryDisplay = React.forwardRef(({
                         <CarouselNext className="absolute right-[-25px] sm:right-[-40px] top-1/2 -translate-y-1/2 text-[#A67C52] bg-[#1a1a1a]/80 hover:bg-[#3a3c3d] border-none" />
                     </>)}
                 </Carousel>
-            ) : (
-                 <div className="w-full max-w-xs h-[250px] bg-[#3a3c3d]/50 flex items-center justify-center rounded-md mb-6 border border-[#A67C52]/30">
-                     <p className="text-gray-400">Image Coming Soon</p>
-                 </div>
-             )}
+            ) : ( <div className="w-full max-w-xs h-[250px] bg-[#3a3c3d]/50 flex items-center justify-center rounded-md mb-6 border border-[#A67C52]/30"><p className="text-gray-400">Image Coming Soon</p></div>)}
             {currentDescriptionDataInSummary && currentDescriptionDataInSummary.description && (
                 <div className="subscription-description text-white my-4 text-left w-full max-w-5xl flex justify-center flex-col">
                     <div className="bg-[#3a3c3d] p-4 rounded-md border border-[#A67C52] text-base sm:text-lg w-full">
                         <p className="mb-3">{currentDescriptionDataInSummary.description}</p>
-                        {currentDescriptionDataInSummary.currentOffering && (
-                            <p className="whitespace-pre-wrap text-sm sm:text-base">{currentDescriptionDataInSummary.currentOffering}</p>
-                        )}
+                        {currentDescriptionDataInSummary.currentOffering && (<p className="whitespace-pre-wrap text-sm sm:text-base">{currentDescriptionDataInSummary.currentOffering}</p>)}
                     </div>
                     <div> <h1 className='words-animation'>{animationText}</h1> </div>
                 </div>
@@ -315,26 +306,28 @@ const SummaryDisplay = React.forwardRef(({
             <p className="summary-sentence text-base sm:text-lg leading-relaxed my-4 w-full max-w-5xl min-h-[3em]">
                 {sentenceParts.map((part, index) => <React.Fragment key={index}>{part}</React.Fragment>)}
             </p>
-            <div className="cart-btn mt-auto pt-4 w-full max-w-5xl flex justify-center sm:justify-end">
-                 <button
-                    className={`bg-[#A67C52] py-2 px-5 rounded-md border-[1.5px] border-transparent hover:border-[#3a3c3d] transition-all duration-300 ease-in-out transform text-white font-semibold text-base sm:text-md disabled:opacity-50 disabled:cursor-not-allowed enabled:hover:brightness-110 enabled:active:scale-95`}
-                    disabled={!canAddToCartProp}
-                    onClick={handleAddToCartClick} >
-                    ADD TO CART
-                </button>
+            <div className="cart-actions-container mt-auto pt-4 w-full max-w-5xl flex flex-col items-center sm:flex-row sm:justify-end sm:items-center">
+                <div className="price-and-button-group flex flex-col items-center gap-3 sm:flex-row sm:items-center sm:gap-x-4">
+                    <div className="price-display text-white text-2xl font-bold"> {/* UPDATED: text-xl to text-2xl */}
+                        {calculatedPrice && calculatedPrice !== "Select options for price" && <span>{calculatedPrice}</span>}
+                    </div>
+                    <button
+                        className={`bg-[#A67C52] py-2 px-5 rounded-md border-[1.5px] border-transparent hover:border-[#3a3c3d] transition-all duration-300 ease-in-out transform text-white font-semibold text-base sm:text-md disabled:opacity-50 disabled:cursor-not-allowed enabled:hover:brightness-110 enabled:active:scale-95 w-full mt-2 sm:mt-0 sm:w-auto`}
+                        disabled={!canAddToCartProp}
+                        onClick={handleAddToCartClick} >
+                        ADD TO CART
+                    </button>
+                </div>
             </div>
         </div>
     );
 });
 SummaryDisplay.displayName = 'SummaryDisplay';
 
-
-// --- RightContainer Component ---
 const RightContainer = ({ method, type, region, edition, sizeOption, quantity, frequency }) => {
     const showSummaryLayout = method && (type || edition);
     const introRef = useRef(null);
     const summaryRef = useRef(null);
-
     const canAddToCart = method && quantity && frequency && (
         (method === 'Capsules' && edition) ||
         (method !== 'Capsules' && type && (
@@ -343,24 +336,17 @@ const RightContainer = ({ method, type, region, edition, sizeOption, quantity, f
             (['Roasters Choice', 'Masterpiece', 'Low-Caf', 'Curated'].includes(type))
         ))
     );
-
     return (
         <div className={`right-container flex justify-center w-full min-h-screen bg-[#1a1a1a] ${!showSummaryLayout ? 'items-center' : 'items-start'}`}>
             <SwitchTransition mode="out-in">
                 <CSSTransition
                     key={showSummaryLayout ? "summary" : "intro"}
                     nodeRef={showSummaryLayout ? summaryRef : introRef}
-                    timeout={1000} // Slower transition: 1000ms (1 second)
+                    timeout={1000}
                     classNames="fade-content"
-                    unmountOnExit
-                >
+                    unmountOnExit >
                     {showSummaryLayout ? (
-                        <SummaryDisplay
-                            ref={summaryRef}
-                            method={method} type={type} region={region} edition={edition}
-                            sizeOption={sizeOption} quantity={quantity} frequency={frequency}
-                            canAddToCartProp={canAddToCart}
-                        />
+                        <SummaryDisplay ref={summaryRef} method={method} type={type} region={region} edition={edition} sizeOption={sizeOption} quantity={quantity} frequency={frequency} canAddToCartProp={canAddToCart} />
                     ) : (
                         <DefaultIntroContent ref={introRef} />
                     )}
@@ -369,5 +355,4 @@ const RightContainer = ({ method, type, region, edition, sizeOption, quantity, f
         </div>
     );
 };
-
 export default RightContainer;
