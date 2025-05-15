@@ -31,7 +31,7 @@ const carouselImageData = {
         "https://cdn.shopify.com/s/files/1/0831/4141/products/NanoChalla_32c7ddc5-d7a5-4989-8483-b2a358c63eb5.jpg?v=1739301233",
         "https://cdn.shopify.com/s/files/1/0831/4141/products/caffeine_levels_d161625f-8c4c-4a27-86fb-b3c5b94a3414.jpg?v=1739301233"
     ],
-    "Office": [ // Assuming generic Office images for now
+    "Office": [
         "https://cdn.shopify.com/s/files/1/1657/3941/files/volcan_azul_1kg.webp?v=1743027540",
         "https://cdn.shopify.com/s/files/1/0831/4141/files/HANNES_1kg_BAG.png?v=1706179901",
         "https://cdn.shopify.com/s/files/1/0831/4141/products/espressoshotsCropped_60eb6865-fd62-43c7-90c5-2bc9050f167b.jpg?v=1741274114"
@@ -181,7 +181,7 @@ const regionalBrazilSellingPlanIds = {
 const officeSellingPlanIds = {
     "2 Weeks": 710447038839,
     "4 Weeks": 710447104375,
-    "4 Weeks (Recommended)": 710447104375, // Ensure this covers the prop value if it includes "(Recommended)"
+    "4 Weeks (Recommended)": 710447104375,
 };
 
 
@@ -196,7 +196,7 @@ const RightContainer = ({ method, type, region, edition, sizeOption, quantity, f
                 <div className='mt-8'>
                     <img src={defaultImageUrl} alt="The Barn Coffee Roasters Logo" style={{ width: '100%', maxWidth: '180px', height: 'auto', margin: '1rem 0' }} />
                 </div>
-                <div className='p-5 border border-[#A57C62] rounded-md mt-8 w-full max-w-5xl'>
+                <div className='p-5 border border-[#A57C62] rounded-md mt-8 max-w-2xl'> {/* Removed w-full, changed max-width */}
                     <ul className="intro-list text-xl sm:text-2xl" style={{ listStyle: 'none', padding: 0 }}>
                         <li className="my-2">🌱 Sustainably sourced from top farms</li>
                         <li className="my-2">🔥 Expertly roasted in Berlin</li>
@@ -213,7 +213,7 @@ const RightContainer = ({ method, type, region, edition, sizeOption, quantity, f
         (
           (method === 'Capsules' && edition) ||
           (method !== 'Capsules' && type &&
-            ( (type === 'Office' && sizeOption) || // For Office, quantity prop still needs to be valid for this check
+            ( (type === 'Office' && sizeOption) ||
               (type === 'Regional' && region) ||
               (['Roasters Choice', 'Masterpiece', 'Low-Caf', 'Curated'].includes(type))
             )
@@ -231,7 +231,7 @@ const RightContainer = ({ method, type, region, edition, sizeOption, quantity, f
         } else if (type === 'Regional') {
             imagesToShow = carouselImageData.Regional?.[region] || carouselImageData.Regional?._default || carouselImageData._fallback || [];
             currentDescriptionData = subscriptionDescriptions.Regional?.[region] || subscriptionDescriptions.Regional?._default || null;
-        } else { // Includes Office here for images/description
+        } else {
             imagesToShow = carouselImageData[type] || carouselImageData._fallback || [];
             currentDescriptionData = subscriptionDescriptions[type] || null;
         }
@@ -247,7 +247,7 @@ const RightContainer = ({ method, type, region, edition, sizeOption, quantity, f
                 sentenceParts.push(' - Taste: ');
                 sentenceParts.push(<span key="edition" className={highlightClass}>{edition}</span>);
             } else { sentenceParts.push(' (select taste profile)'); }
-        } else { // Not Capsules
+        } else {
             if (type) {
                 sentenceParts.push(' - ');
                 sentenceParts.push(<span key="type" className={highlightClass}>{type}</span>);
@@ -261,26 +261,23 @@ const RightContainer = ({ method, type, region, edition, sizeOption, quantity, f
         }
         sentenceParts.push(' subscription');
 
-        if (quantity) { // quantity prop is still relevant for display and for canAddToCart
+        if (quantity) {
             sentenceParts.push(' - Qty: ');
-            const qtyValue = parseInt(quantity); // Actual number of bags for Curated (2,4,6), direct count for others.
+            const qtyValue = parseInt(quantity);
 
             if (type === 'Office') {
-                // For Office, sizeOption (e.g., "1x 1kg") is the primary quantity indicator shown.
-                // The 'quantity' prop might be '1' by default from the parent if not specifically varied for Office.
                 sentenceParts.push(<span key="qty-val" className={highlightClass}>{sizeOption}</span>);
             } else if (method === 'Capsules') {
                 sentenceParts.push(<span key="qty-val" className={highlightClass}>{`${qtyValue}x 10 capsules`}</span>);
             } else if (type === 'Curated') {
-                // Display the actual number of bags based on the qtyValue (e.g., 2, 4, or 6)
                 sentenceParts.push(<span key="qty-val" className={highlightClass}>{`${qtyValue}x 250g`}</span>);
             } else if (type === 'Masterpiece') {
                 sentenceParts.push(<span key="qty-val" className={highlightClass}>{`${qtyValue} bag${qtyValue > 1 ? 's' : ''}`}</span>);
-            } else { // For Roasters Choice, Low-Caf, Regional
+            } else {
                 sentenceParts.push(<span key="qty-val" className={highlightClass}>{qtyValue}</span>);
                 sentenceParts.push(` x 250g`);
             }
-        } else { // Fallback if quantity prop is missing
+        } else {
             sentenceParts.push(type === 'Office' ? ' (select size)' : ' (select quantity)');
         }
 
@@ -315,23 +312,19 @@ const RightContainer = ({ method, type, region, edition, sizeOption, quantity, f
             const parsedQuantityFromProp = parseInt(quantity, 10);
 
             if (type === 'Office') {
-                // For Office, we select a specific variant (e.g., "1x 1kg" or "2x 1kg") and add 1 unit of that variant.
                 quantityForLink = 1;
             } else if (type === 'Curated') {
-                // 'quantity' prop from parent is actual bag count (2, 4, or 6)
-                // Map this to permalink tier (1, 2, or 3)
-                if (parsedQuantityFromProp === 2) { // 2x 250g
+                if (parsedQuantityFromProp === 2) {
                     quantityForLink = 1;
-                } else if (parsedQuantityFromProp === 4) { // 4x 250g
+                } else if (parsedQuantityFromProp === 4) {
                     quantityForLink = 2;
-                } else if (parsedQuantityFromProp === 6) { // 6x 250g
+                } else if (parsedQuantityFromProp === 6) {
                     quantityForLink = 3;
                 } else {
                     console.error(`Unexpected quantity value for Curated subscription: ${quantity}. Using raw value for permalink.`);
-                    quantityForLink = parsedQuantityFromProp; // Fallback, though this case should be avoided
+                    quantityForLink = parsedQuantityFromProp;
                 }
             } else {
-                // For other types (Roasters Choice, Low-Caf, Masterpiece, Regional etc.)
                 quantityForLink = parsedQuantityFromProp;
             }
 
@@ -347,8 +340,6 @@ const RightContainer = ({ method, type, region, edition, sizeOption, quantity, f
             } else if (type === 'Low-Caf') {
                 sellingPlanId = lowCafSellingPlanIds[frequency];
             } else if (type === 'Masterpiece') {
-                // Masterpiece uses a single selling plan ID, typically tied to 4 weeks
-                // The frequency selection might be for user info but permalink uses the fixed plan
                 sellingPlanId = MASTERPIECE_SELLING_PLAN_ID;
                  if (frequency !== "4 Weeks (Recommended)" && frequency !== "4 Weeks") {
                     console.warn(`Masterpiece selected with frequency "${frequency}", but permalink will use the dedicated Masterpiece selling plan ID (${MASTERPIECE_SELLING_PLAN_ID}) typically for a 4-week cycle.`);
@@ -359,20 +350,15 @@ const RightContainer = ({ method, type, region, edition, sizeOption, quantity, f
                 sellingPlanId = regionalEthiopiaSellingPlanIds[frequency];
             } else if (type === 'Regional' && region === 'Brazil') {
                 sellingPlanId = regionalBrazilSellingPlanIds[frequency];
-            } else {
-                // For other types (e.g., Roasters Choice, Curated) use the generic mapping
+            } else { // For Roasters Choice, Curated
                 const selectedPlanInfo = sellingPlanMapping[frequency];
                 if (selectedPlanInfo && selectedPlanInfo.planId) {
                     sellingPlanId = selectedPlanInfo.planId;
                 }
             }
 
-            // Fallback for types with specific mappings if frequency doesn't match a specific plan ID
-            // This check should ideally only be for types that *might* use generic plans as a fallback.
-            // For Office, Low-Caf, Regional, if !sellingPlanId, it means the frequency is not supported.
             const typesWithSpecificPlans = ['Office', 'Low-Caf', 'Regional'];
             if (typesWithSpecificPlans.includes(type) && !sellingPlanId) {
-                 // Attempt generic fallback only if explicitly desired, otherwise it's an unsupported frequency
                 console.error(`Permalink Error: ${type} ${region || ''} specific selling plan ID not found for frequency "${frequency}". This frequency may not be supported.`);
                 alert(`Error: The selected frequency "${frequency}" is not available for ${type} ${region || ''}.`);
                 return;
@@ -466,7 +452,7 @@ const RightContainer = ({ method, type, region, edition, sizeOption, quantity, f
     }
 
     return (
-        <div className="right-container pt-10 pb-10 flex justify-center items-start w-full min-h-screen bg-[#1a1a1a]">
+        <div className={`right-container flex justify-center w-full min-h-screen bg-[#1a1a1a] ${!showSummaryLayout ? 'items-center' : 'items-start'}`}>
             {contentToRender}
         </div>
     );
