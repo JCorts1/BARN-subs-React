@@ -2,14 +2,15 @@
 
 /* --- General Right Container Styles --- */
 .right-container {
-  padding-top: 0; /* Default top padding for all screen sizes (desktop gets 0) */
-  padding-bottom: 2.5rem; /* Default bottom padding for desktop (equivalent to Tailwind pb-10 if it was removed from JSX) */
+  padding-top: 0;
+  padding-bottom: 2.5rem;
 }
 
 .right-container .default-intro-content,
 .right-container .final-selection-display {
   font-size: 1.6rem;
   line-height: 1.6;
+  width: 100%; /* Ensure children fill the CSSTransition wrapper for layout */
 }
 
 
@@ -105,12 +106,8 @@
 }
 
 @keyframes move-words {
-  0% {
-    transform: translateX(0%);
-  }
-  100% {
-    transform: translateX(-200%);
-  }
+  0% { transform: translateX(0%); }
+  100% { transform: translateX(-200%); }
 }
 /* --- End Animation Styles --- */
 
@@ -120,7 +117,6 @@
 .right-container .CarouselNext {
   color: #A67C52 !important;
 }
-
 .right-container .CarouselPrevious svg,
 .right-container .CarouselNext svg {
   fill: #A67C52 !important;
@@ -128,7 +124,6 @@
   width: 2.8rem;
   height: 2.8rem;
 }
-
 .right-container .CarouselPrevious svg path,
 .right-container .CarouselNext svg path {
     fill: #A67C52 !important;
@@ -137,50 +132,37 @@
 /* === END Carousel Arrow Styling === */
 
 
-/* Media Queries */
+/* --- Transition Styles --- */
+.fade-content-enter {
+  opacity: 0;
+}
+.fade-content-enter-active {
+  opacity: 1;
+  transition: opacity 1000ms ease-in-out; /* Slower transition: 1 second */
+}
+.fade-content-exit {
+  opacity: 1;
+}
+.fade-content-exit-active {
+  opacity: 0;
+  transition: opacity 1000ms ease-in-out; /* Slower transition: 1 second */
+}
+
+
+/* --- Media Queries --- */
 @media screen and (max-width: 720px) {
   .right-container {
-    /* Mobile: Set all padding for the entire right container to 5px. */
     padding: 5px;
   }
 
-  .intro-list li {
-    font-size: 1.8rem;
-  }
-
-  .final-selection-display h2.summary-init {
-    font-size: 3rem;
-    margin-top: 0px !important;
-  }
-
-  .right-container .CarouselItem img {
-    width: 90%;
-    margin-left: auto;
-    margin-right: auto;
-  }
-
-  .words-animation {
-    font-size: 1.8rem;
-  }
-
-  .subscription-description .bg-\[\#3a3c3d\] {
-    font-size: 1.5rem;
-    font-family: "Raleway", sans-serif;
-  }
+  .intro-list li { font-size: 1.8rem; }
+  .final-selection-display h2.summary-init { font-size: 3rem; margin-top: 0px !important; }
+  .right-container .CarouselItem img { width: 90%; margin-left: auto; margin-right: auto; }
+  .words-animation { font-size: 1.8rem; }
+  .subscription-description .bg-\[\#3a3c3d\] { font-size: 1.5rem; font-family: "Raleway", sans-serif; }
   .subscription-description .bg-\[\#3a3c3d\] p,
-  .subscription-description .bg-\[\#3a3c3d\] .whitespace-pre-wrap {
-    font-family: "Raleway", sans-serif;
-  }
-
-  .subscription-description .whitespace-pre-wrap {
-    font-size: 1.3rem;
-  }
-
-  .summary-sentence {
-    font-size: 1.5rem;
-  }
-  .cart-btn button {
-    font-size: 1.5rem;
-  }
+  .subscription-description .bg-\[\#3a3c3d\] .whitespace-pre-wrap { font-family: "Raleway", sans-serif; }
+  .subscription-description .whitespace-pre-wrap { font-size: 1.3rem; }
+  .summary-sentence { font-size: 1.5rem; }
+  .cart-btn button { font-size: 1.5rem; }
 }
-
