@@ -1,6 +1,11 @@
 /* ./RightContainer.css */
 
-/* --- General Right Container Font Size Adjustments --- */
+/* --- General Right Container Styles --- */
+.right-container {
+  padding-top: 0; /* Remove default top padding from Tailwind's pt-10 for desktop */
+  /* padding-bottom will still be applied by pb-10 from JSX on desktop */
+}
+
 .right-container .default-intro-content,
 .right-container .final-selection-display {
   font-size: 1.6rem;
@@ -139,7 +144,7 @@
 /* Media Queries (Keep as needed) */
 @media screen and (max-width: 720px) {
   .right-container {
-    /* Mobile: Set padding for the entire right container to 5px */
+    /* Mobile: Set padding for the entire right container to 5px, this overrides the general padding-top: 0 */
     padding: 5px;
   }
 
