@@ -1,7 +1,7 @@
 // src/components/RightContainer.jsx
 // Uses Shopify Permalink for checkout, opening in a new tab.
 // Includes specific Selling Plan IDs and Variant IDs for various products including Office.
-// Adds slower fade transitions between intro and summary views.
+// Adds slower fade transitions and updated summary sentence formatting.
 
 import React, { useRef } from 'react';
 import { SwitchTransition, CSSTransition } from 'react-transition-group';
@@ -146,7 +146,7 @@ const DefaultIntroContent = React.forwardRef((props, ref) => {
         </div>
     );
 });
-DefaultIntroContent.displayName = 'DefaultIntroContent'; // For better debugging
+DefaultIntroContent.displayName = 'DefaultIntroContent';
 
 // --- SummaryDisplay Component (Encapsulates summary view logic and JSX) ---
 const SummaryDisplay = React.forwardRef(({
@@ -193,19 +193,18 @@ const SummaryDisplay = React.forwardRef(({
     sentenceParts.push(' subscription');
 
     if (quantity) {
-        sentenceParts.push(' - Qty: ');
+        sentenceParts.push(' - Quantity: '); // UPDATED
         const qtyValue = parseInt(quantity);
         if (type === 'Office') {
             sentenceParts.push(<span key="qty-val" className={highlightClass}>{sizeOption}</span>);
         } else if (method === 'Capsules') {
-            sentenceParts.push(<span key="qty-val" className={highlightClass}>{`${qtyValue}x 10 capsules`}</span>);
+            sentenceParts.push(<span key="qty-val" className={highlightClass}>{`${qtyValue} box${qtyValue > 1 ? 'es' : ''} of 10 capsules`}</span>); // UPDATED
         } else if (type === 'Curated') {
-            sentenceParts.push(<span key="qty-val" className={highlightClass}>{`${qtyValue}x 250g`}</span>);
+            sentenceParts.push(<span key="qty-val" className={highlightClass}>{`${qtyValue} bag${qtyValue > 1 ? 's' : ''} of 250g each`}</span>); // UPDATED
         } else if (type === 'Masterpiece') {
-            sentenceParts.push(<span key="qty-val" className={highlightClass}>{`${qtyValue} bag${qtyValue > 1 ? 's' : ''}`}</span>);
-        } else {
-            sentenceParts.push(<span key="qty-val" className={highlightClass}>{qtyValue}</span>);
-            sentenceParts.push(` x 250g`);
+            sentenceParts.push(<span key="qty-val" className={highlightClass}>{`${qtyValue} bag${qtyValue > 1 ? 's' : ''}`}</span>); // Remains as is (bag size varies)
+        } else { // For Roasters Choice, Low-Caf, Regional
+            sentenceParts.push(<span key="qty-val" className={highlightClass}>{`${qtyValue} bag${qtyValue > 1 ? 's' : ''} of 250g each`}</span>); // UPDATED
         }
     } else {
         sentenceParts.push(type === 'Office' ? ' (select size)' : ' (select quantity)');
@@ -221,77 +220,56 @@ const SummaryDisplay = React.forwardRef(({
     sentenceParts.push('.');
 
     const handleAddToCartClick = () => {
-        console.log("Add to cart clicked from SummaryDisplay. State:", { method, type, region, edition, sizeOption, quantity, frequency, canAddToCartProp });
         if (!canAddToCartProp) {
             alert("Please complete your subscription selections to proceed.");
-            console.warn("Permalink generation blocked by canAddToCartProp check in SummaryDisplay.");
             return;
         }
         const variantId = getVariantIdFromSelections(method, type, region, sizeOption, edition, quantity);
         if (!variantId) {
-            alert("Error: Product variant could not be determined for your selection. Please ensure all options are selected or check configuration (ensure Variant IDs are mapped).");
-            console.error("Permalink Error in SummaryDisplay: Missing Variant ID for selections:", { method, type, region, edition, sizeOption, quantity });
-            return;
+            alert("Error: Product variant could not be determined."); return;
         }
         let quantityForLink;
         const parsedQuantityFromProp = parseInt(quantity, 10);
-        if (type === 'Office') {
-            quantityForLink = 1;
-        } else if (type === 'Curated') {
+        if (type === 'Office') quantityForLink = 1;
+        else if (type === 'Curated') {
             if (parsedQuantityFromProp === 2) quantityForLink = 1;
             else if (parsedQuantityFromProp === 4) quantityForLink = 2;
             else if (parsedQuantityFromProp === 6) quantityForLink = 3;
-            else {
-                console.error(`Unexpected quantity value for Curated subscription: ${quantity}. Using raw value for permalink.`);
-                quantityForLink = parsedQuantityFromProp;
-            }
-        } else {
-            quantityForLink = parsedQuantityFromProp;
-        }
+            else quantityForLink = parsedQuantityFromProp;
+        } else quantityForLink = parsedQuantityFromProp;
 
         if (isNaN(quantityForLink) || quantityForLink < 1) {
-            alert("Error: Invalid or missing quantity for the selected product.");
-            console.error("Permalink Error in SummaryDisplay: Invalid quantityForLink:", quantityForLink, "from quantity prop:", quantity, "parsed as:", parsedQuantityFromProp);
-            return;
+            alert("Error: Invalid quantity."); return;
         }
         let sellingPlanId;
         if (type === 'Office') sellingPlanId = officeSellingPlanIds[frequency];
         else if (type === 'Low-Caf') sellingPlanId = lowCafSellingPlanIds[frequency];
         else if (type === 'Masterpiece') {
             sellingPlanId = MASTERPIECE_SELLING_PLAN_ID;
-            if (frequency !== "4 Weeks (Recommended)" && frequency !== "4 Weeks") {
-                console.warn(`Masterpiece selected with frequency "${frequency}", but permalink will use the dedicated Masterpiece selling plan ID (${MASTERPIECE_SELLING_PLAN_ID}) typically for a 4-week cycle.`);
-            }
+            if (frequency !== "4 Weeks (Recommended)" && frequency !== "4 Weeks") console.warn("Masterpiece frequency note.");
         }
         else if (type === 'Regional' && region === 'Center America') sellingPlanId = regionalCenterAmericaSellingPlanIds[frequency];
         else if (type === 'Regional' && region === 'Ethiopia') sellingPlanId = regionalEthiopiaSellingPlanIds[frequency];
         else if (type === 'Regional' && region === 'Brazil') sellingPlanId = regionalBrazilSellingPlanIds[frequency];
         else { // For Roasters Choice, Curated
             const selectedPlanInfo = sellingPlanMapping[frequency];
-            if (selectedPlanInfo && selectedPlanInfo.planId) sellingPlanId = selectedPlanInfo.planId;
+            if (selectedPlanInfo) sellingPlanId = selectedPlanInfo.planId;
         }
-
         const typesWithSpecificPlans = ['Office', 'Low-Caf', 'Regional'];
         if (typesWithSpecificPlans.includes(type) && !sellingPlanId) {
-            console.error(`Permalink Error in SummaryDisplay: ${type} ${region || ''} specific selling plan ID not found for frequency "${frequency}". This frequency may not be supported.`);
-            alert(`Error: The selected frequency "${frequency}" is not available for ${type} ${region || ''}.`);
-            return;
+            alert(`Error: Frequency "${frequency}" not available for ${type} ${region || ''}.`); return;
         }
         if (!sellingPlanId) {
-            alert(`Error: Subscription plan details not found for the selected frequency: "${frequency}" and type: "${type}".`);
-            console.error("Permalink Error in SummaryDisplay: Missing selling plan ID for frequency:", frequency, "type:", type);
-            return;
+            alert("Error: Subscription plan details not found."); return;
         }
-
         const cartAddParams = new URLSearchParams();
         cartAddParams.append("items[][id]", variantId.toString());
         cartAddParams.append("items[][quantity]", quantityForLink.toString());
         cartAddParams.append("items[][selling_plan]", sellingPlanId.toString());
         cartAddParams.append("return_to", "/checkout");
         const permalinkUrl = `https://${SHOP_DOMAIN}/cart/clear?return_to=${encodeURIComponent(`/cart/add?${cartAddParams.toString()}`)}`;
-        console.log("Opening Permalink in new tab from SummaryDisplay:", permalinkUrl);
         const newTab = window.open(permalinkUrl, '_blank');
-        if (newTab) newTab.focus(); else alert("Your browser may have blocked the new tab. Please check your pop-up blocker settings.");
+        if (newTab) newTab.focus(); else alert("Popup blocker may have prevented opening the cart.");
     };
 
     const animationText = type === 'Masterpiece'
@@ -348,7 +326,7 @@ const SummaryDisplay = React.forwardRef(({
         </div>
     );
 });
-SummaryDisplay.displayName = 'SummaryDisplay'; // For better debugging
+SummaryDisplay.displayName = 'SummaryDisplay';
 
 
 // --- RightContainer Component ---
