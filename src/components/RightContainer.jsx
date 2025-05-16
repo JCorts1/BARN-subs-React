@@ -312,10 +312,10 @@ const SummaryDisplay = React.forwardRef(({
                         {calculatedPrice && calculatedPrice !== "Select options for price" && <span>{calculatedPrice}</span>}
                     </div>
                     <button
-                        className={`bg-[#A67C52] py-2 px-5 rounded-md border-[1.5px] border-transparent hover:border-[#3a3c3d] transition-all duration-300 ease-in-out transform text-white font-semibold text-base sm:text-md disabled:opacity-50 disabled:cursor-not-allowed enabled:hover:brightness-110 enabled:active:scale-95 w-full mt-2 sm:mt-0 sm:w-auto`}
+                        className={`bg-[#A67C52] py-3 px-18 rounded-md border-[1.5px] border-transparent hover:border-[#3a3c3d] transition-all duration-300 ease-in-out transform text-white font-semibold text-base sm:text-md disabled:opacity-50 disabled:cursor-not-allowed enabled:hover:brightness-110 enabled:active:scale-95 w-full mt-2 sm:mt-0 sm:w-auto`}
                         disabled={!canAddToCartProp}
                         onClick={handleAddToCartClick} >
-                        ADD TO CART
+                        Add to cart
                     </button>
                 </div>
             </div>
