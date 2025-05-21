@@ -153,8 +153,7 @@ const getPriceForSelection = (method, type, region, edition, sizeOption, quantit
     } else if (type === 'Curated') {
         if (qty === 2) return "€27.50";
         if (qty === 4) return "€55.00";
-        // Price for qty "6" ("6x 250g") not provided by user. Falls through.
-        // If user provides it, it can be added here e.g. if (qty === 6) return "€XX.XX";
+        if (qty === 6) return "€82.50";
     } else if (type === 'Masterpiece') {
         if (qty === 1) return "€33.00";
         if (qty === 2) return "€66.00";
