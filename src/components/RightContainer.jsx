@@ -1,6 +1,6 @@
 // src/components/RightContainer.jsx
 // Uses Shopify Permalink for checkout, opening in a new tab.
-// Includes specific Selling Plan IDs and Variant IDs for various products including Office.
+// Includes specific Selling Plan IDs and Variant IDs for various products including Office and Capsules.
 // Adds slower fade transitions, updated summary sentence formatting, and price display with new prices.
 
 import React, { useRef } from 'react';
@@ -56,11 +56,19 @@ const carouselImageData = {
         ],
         "_default": [ "https://cdn.shopify.com/s/files/1/0831/4141/files/map.png?v=1745847536" ]
     },
-    "Capsules": [
-        "https://cdn.shopify.com/s/files/1/0831/4141/files/capsules_1.png?v=1695032905",
-        "https://cdn.shopify.com/s/files/1/0831/4141/products/94caa496-c974-436d-a877-91b5f1deee76_e692294a-dcda-4e46-97cf-cb22632a1acf.jpg?v=1667996022",
-        "https://cdn.shopify.com/s/files/1/0831/4141/files/Capsules.jpg?v=1629729054"
-    ],
+    "Capsules": {
+        "Brazil": [
+            "https://cdn.shopify.com/s/files/1/0831/4141/files/capsules_1.png?v=1695032905",
+        ],
+        "Ethiopia": [
+             "https://cdn.shopify.com/s/files/1/0831/4141/products/94caa496-c974-436d-a877-91b5f1deee76_e692294a-dcda-4e46-97cf-cb22632a1acf.jpg?v=1667996022",
+        ],
+        "_default": [
+            "https://cdn.shopify.com/s/files/1/0831/4141/files/capsules_1.png?v=1695032905",
+            "https://cdn.shopify.com/s/files/1/0831/4141/products/94caa496-c974-436d-a877-91b5f1deee76_e692294a-dcda-4e46-97cf-cb22632a1acf.jpg?v=1667996022",
+            "https://cdn.shopify.com/s/files/1/0831/4141/files/Capsules.jpg?v=1629729054"
+        ]
+    },
      "_fallback": [
         "https://cdn.shopify.com/s/files/1/0831/4141/files/LOGO-NAME.png?v=1710576883"
      ]
@@ -89,25 +97,33 @@ const subscriptionDescriptions = {
         "Ethiopia": {
             description: "Bright, fruity and floral. An elegant expression of Ethiopian terroir in capsule form. ",
             currentOffering: "🇪🇹 Take a trip to the birthplace of coffee with typical floral notes and sweet apricots. "
-        },
-        "Masterpiece": {
-            description: "The pinnacle of capsule coffee: rare, high-scoring lots from the world’s top farms.",
-            currentOffering: ""
         }
     }
 };
 const getVariantIdFromSelections = (method, type, region, sizeOption, edition, quantity) => {
-  if (method === 'Capsules') { console.error("Capsule ID lookup not implemented."); return null; }
+  if (method === 'Capsules') {
+      const qty = quantity ? parseInt(quantity) : 0;
+      if (qty === 3) { // Only quantity 3 is addable for capsules.
+          if (edition === 'Brazil') return 43660597690635;
+          if (edition === 'Ethiopia') return 43660597756171;
+      }
+      console.warn(`Capsule Variant ID not found for Edition: ${edition}, Quantity: ${qty}`);
+      return null;
+  }
   if (type === 'Roasters Choice') {
       if (method === 'Filter') return 45910178332939; if (method === 'Espresso') return 45910178398475;
       console.warn("Roasters Choice invalid method:", method); return null;
   } if (type === 'Curated') {
-      if (method === 'Filter') return 54897259151735; if (method === 'Espresso') return 54897259184503; // Assuming Espresso Curated uses this if available
+      if (method === 'Filter') return 54897259151735; if (method === 'Espresso') return 54897259184503;
       console.warn("Curated invalid method:", method); return null;
   } if (type === 'Masterpiece') return 45969541562635;
   if (type === 'Office') {
       if (sizeOption === "1x 1kg") return 43658532192523;
       if (sizeOption === "2x 1kg") return 43658532258059;
+      if (sizeOption === "3x 1kg" || sizeOption === "4x 1kg" || sizeOption === "5x 1kg") {
+        console.warn(`Office Variant ID for ${sizeOption} is not explicitly defined. Using 1x 1kg variant ID as fallback.`);
+        return 43658532192523;
+      }
       console.warn("Office unsupported size for current Variant ID mapping:", sizeOption); return null;
   } if (type === 'Regional') {
       if (region === 'Center America') return 45972274381067; if (region === 'Ethiopia') return 45972211695883; if (region === 'Brazil') return 45969588617483;
@@ -115,6 +131,7 @@ const getVariantIdFromSelections = (method, type, region, sizeOption, edition, q
   } if (type === 'Low-Caf') return 45972282409227;
   console.warn("Fallback: Variant ID lookup failed.", { method, type, region, sizeOption, edition, quantity }); return null;
 };
+
 const sellingPlanMapping = {
   "1 Week": { planId: 710364201335 }, "2 Weeks": { planId: 710364234103 }, "3 Weeks": { planId: 710364266871 },
   "4 Weeks (Recommended)": { planId: 710364299639 }, "4 Weeks": { planId: 710364299639 },
@@ -126,22 +143,37 @@ const regionalCenterAmericaSellingPlanIds = { "1 Week": 710364823927, "2 Weeks":
 const regionalEthiopiaSellingPlanIds = { "2 Weeks": 710364463479, "4 Weeks (Recommended)": 710364529015, "4 Weeks": 710364529015, "6 Weeks": 710364594551 };
 const regionalBrazilSellingPlanIds = { "2 Weeks": 710364660087, "4 Weeks (Recommended)": 710364725623, "4 Weeks": 710364725623, "6 Weeks": 710364791159 };
 const officeSellingPlanIds = { "2 Weeks": 710447038839, "4 Weeks": 710447104375, "4 Weeks (Recommended)": 710447104375 };
+const capsuleSellingPlanIds = {
+    "2 Weeks": 710706069879,
+    "4 Weeks (Recommended)": 710706004343,
+    "4 Weeks": 710706004343,
+};
 const SHOP_DOMAIN = "thebarn.de";
 
 const getPriceForSelection = (method, type, region, edition, sizeOption, quantity, frequency) => {
-    // Initial check: if critical top-level selections are missing, return empty.
     if (!method) return "";
     if (method !== 'Capsules' && !type) return "";
     if (method === 'Capsules' && !edition) return "";
 
+    // 'quantity' prop is finalSelectionDetail from App.jsx (e.g., "3" for capsules)
+    // 'qty' is its parsed integer value.
     if (method !== 'Capsules' && type !== 'Office' && !quantity) return "Select Quantity...";
-    if (method === 'Capsules' && !quantity) return "Select Quantity...";
+    if (method === 'Capsules' && !quantity) return "Select Quantity..."; // Will always be "3" if selected
     if (type === 'Office' && !sizeOption) return "Select Size...";
 
     const qty = quantity ? parseInt(quantity) : 0;
 
     if (method === 'Capsules') {
-        return "Price on selection";
+        // Quantity is always "3" (3x10 pack) due to MiddleContainer update
+        if (edition && quantity === "3") {
+            if (edition === 'Brazil') {
+                return "€27.50";
+            } else if (edition === 'Ethiopia') {
+                return "€30.00";
+            }
+        }
+        // Fallback if edition not recognized or somehow quantity isn't "3"
+        return "Select options for price";
     }
 
     if (type === 'Roasters Choice') {
@@ -187,11 +219,11 @@ const getPriceForSelection = (method, type, region, edition, sizeOption, quantit
             if (qty === 5) return "€75.00";
         }
     } else if (type === 'Office') {
-        if (sizeOption === "1x 1kg") return "€44.00";
-        if (sizeOption === "2x 1kg") return "€80.00";
-        if (sizeOption === "3x 1kg") return "Coming soon!";
-        if (sizeOption === "4x 1kg") return "Coming soon!";
-        if (sizeOption === "5x 1kg") return "Coming soon!";
+        if (sizeOption === "1x 1kg") return "€39.00";
+        if (sizeOption === "2x 1kg") return "€78.00";
+        if (sizeOption === "3x 1kg") return "€117.00";
+        if (sizeOption === "4x 1kg") return "€156.00";
+        if (sizeOption === "5x 1kg") return "€195.00";
     }
 
     return "Select options for price";
@@ -223,17 +255,24 @@ const SummaryDisplay = React.forwardRef(({
 }, ref) => {
     let imagesToShowInSummary = [];
     let currentDescriptionDataInSummary = null;
+
     if (method === 'Capsules') {
-        imagesToShowInSummary = carouselImageData.Capsules || carouselImageData._fallback || [];
+        imagesToShowInSummary = carouselImageData.Capsules?.[edition] || carouselImageData.Capsules?._default || carouselImageData._fallback || [];
         currentDescriptionDataInSummary = subscriptionDescriptions.Capsules?.[edition] || subscriptionDescriptions.Capsules?._default || null;
     } else if (type === 'Regional') {
         imagesToShowInSummary = carouselImageData.Regional?.[region] || carouselImageData.Regional?._default || carouselImageData._fallback || [];
         currentDescriptionDataInSummary = subscriptionDescriptions.Regional?.[region] || subscriptionDescriptions.Regional?._default || null;
-    } else {
+    } else if (type) {
         imagesToShowInSummary = carouselImageData[type] || carouselImageData._fallback || [];
         currentDescriptionDataInSummary = subscriptionDescriptions[type] || null;
+    } else {
+        imagesToShowInSummary = carouselImageData._fallback || [];
+        currentDescriptionDataInSummary = null;
     }
-    if (!Array.isArray(imagesToShowInSummary)) { imagesToShowInSummary = carouselImageData._fallback || []; }
+    if (!Array.isArray(imagesToShowInSummary) || imagesToShowInSummary.length === 0) {
+         imagesToShowInSummary = carouselImageData._fallback || [];
+    }
+
 
     const highlightClass = "text-[#A67C52] font-semibold";
     const sentenceParts = [];
@@ -257,9 +296,10 @@ const SummaryDisplay = React.forwardRef(({
         if (type === 'Office') {
             sentenceParts.push(<span key="qty-val" className={highlightClass}>{sizeOption}</span>);
         } else {
-            const qtyValue = parseInt(quantity);
+            const qtyValue = parseInt(quantity); // quantity is finalSelectionDetail (e.g. "3" for capsules)
             if (method === 'Capsules') {
-                 sentenceParts.push(<span key="qty-val" className={highlightClass}>{`${qtyValue}x 10 capsules`}</span>);
+                 // Label will be "3x 10 capsules" as it's the only option
+                 sentenceParts.push(<span key="qty-val" className={highlightClass}>3x 10 capsules</span>);
             } else if (type === 'Curated') {
                 sentenceParts.push(<span key="qty-val" className={highlightClass}>{`${qtyValue}x 250g`}</span>);
             } else if (type === 'Masterpiece') {
@@ -278,21 +318,36 @@ const SummaryDisplay = React.forwardRef(({
     sentenceParts.push('.');
 
     const handleAddToCartClick = () => {
-        if (!canAddToCartProp) { alert("Please complete selections."); return; }
+        if (!canAddToCartProp) { alert("Please complete selections or note that this specific option may be coming soon."); return; }
         const variantId = getVariantIdFromSelections(method, type, region, sizeOption, edition, quantity);
-        if (!variantId) { alert("Error: Variant ID not found for the current selection. Please check console for details."); return; }
+
+        if (!variantId) {
+            alert("Error: Product variant not found for the current selection. It might be coming soon or an issue with the configuration.");
+            console.error("Add to Cart blocked: Variant ID is null.", { method, type, region, sizeOption, edition, quantity });
+            return;
+        }
 
         let quantityForLink;
         const parsedQuantityFromProp = parseInt(quantity, 10);
 
         if (type === 'Office') {
-            quantityForLink = 1;
+            quantityForLink = 1; 
         } else if (type === 'Curated') {
             if (parsedQuantityFromProp === 2) quantityForLink = 1;
             else if (parsedQuantityFromProp === 4) quantityForLink = 2;
             else if (parsedQuantityFromProp === 6) quantityForLink = 3;
             else quantityForLink = parsedQuantityFromProp;
-        } else {
+        } else if (method === 'Capsules') {
+            // For capsules, variant ID represents the 3x10 pack. So quantityForLink is 1.
+            // This assumes `quantity` prop is "3".
+            if (parsedQuantityFromProp === 3) {
+                quantityForLink = 1;
+            } else {
+                alert("Selected capsule quantity is not available for purchase at this time.");
+                return;
+            }
+        }
+         else {
             quantityForLink = parsedQuantityFromProp;
         }
 
@@ -303,7 +358,9 @@ const SummaryDisplay = React.forwardRef(({
         }
 
         let sellingPlanIdToUse;
-        if (type === 'Office') sellingPlanIdToUse = officeSellingPlanIds[frequency];
+        if (method === 'Capsules') {
+            sellingPlanIdToUse = capsuleSellingPlanIds[frequency];
+        } else if (type === 'Office') sellingPlanIdToUse = officeSellingPlanIds[frequency];
         else if (type === 'Low-Caf') sellingPlanIdToUse = lowCafSellingPlanIds[frequency];
         else if (type === 'Masterpiece') {
             sellingPlanIdToUse = MASTERPIECE_SELLING_PLAN_ID;
@@ -311,27 +368,16 @@ const SummaryDisplay = React.forwardRef(({
         } else if (type === 'Regional' && region === 'Center America') sellingPlanIdToUse = regionalCenterAmericaSellingPlanIds[frequency];
         else if (type === 'Regional' && region === 'Ethiopia') sellingPlanIdToUse = regionalEthiopiaSellingPlanIds[frequency];
         else if (type === 'Regional' && region === 'Brazil') sellingPlanIdToUse = regionalBrazilSellingPlanIds[frequency];
-        else if (method === 'Capsules') {
-            const selectedPlanInfo = sellingPlanMapping[frequency];
-            if (selectedPlanInfo) sellingPlanIdToUse = selectedPlanInfo.planId;
-            else { console.error(`Capsule selling plan for frequency "${frequency}" not found.`); }
-        }
         else { 
             const selectedPlanInfo = sellingPlanMapping[frequency];
             if (selectedPlanInfo) sellingPlanIdToUse = selectedPlanInfo.planId;
         }
 
-        const typesRequiringSpecificPlans = ['Office', 'Low-Caf', 'Regional', 'Masterpiece', 'Capsules'];
-        if (typesRequiringSpecificPlans.includes(type) || method === 'Capsules') {
-            if (!sellingPlanIdToUse) {
-                alert(`Error: Subscription plan details for frequency "${frequency}" are not available for ${method === 'Capsules' ? `Capsules ${edition || ''}` : `${type} ${region || ''}`}.`);
-                return;
-            }
-        } else if (!sellingPlanIdToUse) {
-             alert(`Error: Subscription plan details for frequency "${frequency}" are not available.`);
-             return;
+        if (!sellingPlanIdToUse) {
+            const selectionName = method === 'Capsules' ? `Capsules (${edition || 'N/A'})` : `${type} (${region || 'N/A'})`;
+            alert(`Error: Subscription plan details for frequency "${frequency}" are not available for ${selectionName.trim()}.`);
+            return;
         }
-
 
         const cartAddParams = new URLSearchParams();
         cartAddParams.append("items[][id]", variantId.toString());
@@ -344,15 +390,17 @@ const SummaryDisplay = React.forwardRef(({
         if (newTab) newTab.focus(); else alert("Popup blocker may have prevented opening the cart. Please disable it and try again.");
     };
 
-    const animationText = type === 'Masterpiece' ? "We roast this subscription only on the first Tuesday every month" : "You can adjust your quantity any time!";
+    const animationText = type === 'Masterpiece' && method !== 'Capsules' ? "We roast this subscription only on the first Tuesday every month" : "You can adjust your quantity any time!";
     const calculatedPrice = getPriceForSelection(method, type, region, edition, sizeOption, quantity, frequency);
 
+    // Updated to handle "Coming soon" which might be returned by getPriceForSelection, though less likely now for capsules.
     const shouldShowPrice = calculatedPrice &&
                            calculatedPrice !== "Select options for price" &&
                            calculatedPrice !== "Select Quantity..." &&
                            calculatedPrice !== "Select Size..." &&
                            calculatedPrice !== "Select Region..." &&
-                           calculatedPrice !== "Price on selection";
+                           calculatedPrice !== "Price on selection" && // Kept for other potential uses
+                           calculatedPrice !== "Coming soon";
 
 
     return (
@@ -416,7 +464,8 @@ const RightContainer = ({ method, type, region, edition, sizeOption, quantity, f
     const summaryRef = useRef(null);
 
     const canAddToCart = method && frequency && (
-        (method === 'Capsules' && edition && quantity) ||
+        // For Capsules, only quantity "3" is addable (as per MiddleContainer only offering "3")
+        (method === 'Capsules' && edition && quantity === "3") ||
         (type === 'Office' && sizeOption) ||
         (type === 'Regional' && region && quantity) ||
         (['Roasters Choice', 'Masterpiece', 'Low-Caf', 'Curated'].includes(type) && quantity)

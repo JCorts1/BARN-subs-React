@@ -1,6 +1,6 @@
 // src/components/MiddleContainer.jsx
 // Adds info text for Capsules. Updates Capsules flow: "Taste Profile",
-// new options, new quantity structure, and specific frequencies.
+// new options, new quantity structure (only 3x10), and specific frequencies.
 // Navigates to prepaid subscriptions when "UPFRONT PAYMENT" is clicked.
 
 import React, { useState, useEffect } from 'react';
@@ -54,11 +54,14 @@ const masterpieceQuantityOptions = [
 ];
 const masterpieceQuantityLabelMap = masterpieceQuantityOptions.reduce((acc, o) => { acc[o.value] = o.label; return acc; }, {});
 
+// Removed "Masterpiece" from capsule taste profiles
 const capsuleTasteProfileOptions = [
-    { value: "Brazil", label: "Brazil" }, { value: "Ethiopia", label: "Ethiopia" }, { value: "Masterpiece", label: "Masterpiece" },
+    { value: "Brazil", label: "Brazil" }, { value: "Ethiopia", label: "Ethiopia" },
 ];
+
+// Updated: Only "3x 10 capsules" option available
 const capsuleQuantityOptions = [
-    { value: "3", label: "3x 10 capsules" }, { value: "4", label: "4x 10 capsules" }, { value: "5", label: "5x 10 capsules" },
+    { value: "3", label: "3x 10 capsules" },
 ];
 const capsuleQuantityLabelMap = capsuleQuantityOptions.reduce((acc, o) => { acc[o.value] = o.label; return acc; }, {});
 
@@ -165,6 +168,8 @@ const MiddleContainer = ({
         let isValidQty = true;
         let resetQty = false;
 
+        // Since capsuleQuantityOptions now only has one option, this check might seem simpler,
+        // but keeping it generic is fine for future flexibility if more options are added back.
         if (selectedMethod === 'Capsules' && finalSelectionDetail) {
             isValidQty = capsuleQuantityOptions.some(o => o.value === finalSelectionDetail);
             if(!isValidQty) resetQty = true;
@@ -188,11 +193,8 @@ const MiddleContainer = ({
 
     const handleSelectSelf = () => {
         setShowOptionsContainer(true);
-        // If switching from "UPFRONT PAYMENT" back to "PAY PER DELIVERY",
-        // reset selections might be desired, or re-trigger default settings.
-        // For now, it just shows the options.
         if (typeof onResetSelections === 'function' && showOptionsContainer === false) {
-            onResetSelections(); // Optionally reset if coming from gift
+            onResetSelections(); 
         }
     };
 
@@ -201,7 +203,6 @@ const MiddleContainer = ({
         if (typeof onResetSelections === 'function') {
             onResetSelections();
         }
-        // Navigate to the prepaid subscription page in a new tab
         window.open('https://thebarn.de/collections/prepaid-subscription', '_blank');
     };
 
@@ -238,6 +239,7 @@ const MiddleContainer = ({
                         ? baseFrequencyOptions.filter(option => allowedLowCafRegionalFrequencies.includes(option.value))
                         : baseFrequencyOptions;
 
+    // currentQuantityOptions will now reflect the single option for Capsules
     const currentQuantityOptions =
         selectedMethod === 'Capsules' ? capsuleQuantityOptions
         : selectedCoffeeType === 'Curated' ? curatedQuantityOptions
@@ -247,7 +249,7 @@ const MiddleContainer = ({
     const getQuantityDisplayLabel = (value) => {
         if (!value) {
             if (selectedCoffeeType === 'Office') return "Select Size...";
-            if (selectedMethod === 'Capsules') return "Select Quantity...";
+            if (selectedMethod === 'Capsules') return "Select Quantity..."; // Will show "3x 10 capsules" once selected as it's the only option
             return "Select Quantity...";
         }
         if (selectedMethod === 'Capsules') return capsuleQuantityLabelMap[value] || value;
@@ -255,7 +257,7 @@ const MiddleContainer = ({
         if (selectedCoffeeType === 'Masterpiece') return masterpieceQuantityLabelMap[value] || value;
         if (selectedCoffeeType === 'Low-Caf') return `${value}x 250g`;
         if (selectedCoffeeType === 'Regional') return `${value}x 250g`;
-        if (selectedCoffeeType === 'Office') return value; // For Office, value is already like "1x 1kg"
+        if (selectedCoffeeType === 'Office') return value; 
         if (selectedCoffeeType === 'Roasters Choice') return `${value} x 250g`;
         return value;
     };
@@ -277,11 +279,9 @@ const MiddleContainer = ({
                 </div>
             </div>
 
-            {/* Only show dropdowns if "PAY PER DELIVERY" (showOptionsContainer === true) is selected */}
             {showOptionsContainer === true && (
                 <div className='coffee-type-container w-5/6 rounded-md p-3 pt-5 flex flex-col items-center gap-y-2 bg-[#3a3c3d] justify-center mt-5'>
 
-                    {/* Step 1: Method Selection */}
                     <div className='dropdown-row'>
                        <h3 className='dropdown-label'>Method</h3>
                        <DropdownMenu>
@@ -472,7 +472,7 @@ const MiddleContainer = ({
                                 </DropdownMenuTrigger>
                                 <DropdownMenuContent className='dropdown-content-panel'>
                                     <DropdownMenuRadioGroup value={finalSelectionDetail} onValueChange={onQuantityChange}>
-                                        {currentQuantityOptions.map((option) => (
+                                        {currentQuantityOptions.map((option) => ( // This will now only show "3x 10 capsules" if method is Capsules
                                             <DropdownMenuRadioItem key={option.value} value={option.value}>
                                                {selectedMethod === 'Capsules'
                                                     ? option.label
