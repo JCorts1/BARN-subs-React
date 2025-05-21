@@ -35,8 +35,12 @@ const carouselImageData = {
     ],
     "Office": [
         "https://cdn.shopify.com/s/files/1/1657/3941/files/volcan_azul_1kg.webp?v=1743027540",
-        "https://cdn.shopify.com/s/files/1/0831/4141/files/HANNES_1kg_BAG.png?v=1706179901",
-        "https://cdn.shopify.com/s/files/1/0831/4141/products/espressoshotsCropped_60eb6865-fd62-43c7-90c5-2bc9050f167b.jpg?v=1741274114"
+        "https://cdn.shopify.com/s/files/1/0831/4141/files/gigesa_EOM.jpg?v=1741274114",
+        "https://cdn.shopify.com/s/files/1/0831/4141/products/espressoshotsCropped_60eb6865-fd62-43c7-90c5-2bc9050f167b.jpg?v=1741274114",
+        "https://cdn.shopify.com/s/files/1/0831/4141/files/Gigesa_flowers.jpg?v=1741274114",
+        "https://cdn.shopify.com/s/files/1/0831/4141/files/Gigesa_cherries_cafe_imports.jpg?v=1741274114",
+        "https://cdn.shopify.com/s/files/1/0831/4141/products/IMG_53282_e3689e29-ef3c-4753-8295-e2dd695b8ddc.jpg?v=1741274114",
+
     ],
     "Regional": {
         "Brazil": [
@@ -59,9 +63,15 @@ const carouselImageData = {
     "Capsules": {
         "Brazil": [
             "https://cdn.shopify.com/s/files/1/0831/4141/files/capsules_1.png?v=1695032905",
+            "https://cdn.shopify.com/s/files/1/0831/4141/files/Capsules.jpg?v=1629729054",
+            "https://cdn.shopify.com/s/files/1/0831/4141/products/IMG_0695_00be90e4-4d21-44b9-9455-9976a2701503.jpg?v=1667996022",
+            "https://cdn.shopify.com/s/files/1/0831/4141/products/IMG_0685_0b551a68-a4c6-4184-bf6d-97cfbd0b9c43.jpg?v=1667996022",
         ],
         "Ethiopia": [
              "https://cdn.shopify.com/s/files/1/0831/4141/products/94caa496-c974-436d-a877-91b5f1deee76_e692294a-dcda-4e46-97cf-cb22632a1acf.jpg?v=1667996022",
+             "https://cdn.shopify.com/s/files/1/0831/4141/files/Capsules.jpg?v=1629729054",
+             "https://cdn.shopify.com/s/files/1/0831/4141/products/IMG_0695_00be90e4-4d21-44b9-9455-9976a2701503.jpg?v=1667996022",
+             "https://cdn.shopify.com/s/files/1/0831/4141/products/IMG_0685_0b551a68-a4c6-4184-bf6d-97cfbd0b9c43.jpg?v=1667996022",
         ],
         "_default": [
             "https://cdn.shopify.com/s/files/1/0831/4141/files/capsules_1.png?v=1695032905",
