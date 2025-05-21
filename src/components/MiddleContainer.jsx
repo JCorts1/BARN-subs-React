@@ -1,7 +1,7 @@
 // src/components/MiddleContainer.jsx
 // Adds info text for Capsules. Updates Capsules flow: "Taste Profile",
 // new options, new quantity structure (only 3x10), and specific frequencies.
-// Navigates to prepaid subscriptions when "UPFRONT PAYMENT" is clicked.
+// Navigates to prepaid subscriptions in the same tab when "UPFRONT PAYMENT" is clicked.
 
 import React, { useState, useEffect } from 'react';
 import {
@@ -133,7 +133,7 @@ const MiddleContainer = ({
 
 
     useEffect(() => {
-        if (showOptionsContainer === false) return; // Don't reset frequency if upfront payment is selected
+        if (showOptionsContainer === false) return; 
 
         let resetToFrequency = null;
         let needsReset = false;
@@ -163,13 +163,11 @@ const MiddleContainer = ({
 
 
     useEffect(() => {
-        if (showOptionsContainer === false) return; // Don't reset quantity if upfront payment selected
+        if (showOptionsContainer === false) return; 
 
         let isValidQty = true;
         let resetQty = false;
 
-        // Since capsuleQuantityOptions now only has one option, this check might seem simpler,
-        // but keeping it generic is fine for future flexibility if more options are added back.
         if (selectedMethod === 'Capsules' && finalSelectionDetail) {
             isValidQty = capsuleQuantityOptions.some(o => o.value === finalSelectionDetail);
             if(!isValidQty) resetQty = true;
@@ -203,7 +201,8 @@ const MiddleContainer = ({
         if (typeof onResetSelections === 'function') {
             onResetSelections();
         }
-        window.open('https://thebarn.de/collections/prepaid-subscription', '_blank');
+        // Changed to navigate in the same tab
+        window.location.href = 'https://thebarn.de/collections/prepaid-subscription';
     };
 
     const currentCoffeeTypeOptions = selectedMethod === 'Filter' ? filterOptions : espressoOptions;
@@ -239,7 +238,6 @@ const MiddleContainer = ({
                         ? baseFrequencyOptions.filter(option => allowedLowCafRegionalFrequencies.includes(option.value))
                         : baseFrequencyOptions;
 
-    // currentQuantityOptions will now reflect the single option for Capsules
     const currentQuantityOptions =
         selectedMethod === 'Capsules' ? capsuleQuantityOptions
         : selectedCoffeeType === 'Curated' ? curatedQuantityOptions
@@ -249,7 +247,7 @@ const MiddleContainer = ({
     const getQuantityDisplayLabel = (value) => {
         if (!value) {
             if (selectedCoffeeType === 'Office') return "Select Size...";
-            if (selectedMethod === 'Capsules') return "Select Quantity..."; // Will show "3x 10 capsules" once selected as it's the only option
+            if (selectedMethod === 'Capsules') return "Select Quantity...";
             return "Select Quantity...";
         }
         if (selectedMethod === 'Capsules') return capsuleQuantityLabelMap[value] || value;
@@ -472,7 +470,7 @@ const MiddleContainer = ({
                                 </DropdownMenuTrigger>
                                 <DropdownMenuContent className='dropdown-content-panel'>
                                     <DropdownMenuRadioGroup value={finalSelectionDetail} onValueChange={onQuantityChange}>
-                                        {currentQuantityOptions.map((option) => ( // This will now only show "3x 10 capsules" if method is Capsules
+                                        {currentQuantityOptions.map((option) => (
                                             <DropdownMenuRadioItem key={option.value} value={option.value}>
                                                {selectedMethod === 'Capsules'
                                                     ? option.label
