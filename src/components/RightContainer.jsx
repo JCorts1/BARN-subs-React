@@ -189,6 +189,9 @@ const getPriceForSelection = (method, type, region, edition, sizeOption, quantit
     } else if (type === 'Office') {
         if (sizeOption === "1x 1kg") return "€44.00";
         if (sizeOption === "2x 1kg") return "€80.00";
+        if (sizeOption === "3x 1kg") return "Coming soon!";
+        if (sizeOption === "4x 1kg") return "Coming soon!";
+        if (sizeOption === "5x 1kg") return "Coming soon!";
     }
 
     return "Select options for price";
