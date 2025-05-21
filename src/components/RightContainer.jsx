@@ -2,6 +2,7 @@
 // Uses Shopify Permalink for checkout, opening in a new tab.
 // Includes specific Selling Plan IDs and Variant IDs for various products including Office and Capsules.
 // Adds slower fade transitions, updated summary sentence formatting, and price display with new prices.
+// Updated subscription descriptions and logic to handle method-specific offerings.
 
 import React, { useRef } from 'react';
 import { SwitchTransition, CSSTransition } from 'react-transition-group';
@@ -40,7 +41,6 @@ const carouselImageData = {
         "https://cdn.shopify.com/s/files/1/0831/4141/files/Gigesa_flowers.jpg?v=1741274114",
         "https://cdn.shopify.com/s/files/1/0831/4141/files/Gigesa_cherries_cafe_imports.jpg?v=1741274114",
         "https://cdn.shopify.com/s/files/1/0831/4141/products/IMG_53282_e3689e29-ef3c-4753-8295-e2dd695b8ddc.jpg?v=1741274114",
-
     ],
     "Regional": {
         "Brazil": [
@@ -83,37 +83,70 @@ const carouselImageData = {
         "https://cdn.shopify.com/s/files/1/0831/4141/files/LOGO-NAME.png?v=1710576883"
      ]
 };
+
+// Updated subscriptionDescriptions
 const subscriptionDescriptions = {
-    "Roasters Choice": { description: "Our most popular Subscription. Seasonal coffee curated every month. The perfect way to explore stunning Single Origin flavour.", currentOffering: "Current Offering:\n\n🇪🇹 Spring Coffee, Ethiopia: Apricot Jam. Bergamot. Floral." },
-    "Curated": { description: "Perfect for sharing or enjoying variety. Every month our Roasters select two exceptional 250g bags of different single origin coffees, roasted for Filter or Espresso.", currentOffering: "Current Pairings:\n\nPairing details coming soon!" },
-    "Masterpiece": { description: "The rarest coffees on the planet: a showcase of innovation and extraordinary flavour. Scoring 90 points and up. Omni Roast.", currentOffering: "Current Offering:\n\nFinca Sophia Natural Gesha, Panama 🇵🇦" },
-    "Low-Caf": { description: "Our answer to decaf, without no compromise on flavour: unique coffees featuring naturally low levels of caffeine.", currentOffering: "Current Offering:\n\nDaterra Reserve from Brazil 🇧🇷" },
-    "Office": { description: "For offices or households that love their espresso, with a little more volume each month. The coffee selection changes every month, allowing you to explore different regions and flavour!", currentOffering: "Current Offering:\n\nOur signature Office Espresso Blend." },
+    "Roasters Choice": {
+        description: "Our most popular Subscription. Seasonal coffee curated every month. The perfect way to explore stunning Single Origin flavour.",
+        currentOffering: {
+            "Espresso": "🇷🇼Huye Mountain Washed, Rwanda: Milk Chocolate. Orange. Raisin.",
+            "Filter": "🇷🇼Mahembe, Rwanda: Cherry. Black Tea. Sparkling."
+        }
+    },
+    "Curated": {
+        description: "Two seasonal coffees chosen every month by our team. Explore the variety of Single Origin flavour side by side.",
+        currentOffering: {
+            "Espresso": "🇷🇼Huye Mountain Washed, Rwanda: Milk Chocolate. Orange. Raisin.\n🇷🇼Huye Mountain Natural, Rwanda: Malt. Morello Cherry. Juicy.",
+            "Filter": "🇷🇼Mahembe, Rwanda: Cherry. Black Tea. Sparkling.\n🇨🇷La Bandera Forestal, Costa Rica: Mango. Pineapple. Fresh."
+        }
+    },
+    "Masterpiece": {
+        description: "The rarest coffees on the planet: a showcase of innovation and extraordinary flavour. Scoring 90 points and up. Omni Roast.",
+        currentOffering: "Finca Sophia Natural Gesha, Panama 🇵🇦"
+    },
+    "Low-Caf": {
+        description: "Our answer to decaf, without no compromise on flavour: unique coffees featuring naturally low levels of caffeine.",
+        currentOffering: "Daterra Reserve from Brazil 🇧🇷"
+    },
+    "Office": {
+        description: "For offices or households that love their espresso, with a little more volume each month. The coffee selection changes every month, allowing you to explore different regions and flavour!",
+        currentOffering: "🇪🇹 Spring Coffee, Ethiopia: Apricot Jam. Bergamot. Floral."
+    },
     "Regional": {
-        "Brazil": { description: "People love Brazilian Coffees for their sweetness, depth, and low acidity.", currentOffering: "Current Offering:\n\n🇧🇷 Elemental, Brazil: Milk Chocolate. Macadamia. Smooth." },
-        "Ethiopia": { description: "People love Ethiopian Coffees for their fruity sweetness and floral notes.", currentOffering: "Current Offering:\n\n🇪🇹 Chelbesa, Ethiopia: Peach. Fudge. Jasmine." },
-        "Center America": { description: "People love Central American Coffees for their exciting diversity and complex flavour.", currentOffering: "Current Offering:\n\n🇨🇷 Volcan Azul, Costa Rica: Dried Fig. Vanilla." },
+        "Brazil": {
+            description: "People love Brazilian Coffees for their sweetness, depth, and low acidity.",
+            currentOffering: "🇧🇷 Elemental, Brazil: Milk Chocolate. Macadamia. Smooth."
+        },
+        "Ethiopia": {
+            description: "People love Ethiopian Coffees for their fruity sweetness and floral notes.",
+            currentOffering: "🇪🇹 Chelbesa, Ethiopia: Peach. Fudge. Jasmine."
+        },
+        "Center America": {
+            description: "People love Central American Coffees for their exciting diversity and complex flavour.",
+            currentOffering: "🇨🇷 Volcan Azul, Costa Rica: Dried Fig. Vanilla."
+        },
         _default: { description: "Select a region to see details about the specific coffee offering for this type.", currentOffering: "" }
     },
     "Capsules": {
-        _default: {
+        _default: { // Used if no specific capsule edition is selected or edition not in this map
             description: "Select a taste profile to continue.",
             currentOffering: "Receive our Sustainable Capsules on repeat."
         },
-        "Brazil": {
-            description: "Bold and chocolatey with low acidity. A smooth and comforting cup, every time.",
-            currentOffering: "🇧🇷 Sweet flavours and pronounced chocolate notes with Single Origin Coffee from the experts at FAF Brazil."
+        "Brazil": { // Key for "Brazil" capsule edition
+            description: "People love Brazilian Coffees for their rich sweetness and low acidity.",
+            currentOffering: "🇧🇷 Seasonal Brazil: Toffee. Vanilla. Rich."
         },
-        "Ethiopia": {
-            description: "Bright, fruity and floral. An elegant expression of Ethiopian terroir in capsule form. ",
-            currentOffering: "🇪🇹 Take a trip to the birthplace of coffee with typical floral notes and sweet apricots. "
+        "Ethiopia": { // Key for "Ethiopia" capsule edition
+            description: "People love Ethiopian Coffees for their fruity character and elegant sweetness.",
+            currentOffering: "🇪🇹 Seasonal Ethiopia: Strawberry. Chocolate. Creamy."
         }
     }
 };
+
 const getVariantIdFromSelections = (method, type, region, sizeOption, edition, quantity) => {
   if (method === 'Capsules') {
       const qty = quantity ? parseInt(quantity) : 0;
-      if (qty === 3) { // Only quantity 3 is addable for capsules.
+      if (qty === 3) {
           if (edition === 'Brazil') return 43660597690635;
           if (edition === 'Ethiopia') return 43660597756171;
       }
@@ -165,16 +198,13 @@ const getPriceForSelection = (method, type, region, edition, sizeOption, quantit
     if (method !== 'Capsules' && !type) return "";
     if (method === 'Capsules' && !edition) return "";
 
-    // 'quantity' prop is finalSelectionDetail from App.jsx (e.g., "3" for capsules)
-    // 'qty' is its parsed integer value.
     if (method !== 'Capsules' && type !== 'Office' && !quantity) return "Select Quantity...";
-    if (method === 'Capsules' && !quantity) return "Select Quantity..."; // Will always be "3" if selected
+    if (method === 'Capsules' && !quantity) return "Select Quantity...";
     if (type === 'Office' && !sizeOption) return "Select Size...";
 
     const qty = quantity ? parseInt(quantity) : 0;
 
     if (method === 'Capsules') {
-        // Quantity is always "3" (3x10 pack) due to MiddleContainer update
         if (edition && quantity === "3") {
             if (edition === 'Brazil') {
                 return "€27.50";
@@ -182,7 +212,6 @@ const getPriceForSelection = (method, type, region, edition, sizeOption, quantit
                 return "€30.00";
             }
         }
-        // Fallback if edition not recognized or somehow quantity isn't "3"
         return "Select options for price";
     }
 
@@ -283,6 +312,26 @@ const SummaryDisplay = React.forwardRef(({
          imagesToShowInSummary = carouselImageData._fallback || [];
     }
 
+    // Logic to get the correct "Current Offering" text
+    let offeringDisplayHtml = null;
+    if (currentDescriptionDataInSummary && currentDescriptionDataInSummary.currentOffering) {
+        let textToDisplay;
+        // Check if currentOffering is an object (for method-specific offerings like Roasters Choice, Curated)
+        if (typeof currentDescriptionDataInSummary.currentOffering === 'object' && (type === 'Roasters Choice' || type === 'Curated')) {
+            textToDisplay = currentDescriptionDataInSummary.currentOffering[method]; // Get by method (Filter/Espresso)
+            if (!textToDisplay) {
+                // Fallback if a specific method isn't defined in the currentOffering object for these types
+                textToDisplay = Object.values(currentDescriptionDataInSummary.currentOffering).join('\n') || "Details coming soon.";
+            }
+        } else if (typeof currentDescriptionDataInSummary.currentOffering === 'string') {
+            // For all other types where currentOffering is a direct string
+            textToDisplay = currentDescriptionDataInSummary.currentOffering;
+        } else {
+            textToDisplay = "Details coming soon."; // Fallback for unexpected format
+        }
+        offeringDisplayHtml = <p className="whitespace-pre-wrap text-sm sm:text-base">{textToDisplay}</p>;
+    }
+
 
     const highlightClass = "text-[#A67C52] font-semibold";
     const sentenceParts = [];
@@ -306,9 +355,8 @@ const SummaryDisplay = React.forwardRef(({
         if (type === 'Office') {
             sentenceParts.push(<span key="qty-val" className={highlightClass}>{sizeOption}</span>);
         } else {
-            const qtyValue = parseInt(quantity); // quantity is finalSelectionDetail (e.g. "3" for capsules)
+            const qtyValue = parseInt(quantity);
             if (method === 'Capsules') {
-                 // Label will be "3x 10 capsules" as it's the only option
                  sentenceParts.push(<span key="qty-val" className={highlightClass}>3x 10 capsules</span>);
             } else if (type === 'Curated') {
                 sentenceParts.push(<span key="qty-val" className={highlightClass}>{`${qtyValue}x 250g`}</span>);
@@ -348,8 +396,6 @@ const SummaryDisplay = React.forwardRef(({
             else if (parsedQuantityFromProp === 6) quantityForLink = 3;
             else quantityForLink = parsedQuantityFromProp;
         } else if (method === 'Capsules') {
-            // For capsules, variant ID represents the 3x10 pack. So quantityForLink is 1.
-            // This assumes `quantity` prop is "3".
             if (parsedQuantityFromProp === 3) {
                 quantityForLink = 1;
             } else {
@@ -403,13 +449,12 @@ const SummaryDisplay = React.forwardRef(({
     const animationText = type === 'Masterpiece' && method !== 'Capsules' ? "We roast this subscription only on the first Tuesday every month" : "You can adjust your quantity any time!";
     const calculatedPrice = getPriceForSelection(method, type, region, edition, sizeOption, quantity, frequency);
 
-    // Updated to handle "Coming soon" which might be returned by getPriceForSelection, though less likely now for capsules.
     const shouldShowPrice = calculatedPrice &&
                            calculatedPrice !== "Select options for price" &&
                            calculatedPrice !== "Select Quantity..." &&
                            calculatedPrice !== "Select Size..." &&
                            calculatedPrice !== "Select Region..." &&
-                           calculatedPrice !== "Price on selection" && // Kept for other potential uses
+                           calculatedPrice !== "Price on selection" &&
                            calculatedPrice !== "Coming soon";
 
 
@@ -438,7 +483,8 @@ const SummaryDisplay = React.forwardRef(({
                 <div className="subscription-description text-white my-4 text-left w-full max-w-5xl flex justify-center flex-col">
                     <div className="bg-[#3a3c3d] p-4 rounded-md border border-[#A67C52] text-base sm:text-lg w-full">
                         <p className="mb-3">{currentDescriptionDataInSummary.description}</p>
-                        {currentDescriptionDataInSummary.currentOffering && (<p className="whitespace-pre-wrap text-sm sm:text-base">{currentDescriptionDataInSummary.currentOffering}</p>)}
+                        {/* Display the Current Offering text */}
+                        {offeringDisplayHtml}
                     </div>
                     <div> <h1 className='words-animation'>{animationText}</h1> </div>
                 </div>
@@ -474,7 +520,6 @@ const RightContainer = ({ method, type, region, edition, sizeOption, quantity, f
     const summaryRef = useRef(null);
 
     const canAddToCart = method && frequency && (
-        // For Capsules, only quantity "3" is addable (as per MiddleContainer only offering "3")
         (method === 'Capsules' && edition && quantity === "3") ||
         (type === 'Office' && sizeOption) ||
         (type === 'Regional' && region && quantity) ||
