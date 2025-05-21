@@ -1,8 +1,3 @@
-// src/components/RightContainer.jsx
-// Uses Shopify Permalink for checkout, opening in a new tab.
-// Includes specific Selling Plan IDs and Variant IDs for various products including Office.
-// Adds slower fade transitions, updated summary sentence formatting, and price display with new prices.
-
 import React, { useRef } from 'react';
 import { SwitchTransition, CSSTransition } from 'react-transition-group';
 import './RightContainer.css'; // Your CSS file for RightContainer styles
@@ -102,12 +97,20 @@ const getVariantIdFromSelections = (method, type, region, sizeOption, edition, q
       if (method === 'Filter') return 45910178332939; if (method === 'Espresso') return 45910178398475;
       console.warn("Roasters Choice invalid method:", method); return null;
   } if (type === 'Curated') {
-      if (method === 'Filter') return 54897259151735; if (method === 'Espresso') return 54897259184503;
+      if (method === 'Filter') return 54897259151735; if (method === 'Espresso') return 54897259184503; // Assuming Espresso Curated uses this if available
       console.warn("Curated invalid method:", method); return null;
   } if (type === 'Masterpiece') return 45969541562635;
   if (type === 'Office') {
-      if (sizeOption === "1x 1kg") return 43658532192523; if (sizeOption === "2x 1kg") return 43658532258059;
-      console.warn("Office unsupported size:", sizeOption); return null;
+      // Assuming variant IDs are specific to the sizeOption, not just a base product ID with quantity.
+      // These might need to be distinct variant IDs for 1kg, 2kg etc. if they are separate SKUs in Shopify.
+      // The existing logic only has two variant IDs for office, corresponding to 1x1kg and 2x1kg based on original code.
+      // If 3x, 4x, 5x 1kg options have *different* variant IDs, this needs expansion.
+      // For now, using the existing variant IDs for the sizes they were mapped to.
+      if (sizeOption === "1x 1kg") return 43658532192523;
+      if (sizeOption === "2x 1kg") return 43658532258059;
+      // Add more variant IDs if other office sizes have unique ones:
+      // if (sizeOption === "3x 1kg") return YOUR_VARIANT_ID_FOR_3KG;
+      console.warn("Office unsupported size for current Variant ID mapping:", sizeOption); return null;
   } if (type === 'Regional') {
       if (region === 'Center America') return 45972274381067; if (region === 'Ethiopia') return 45972211695883; if (region === 'Brazil') return 45969588617483;
       console.warn("Regional region not mapped:", region); return null;
@@ -128,35 +131,73 @@ const officeSellingPlanIds = { "2 Weeks": 710447038839, "4 Weeks": 710447104375,
 const SHOP_DOMAIN = "thebarn.de";
 
 const getPriceForSelection = (method, type, region, edition, sizeOption, quantity, frequency) => {
-    if (!method && !type && !edition && !sizeOption && !region) return "";
-    const qty = quantity ? parseInt(quantity) : 0;
+    // Initial check: if critical top-level selections are missing, return empty.
+    if (!method) return "";
+    if (method !== 'Capsules' && !type) return "";
+    if (method === 'Capsules' && !edition) return "";
 
-    if (type === 'Roasters Choice') {
+    // For Office type, sizeOption is the primary price determinant.
+    // For other types that require quantity, if quantity is missing, we can't determine price.
+    if (method !== 'Capsules' && type !== 'Office' && !quantity) return "Select Quantity...";
+    if (method === 'Capsules' && !quantity) return "Select Quantity...";
+    if (type === 'Office' && !sizeOption) return "Select Size...";
+
+    const qty = quantity ? parseInt(quantity) : 0; // 'quantity' here is the finalSelectionDetail from props
+
+    if (method === 'Capsules') {
+        // Specific capsule pricing based on edition and qty would go here
+        // e.g., if (edition === 'Brazil' && qty === 3) return "€20.00";
+        return "Price on selection"; // Fallback as per original, assuming prices are more complex or TBD
+    }
+
+    if (type === 'Roasters Choice') { // Applies to Filter or Espresso
         if (qty === 1) return "€14.00";
-        if (qty === 2) return "€27.50";
-    } else if (type === 'Curated') {
-        if (qty === 2) return "€27.50";
-    } else if (type === 'Masterpiece') {
-        if (qty === 1) return "€33.00";
+        if (qty === 2) return "€28.00";
+        if (qty === 3) return "€42.00";
+        if (qty === 4) return "€56.00";
+        if (qty === 5) return "€70.00";
+    } else if (type === 'Curated') { // User specified "Filter Curated". Assume Espresso Curated, if exists, has same pricing.
+                                   // `quantity` prop values are "2", "4", "6" from curatedQuantityOptions
+        if (qty === 2) return "€27.50"; // For "2x 250g" (original price, not explicitly changed by user for this qty)
+        if (qty === 4) return "€55.00";
+        if (qty === 6) return "€82.50"; // For "6x 250g" (new price from user)
+        // Price for qty "6" ("6x 250g") not provided by user. Falls through to "Select options for price".
+    } else if (type === 'Masterpiece') { // Omni roast
+                                        // `quantity` prop values are "1", "2", "3" from masterpieceQuantityOptions
+        if (qty === 1) return "€33.00"; // For "1 bag"
+        if (qty === 2) return "€66.00"; // For "2 bags"
+        if (qty === 3) return "€99.00"; // For "3 bags"
+    } else if (type === 'Low-Caf') { // User specified "Filter low-caf". Assume Espresso Low-Caf, if exists, has same pricing.
+                                     // `quantity` prop values are "1"-"5" from standardQuantityOptions
+        if (qty === 1) return "€15.50";
+        if (qty === 2) return "€31.00";
+        if (qty === 3) return "€46.50";
+        if (qty === 4) return "€62.00";
+        if (qty === 5) return "€77.50";
     } else if (type === 'Regional') {
+        if (!region) return "Select Region..."; // Regional type selected, but no specific region
+        // Prices here are for qty 1 as per original code.
+        // `quantity` prop values are "1"-"5" from standardQuantityOptions
         if (qty === 1) {
             if (region === 'Brazil') return "€13.00";
             if (region === 'Center America') return "€15.00";
             if (region === 'Ethiopia') return "€14.00";
         }
+        // Add other quantities for regional if prices are known e.g.
+        // if (qty === 2 && region === 'Brazil') return "€25.00";
     } else if (type === 'Office') {
+        // `sizeOption` is the key for Office pricing (e.g., "1x 1kg", "2x 1kg")
         if (sizeOption === "1x 1kg") return "€44.00";
         if (sizeOption === "2x 1kg") return "€80.00";
-    } else if (type === 'Low-Caf') {
-        if (qty === 1) return "€15.50";
-    } else if (method === 'Capsules') {
-        if (edition && quantity) return "Price on selection";
+        // Prices for "3x 1kg", "4x 1kg", "5x 1kg" from officeSizeOptions are not defined in requirements.
     }
-    if (method || type || edition || sizeOption || region) {
-        return "Select options for price";
-    }
-    return "";
+
+    // If a known type/method is selected but doesn't match any specific price rule above
+    // (e.g. Curated with qty 6, or Regional with qty 2, or Office 3x 1kg)
+    // or if a required sub-selection for pricing is still missing (though initial checks try to catch this)
+    return "Select options for price";
 };
+
 
 const DefaultIntroContent = React.forwardRef((props, ref) => {
     const defaultImageUrl = "https://cdn.shopify.com/s/files/1/0831/4141/files/LOGO-NAME.png?v=1710576883";
@@ -212,15 +253,28 @@ const SummaryDisplay = React.forwardRef(({
         } else { sentenceParts.push(' (select type)'); }
     }
     sentenceParts.push(' subscription');
-    if (quantity) {
+    if (quantity || sizeOption) { // sizeOption for Office, quantity for others
         sentenceParts.push(' - Quantity: ');
-        const qtyValue = parseInt(quantity);
-        if (type === 'Office') { sentenceParts.push(<span key="qty-val" className={highlightClass}>{sizeOption}</span>); }
-        else if (method === 'Capsules') { sentenceParts.push(<span key="qty-val" className={highlightClass}>{`${qtyValue} box${qtyValue > 1 ? 'es' : ''} of 10 capsules`}</span>); }
-        else if (type === 'Curated') { sentenceParts.push(<span key="qty-val" className={highlightClass}>{`${qtyValue} bag${qtyValue > 1 ? 's' : ''} of 250g each`}</span>); }
-        else if (type === 'Masterpiece') { sentenceParts.push(<span key="qty-val" className={highlightClass}>{`${qtyValue} bag${qtyValue > 1 ? 's' : ''}`}</span>); }
-        else { sentenceParts.push(<span key="qty-val" className={highlightClass}>{`${qtyValue} bag${qtyValue > 1 ? 's' : ''} of 250g each`}</span>); }
+        if (type === 'Office') {
+            sentenceParts.push(<span key="qty-val" className={highlightClass}>{sizeOption}</span>);
+        } else {
+            const qtyValue = parseInt(quantity); // Ensure quantity is a number for comparisons
+            if (method === 'Capsules') {
+                 // Example: "3 boxes of 10 capsules" from capsuleQuantityLabelMap logic in MiddleContainer
+                 // We need a way to get the actual label here if it's complex, or construct it.
+                 // For simplicity, directly using qtyValue for now, but ideally, pass down getQuantityDisplayLabel or similar.
+                 sentenceParts.push(<span key="qty-val" className={highlightClass}>{`${qtyValue}x 10 capsules`}</span>); // Simplified, adjust if more detail needed
+            } else if (type === 'Curated') {
+                // Value "2" is "2x 250g", "4" is "4x 250g", "6" is "6x 250g"
+                sentenceParts.push(<span key="qty-val" className={highlightClass}>{`${qtyValue}x 250g`}</span>);
+            } else if (type === 'Masterpiece') {
+                sentenceParts.push(<span key="qty-val" className={highlightClass}>{`${qtyValue} bag${qtyValue > 1 ? 's' : ''}`}</span>);
+            } else { // Roasters Choice, Low-Caf, Regional
+                sentenceParts.push(<span key="qty-val" className={highlightClass}>{`${qtyValue} bag${qtyValue > 1 ? 's' : ''} of 250g each`}</span>);
+            }
+        }
     } else { sentenceParts.push(type === 'Office' ? ' (select size)' : ' (select quantity)'); }
+
     if (frequency) {
         sentenceParts.push(', delivered every ');
         const displayFrequency = frequency.replace(' (Recommended)', '');
@@ -231,47 +285,87 @@ const SummaryDisplay = React.forwardRef(({
     const handleAddToCartClick = () => {
         if (!canAddToCartProp) { alert("Please complete selections."); return; }
         const variantId = getVariantIdFromSelections(method, type, region, sizeOption, edition, quantity);
-        if (!variantId) { alert("Error: Variant ID not found."); return; }
+        if (!variantId) { alert("Error: Variant ID not found for the current selection. Please check console for details."); return; }
+
         let quantityForLink;
         const parsedQuantityFromProp = parseInt(quantity, 10);
-        if (type === 'Office') quantityForLink = 1;
-        else if (type === 'Curated') {
-            if (parsedQuantityFromProp === 2) quantityForLink = 1;
-            else if (parsedQuantityFromProp === 4) quantityForLink = 2;
-            else if (parsedQuantityFromProp === 6) quantityForLink = 3;
-            else quantityForLink = parsedQuantityFromProp;
-        } else quantityForLink = parsedQuantityFromProp;
-        if (isNaN(quantityForLink) || quantityForLink < 1) { alert("Error: Invalid quantity."); return; }
-        let sellingPlanId;
-        if (type === 'Office') sellingPlanId = officeSellingPlanIds[frequency];
-        else if (type === 'Low-Caf') sellingPlanId = lowCafSellingPlanIds[frequency];
+
+        if (type === 'Office') {
+            // For Office, the quantity in the permalink is typically 1, as the variant itself represents the total amount (e.g., 1 unit of "2x 1kg" variant).
+            // This depends on how Shopify variants are set up. If each 1kg bag is a quantity unit, then sizeOption's numeric part is the quantity.
+            // Assuming variant represents the bundle (e.g. "2x 1kg" is one variant, quantity 1 of that variant)
+            quantityForLink = 1;
+        } else if (type === 'Curated') {
+            // Original logic: 2 -> 1, 4 -> 2, 6 -> 3. This implies the variant is a "pair of 250g bags" or similar base unit.
+            if (parsedQuantityFromProp === 2) quantityForLink = 1; // 1 unit of (2x250g variant)
+            else if (parsedQuantityFromProp === 4) quantityForLink = 2; // 2 units of (2x250g variant if base is 2 bags)
+            else if (parsedQuantityFromProp === 6) quantityForLink = 3; // 3 units
+            else quantityForLink = parsedQuantityFromProp; // Fallback, should not happen with current options
+        } else {
+            quantityForLink = parsedQuantityFromProp;
+        }
+
+        if (isNaN(quantityForLink) || quantityForLink < 1) {
+             alert("Error: Invalid quantity for cart link. Please check selections.");
+             console.error("Invalid quantityForLink:", quantityForLink, {method, type, quantity, sizeOption});
+             return;
+        }
+
+        let sellingPlanIdToUse; // Renamed to avoid conflict
+        if (type === 'Office') sellingPlanIdToUse = officeSellingPlanIds[frequency];
+        else if (type === 'Low-Caf') sellingPlanIdToUse = lowCafSellingPlanIds[frequency];
         else if (type === 'Masterpiece') {
-            sellingPlanId = MASTERPIECE_SELLING_PLAN_ID;
-            if (frequency !== "4 Weeks (Recommended)" && frequency !== "4 Weeks") console.warn("Masterpiece frequency note.");
-        } else if (type === 'Regional' && region === 'Center America') sellingPlanId = regionalCenterAmericaSellingPlanIds[frequency];
-        else if (type === 'Regional' && region === 'Ethiopia') sellingPlanId = regionalEthiopiaSellingPlanIds[frequency];
-        else if (type === 'Regional' && region === 'Brazil') sellingPlanId = regionalBrazilSellingPlanIds[frequency];
-        else {
+            sellingPlanIdToUse = MASTERPIECE_SELLING_PLAN_ID;
+            if (frequency !== "4 Weeks (Recommended)" && frequency !== "4 Weeks") console.warn("Masterpiece frequency note: Standard Masterpiece plan ID used, though frequency is not 4 weeks. Ensure this is intended.");
+        } else if (type === 'Regional' && region === 'Center America') sellingPlanIdToUse = regionalCenterAmericaSellingPlanIds[frequency];
+        else if (type === 'Regional' && region === 'Ethiopia') sellingPlanIdToUse = regionalEthiopiaSellingPlanIds[frequency];
+        else if (type === 'Regional' && region === 'Brazil') sellingPlanIdToUse = regionalBrazilSellingPlanIds[frequency];
+        else if (method === 'Capsules') {
+            // TODO: Implement capsule selling plan ID lookup if they have specific plans
+            // For now, try to use generic plans if capsules use them, or log error.
             const selectedPlanInfo = sellingPlanMapping[frequency];
-            if (selectedPlanInfo) sellingPlanId = selectedPlanInfo.planId;
+            if (selectedPlanInfo) sellingPlanIdToUse = selectedPlanInfo.planId;
+            else { console.error(`Capsule selling plan for frequency "${frequency}" not found.`); /* sellingPlanIdToUse remains undefined */ }
         }
-        const typesWithSpecificPlans = ['Office', 'Low-Caf', 'Regional'];
-        if (typesWithSpecificPlans.includes(type) && !sellingPlanId) {
-            alert(`Error: Frequency "${frequency}" not available for ${type} ${region || ''}.`); return;
+        else { // Default for Roasters Choice, Curated (if not covered by specific logic)
+            const selectedPlanInfo = sellingPlanMapping[frequency];
+            if (selectedPlanInfo) sellingPlanIdToUse = selectedPlanInfo.planId;
         }
-        if (!sellingPlanId) { alert("Error: Plan details not found."); return; }
+
+        // Check if a selling plan ID was actually found
+        const typesRequiringSpecificPlans = ['Office', 'Low-Caf', 'Regional', 'Masterpiece', 'Capsules']; // Capsules added
+        if (typesRequiringSpecificPlans.includes(type) || method === 'Capsules') {
+            if (!sellingPlanIdToUse) {
+                alert(`Error: Subscription plan details for frequency "${frequency}" are not available for ${method === 'Capsules' ? `Capsules ${edition || ''}` : `${type} ${region || ''}`}.`);
+                return;
+            }
+        } else if (!sellingPlanIdToUse) { // For other types like Roasters Choice, Curated
+             alert(`Error: Subscription plan details for frequency "${frequency}" are not available.`);
+             return;
+        }
+
+
         const cartAddParams = new URLSearchParams();
         cartAddParams.append("items[][id]", variantId.toString());
         cartAddParams.append("items[][quantity]", quantityForLink.toString());
-        cartAddParams.append("items[][selling_plan]", sellingPlanId.toString());
-        cartAddParams.append("return_to", "/checkout");
+        cartAddParams.append("items[][selling_plan]", sellingPlanIdToUse.toString()); // Use the correctly determined sellingPlanIdToUse
+        cartAddParams.append("return_to", "/checkout"); // Or perhaps just /cart to review first
+
         const permalinkUrl = `https://${SHOP_DOMAIN}/cart/clear?return_to=${encodeURIComponent(`/cart/add?${cartAddParams.toString()}`)}`;
         const newTab = window.open(permalinkUrl, '_blank');
-        if (newTab) newTab.focus(); else alert("Popup blocker.");
+        if (newTab) newTab.focus(); else alert("Popup blocker may have prevented opening the cart. Please disable it and try again.");
     };
 
     const animationText = type === 'Masterpiece' ? "We roast this subscription only on the first Tuesday every month" : "You can adjust your quantity any time!";
     const calculatedPrice = getPriceForSelection(method, type, region, edition, sizeOption, quantity, frequency);
+
+    const shouldShowPrice = calculatedPrice &&
+                           calculatedPrice !== "Select options for price" &&
+                           calculatedPrice !== "Select Quantity..." &&
+                           calculatedPrice !== "Select Size..." &&
+                           calculatedPrice !== "Select Region..." &&
+                           calculatedPrice !== "Price on selection";
+
 
     return (
         <div ref={ref} className="final-selection-display w-[100%] flex flex-col items-center text-white text-center px-4">
@@ -280,7 +374,7 @@ const SummaryDisplay = React.forwardRef(({
                  <Carousel className="w-full max-w-lg mx-auto mb-6" opts={{ align: "start", loop: imagesToShowInSummary.length > 1 }}>
                     <CarouselContent>
                         {imagesToShowInSummary.map((imageUrl, index) => (
-                            <CarouselItem key={`${method}-${type || edition}-${region || ''}-${index}-${quantity}`}>
+                            <CarouselItem key={`${method}-${type || edition}-${region || ''}-${index}-${quantity || sizeOption}`}> {/* Added sizeOption to key for office */}
                                 <div className="p-1">
                                     <img src={imageUrl} alt={`${method}${type ? ' - '+type : ''}${edition ? ' - Taste: '+edition : ''}${region ? ' - '+region : ''} image ${index + 1}`}
                                         className="w-full h-auto aspect-square object-cover rounded-md block" loading="lazy" />
@@ -308,8 +402,12 @@ const SummaryDisplay = React.forwardRef(({
             </p>
             <div className="cart-actions-container mt-auto pt-4 w-full max-w-5xl flex flex-col items-center sm:flex-row sm:justify-end sm:items-center">
                 <div className="price-and-button-group flex flex-col items-center gap-3 sm:flex-row sm:items-center sm:gap-x-4">
-                    <div className="price-display text-white text-2xl font-bold"> {/* UPDATED: text-xl to text-2xl */}
-                        {calculatedPrice && calculatedPrice !== "Select options for price" && <span>{calculatedPrice}</span>}
+                    <div className="price-display text-white text-2xl font-bold min-h-[1em]"> {/* Ensure space even if no price */}
+                        {shouldShowPrice ? (
+                            <span>{calculatedPrice}</span>
+                        ) : (
+                            calculatedPrice && <span className="text-sm text-gray-400">{calculatedPrice}</span> // Show prompts like "Select Quantity..."
+                        )}
                     </div>
                     <button
                         className={`bg-[#A67C52] py-3 px-18 rounded-md border-[1.5px] border-transparent hover:border-[#3a3c3d] transition-all duration-300 ease-in-out transform text-white font-semibold text-base sm:text-md disabled:opacity-50 disabled:cursor-not-allowed enabled:hover:brightness-110 enabled:active:scale-95 w-full mt-2 sm:mt-0 sm:w-auto`}
@@ -325,24 +423,26 @@ const SummaryDisplay = React.forwardRef(({
 SummaryDisplay.displayName = 'SummaryDisplay';
 
 const RightContainer = ({ method, type, region, edition, sizeOption, quantity, frequency }) => {
-    const showSummaryLayout = method && (type || edition);
+    const showSummaryLayout = method && (type || edition); // Show summary if method and EITHER type (for coffee/espresso) OR edition (for capsules) is selected
     const introRef = useRef(null);
     const summaryRef = useRef(null);
-    const canAddToCart = method && quantity && frequency && (
-        (method === 'Capsules' && edition) ||
-        (method !== 'Capsules' && type && (
-            (type === 'Office' && sizeOption) ||
-            (type === 'Regional' && region) ||
-            (['Roasters Choice', 'Masterpiece', 'Low-Caf', 'Curated'].includes(type))
-        ))
+
+    // Determine if the "Add to Cart" button should be enabled
+    const canAddToCart = method && frequency && (
+        (method === 'Capsules' && edition && quantity) || // Capsules need edition and quantity
+        (type === 'Office' && sizeOption) || // Office needs sizeOption (quantity is derived from it)
+        (type === 'Regional' && region && quantity) || // Regional needs region and quantity
+        // For types that only need quantity (and not a sub-type like region or special size like office)
+        (['Roasters Choice', 'Masterpiece', 'Low-Caf', 'Curated'].includes(type) && quantity)
     );
+
     return (
-        <div className={`right-container flex justify-center w-full min-h-screen bg-[#1a1a1a] ${!showSummaryLayout ? 'items-center' : 'items-start'}`}>
+        <div className={`right-container flex justify-center w-full min-h-screen bg-[#1a1a1a] ${!showSummaryLayout ? 'items-center' : 'items-start pt-8 pb-8'}`}> {/* Added padding top/bottom for summary view */}
             <SwitchTransition mode="out-in">
                 <CSSTransition
                     key={showSummaryLayout ? "summary" : "intro"}
                     nodeRef={showSummaryLayout ? summaryRef : introRef}
-                    timeout={1000}
+                    timeout={1000} // Adjusted timeout for a more noticeable transition
                     classNames="fade-content"
                     unmountOnExit >
                     {showSummaryLayout ? (
