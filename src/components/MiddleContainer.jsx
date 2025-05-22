@@ -1,8 +1,3 @@
-// src/components/MiddleContainer.jsx
-// Adds info text for Capsules. Updates Capsules flow: "Taste Profile",
-// new options, new quantity structure (only 3x10), and specific frequencies.
-// Navigates to prepaid subscriptions in the same tab when "UPFRONT PAYMENT" is clicked.
-
 import React, { useState, useEffect } from 'react';
 import {
     DropdownMenu,
@@ -13,7 +8,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { ChevronDown } from "lucide-react";
-import "./MiddleContainer.css"; // Your CSS file
+import "./MiddleContainer.css"; // This CSS works in harmony 
 
 // --- Data Constants ---
 
@@ -54,14 +49,12 @@ const masterpieceQuantityOptions = [
 ];
 const masterpieceQuantityLabelMap = masterpieceQuantityOptions.reduce((acc, o) => { acc[o.value] = o.label; return acc; }, {});
 
-// Removed "Masterpiece" from capsule taste profiles
 const capsuleTasteProfileOptions = [
     { value: "Brazil", label: "Brazil" }, { value: "Ethiopia", label: "Ethiopia" },
 ];
 
-// Updated: Only "3x 10 capsules" option available
 const capsuleQuantityOptions = [
-    { value: "3", label: "3x 10 capsules" },
+    { value: "3", label: "3 x 10 capsules" },
 ];
 const capsuleQuantityLabelMap = capsuleQuantityOptions.reduce((acc, o) => { acc[o.value] = o.label; return acc; }, {});
 
@@ -201,7 +194,6 @@ const MiddleContainer = ({
         if (typeof onResetSelections === 'function') {
             onResetSelections();
         }
-        // Changed to navigate in the same tab
         window.location.href = 'https://thebarn.de/collections/prepaid-subscription';
     };
 
