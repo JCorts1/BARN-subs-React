@@ -1,5 +1,3 @@
-/* ./RightContainer.css */
-
 /* --- General Right Container Styles --- */
 .right-container {
   padding-top: 0;
@@ -17,15 +15,11 @@
 /* --- Original and Scaled Styles --- */
 .intro-list li {
   padding-bottom: 0.5rem;
-  /* Font size will now be inherited from the parent <ul>'s Tailwind classes (text-xl sm:text-2xl) */
-  /* The specific desktop override for .intro-list li font-size has been removed. */
 }
 
 /* Ensure the ul itself has the intended base font sizes for its children */
 .right-container .default-intro-content .intro-list {
-  /* This is where text-xl sm:text-2xl from JSX applies.
-     If you need to specifically target list items for other reasons,
-     you can do it here, but for font-size, Tailwind on the <ul> is now the primary control. */
+
 }
 
 
@@ -52,7 +46,6 @@
 }
 @media (min-width: 640px) {
   .subscription-description .whitespace-pre-wrap {
-    /* font-size: 1.6rem; */
   }
 }
 
@@ -69,7 +62,6 @@
 }
 @media (min-width: 640px) {
   .summary-sentence {
-    /* font-size: 1.8rem; */
   }
 }
 

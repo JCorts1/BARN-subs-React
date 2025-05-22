@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { ChevronDown } from "lucide-react";
-import "./MiddleContainer.css"; // This CSS works in harmony 
+import "./MiddleContainer.css"; // This CSS works in harmony with Tailwind
 
 // --- Data Constants ---
 
@@ -28,17 +28,20 @@ const espressoOptions = [
     { value: "Regional", label: "Regional" },
 ];
 
-// Modified officeSizeOptions for consistent spacing
+
 const officeSizeOptions = [
-    { value: "1 x 1kg", label: "1 x 1kg" }, { value: "2 x 1kg", label: "2 x 1kg" }, { value: "3 x 1kg", label: "3 x 1kg" },
-    { value: "4 x 1kg", label: "4 x 1kg" }, { value: "5 x 1kg", label: "5 x 1kg" },
+    { value: "1x 1kg", label: "1 x 1kg" }, 
+    { value: "2x 1kg", label: "2 x 1kg" }, 
+    { value: "3x 1kg", label: "3 x 1kg" },
+    { value: "4x 1kg", label: "4 x 1kg" },
+    { value: "5x 1kg", label: "5 x 1kg" },
 ];
 
 const standardQuantityOptions = [
     { value: "1", label: "1" }, { value: "2", label: "2" }, { value: "3", label: "3" },
     { value: "4", label: "4" }, { value: "5", label: "5" },
 ];
-// Modified curatedQuantityOptions for consistent spacing
+
 const curatedQuantityOptions = [
     { value: "2", label: "2 x 250g" }, { value: "4", label: "4 x 250g" }, { value: "6", label: "6 x 250g" },
 ];
@@ -248,8 +251,8 @@ const MiddleContainer = ({
         if (selectedMethod === 'Capsules') return capsuleQuantityLabelMap[value] || value;
         if (selectedCoffeeType === 'Curated') return curatedQuantityLabelMap[value] || value;
         if (selectedCoffeeType === 'Masterpiece') return masterpieceQuantityLabelMap[value] || value;
-        if (selectedCoffeeType === 'Low-Caf') return `${value} x 250g`; // Added space
-        if (selectedCoffeeType === 'Regional') return `${value} x 250g`; // Added space
+        if (selectedCoffeeType === 'Low-Caf') return `${value} x 250g`; 
+        if (selectedCoffeeType === 'Regional') return `${value} x 250g`; 
         if (selectedCoffeeType === 'Office') return value; // Will use the value from officeSizeOptions (e.g., "1 x 1kg")
         if (selectedCoffeeType === 'Roasters Choice') return `${value} x 250g`;
         return value;
@@ -465,7 +468,6 @@ const MiddleContainer = ({
                                 </DropdownMenuTrigger>
                                 <DropdownMenuContent className='dropdown-content-panel'>
                                     <DropdownMenuRadioGroup value={finalSelectionDetail} onValueChange={onQuantityChange}>
-                                        {/* Modified rendering for Low-Caf and Regional for consistent spacing */}
                                         {currentQuantityOptions.map((option) => (
                                             <DropdownMenuRadioItem key={option.value} value={option.value}>
                                                {selectedMethod === 'Capsules'
