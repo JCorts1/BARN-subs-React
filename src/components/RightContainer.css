@@ -17,15 +17,17 @@
 /* --- Original and Scaled Styles --- */
 .intro-list li {
   padding-bottom: 0.5rem;
-  font-size: 2rem;
-  line-height: 1.5;
+  /* Font size will now be inherited from the parent <ul>'s Tailwind classes (text-xl sm:text-2xl) */
+  /* The specific desktop override for .intro-list li font-size has been removed. */
 }
 
-@media (min-width: 640px) { /* sm breakpoint in Tailwind */
-  .intro-list li {
-    /* font-size: 2.4rem; */
-  }
+/* Ensure the ul itself has the intended base font sizes for its children */
+.right-container .default-intro-content .intro-list {
+  /* This is where text-xl sm:text-2xl from JSX applies.
+     If you need to specifically target list items for other reasons,
+     you can do it here, but for font-size, Tailwind on the <ul> is now the primary control. */
 }
+
 
 .final-selection-display h2.summary-init {
   margin-bottom: 1rem;
@@ -71,14 +73,8 @@
   }
 }
 
-.cart-btn {
-  width: 90%;
-  margin-top: 0.7rem;
-  display: flex;
-  justify-content: flex-end;
-}
-
-.cart-btn button {
+/* Styles for the container of price and button */
+.cart-actions-container .price-and-button-group button {
   font-family: "Raleway", sans-serif;
   font-weight: bold;
   font-size: 1.6rem;
@@ -155,7 +151,11 @@
     padding: 5px;
   }
 
-  .intro-list li { font-size: 1.8rem; }
+  /* On mobile, intro-list li will inherit font-size from <ul>'s text-xl (1.25rem) */
+  .right-container .default-intro-content .intro-list li {
+    font-size: 1.8rem; /* If you need a specific mobile size different from text-xl */
+  }
+
   .final-selection-display h2.summary-init { font-size: 3rem; margin-top: 0px !important; }
   .right-container .CarouselItem img { width: 90%; margin-left: auto; margin-right: auto; }
   .words-animation { font-size: 1.8rem; }
@@ -164,5 +164,8 @@
   .subscription-description .bg-\[\#3a3c3d\] .whitespace-pre-wrap { font-family: "Raleway", sans-serif; }
   .subscription-description .whitespace-pre-wrap { font-size: 1.3rem; }
   .summary-sentence { font-size: 1.5rem; }
-  .cart-btn button { font-size: 1.5rem; }
+
+  .cart-actions-container .price-and-button-group button {
+    font-size: 1.5rem;
+  }
 }
