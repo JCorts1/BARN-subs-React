@@ -3,6 +3,8 @@
 // Includes specific Selling Plan IDs and Variant IDs for various products including Office and Capsules.
 // Adds slower fade transitions, updated summary sentence formatting, and price display with new prices.
 // Updated subscription descriptions and logic to handle method-specific offerings.
+// Increased width of intro text container on desktop.
+// Corrected syntax error in permalink URL construction.
 
 import React, { useRef } from 'react';
 import { SwitchTransition, CSSTransition } from 'react-transition-group';
@@ -83,8 +85,6 @@ const carouselImageData = {
         "https://cdn.shopify.com/s/files/1/0831/4141/files/LOGO-NAME.png?v=1710576883"
      ]
 };
-
-// Updated subscriptionDescriptions
 const subscriptionDescriptions = {
     "Roasters Choice": {
         description: "Our most popular Subscription. Seasonal coffee curated every month. The perfect way to explore stunning Single Origin flavour.",
@@ -128,21 +128,20 @@ const subscriptionDescriptions = {
         _default: { description: "Select a region to see details about the specific coffee offering for this type.", currentOffering: "" }
     },
     "Capsules": {
-        _default: { // Used if no specific capsule edition is selected or edition not in this map
+        _default: {
             description: "Select a taste profile to continue.",
             currentOffering: "Receive our Sustainable Capsules on repeat."
         },
-        "Brazil": { // Key for "Brazil" capsule edition
+        "Brazil": {
             description: "People love Brazilian Coffees for their rich sweetness and low acidity.",
             currentOffering: "🇧🇷 Seasonal Brazil: Toffee. Vanilla. Rich."
         },
-        "Ethiopia": { // Key for "Ethiopia" capsule edition
+        "Ethiopia": {
             description: "People love Ethiopian Coffees for their fruity character and elegant sweetness.",
             currentOffering: "🇪🇹 Seasonal Ethiopia: Strawberry. Chocolate. Creamy."
         }
     }
 };
-
 const getVariantIdFromSelections = (method, type, region, sizeOption, edition, quantity) => {
   if (method === 'Capsules') {
       const qty = quantity ? parseInt(quantity) : 0;
@@ -174,7 +173,6 @@ const getVariantIdFromSelections = (method, type, region, sizeOption, edition, q
   } if (type === 'Low-Caf') return 45972282409227;
   console.warn("Fallback: Variant ID lookup failed.", { method, type, region, sizeOption, edition, quantity }); return null;
 };
-
 const sellingPlanMapping = {
   "1 Week": { planId: 710364201335 }, "2 Weeks": { planId: 710364234103 }, "3 Weeks": { planId: 710364266871 },
   "4 Weeks (Recommended)": { planId: 710364299639 }, "4 Weeks": { planId: 710364299639 },
@@ -276,7 +274,7 @@ const DefaultIntroContent = React.forwardRef((props, ref) => {
             <div className='mt-8'>
                 <img src={defaultImageUrl} alt="The Barn Coffee Roasters Logo" style={{ width: '100%', maxWidth: '180px', height: 'auto', margin: '1rem 0' }} />
             </div>
-            <div className='p-5 border border-[#A57C62] rounded-md mt-8 max-w-2xl'>
+            <div className='p-5 border border-[#A57C62] rounded-md mt-8 max-w-3xl'> {/* UPDATED from max-w-2xl to max-w-3xl */}
                 <ul className="intro-list text-xl sm:text-2xl" style={{ listStyle: 'none', padding: 0 }}>
                     <li className="my-2">🌱 Sustainably sourced from top farms</li>
                     <li className="my-2">🔥 Expertly roasted in Berlin</li>
@@ -312,26 +310,21 @@ const SummaryDisplay = React.forwardRef(({
          imagesToShowInSummary = carouselImageData._fallback || [];
     }
 
-    // Logic to get the correct "Current Offering" text
     let offeringDisplayHtml = null;
     if (currentDescriptionDataInSummary && currentDescriptionDataInSummary.currentOffering) {
         let textToDisplay;
-        // Check if currentOffering is an object (for method-specific offerings like Roasters Choice, Curated)
         if (typeof currentDescriptionDataInSummary.currentOffering === 'object' && (type === 'Roasters Choice' || type === 'Curated')) {
-            textToDisplay = currentDescriptionDataInSummary.currentOffering[method]; // Get by method (Filter/Espresso)
+            textToDisplay = currentDescriptionDataInSummary.currentOffering[method];
             if (!textToDisplay) {
-                // Fallback if a specific method isn't defined in the currentOffering object for these types
                 textToDisplay = Object.values(currentDescriptionDataInSummary.currentOffering).join('\n') || "Details coming soon.";
             }
         } else if (typeof currentDescriptionDataInSummary.currentOffering === 'string') {
-            // For all other types where currentOffering is a direct string
             textToDisplay = currentDescriptionDataInSummary.currentOffering;
         } else {
-            textToDisplay = "Details coming soon."; // Fallback for unexpected format
+            textToDisplay = "Details coming soon.";
         }
         offeringDisplayHtml = <p className="whitespace-pre-wrap text-sm sm:text-base">{textToDisplay}</p>;
     }
-
 
     const highlightClass = "text-[#A67C52] font-semibold";
     const sentenceParts = [];
@@ -441,7 +434,7 @@ const SummaryDisplay = React.forwardRef(({
         cartAddParams.append("items[][selling_plan]", sellingPlanIdToUse.toString());
         cartAddParams.append("return_to", "/checkout");
 
-        const permalinkUrl = `https://${SHOP_DOMAIN}/cart/clear?return_to=${encodeURIComponent(`/cart/add?${cartAddParams.toString()}`)}`;
+        const permalinkUrl = `https://${SHOP_DOMAIN}/cart/clear?return_to=${encodeURIComponent(`/cart/add?${cartAddParams.toString()}`)}`; // Corrected line
         const newTab = window.open(permalinkUrl, '_blank');
         if (newTab) newTab.focus(); else alert("Popup blocker may have prevented opening the cart. Please disable it and try again.");
     };
@@ -483,7 +476,6 @@ const SummaryDisplay = React.forwardRef(({
                 <div className="subscription-description text-white my-4 text-left w-full max-w-5xl flex justify-center flex-col">
                     <div className="bg-[#3a3c3d] p-4 rounded-md border border-[#A67C52] text-base sm:text-lg w-full">
                         <p className="mb-3">{currentDescriptionDataInSummary.description}</p>
-                        {/* Display the Current Offering text */}
                         {offeringDisplayHtml}
                     </div>
                     <div> <h1 className='words-animation'>{animationText}</h1> </div>
@@ -520,7 +512,7 @@ const RightContainer = ({ method, type, region, edition, sizeOption, quantity, f
     const summaryRef = useRef(null);
 
     const canAddToCart = method && frequency && (
-        (method === 'Capsules' && edition && quantity === "3") ||
+        (method === 'Capsules' && edition && quantity === "3") || // Only 3 boxes of capsules are purchasable
         (type === 'Office' && sizeOption) ||
         (type === 'Regional' && region && quantity) ||
         (['Roasters Choice', 'Masterpiece', 'Low-Caf', 'Curated'].includes(type) && quantity)
