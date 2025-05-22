@@ -28,17 +28,19 @@ const espressoOptions = [
     { value: "Regional", label: "Regional" },
 ];
 
+// Modified officeSizeOptions for consistent spacing
 const officeSizeOptions = [
-    { value: "1x 1kg", label: "1x 1kg" }, { value: "2x 1kg", label: "2x 1kg" }, { value: "3x 1kg", label: "3x 1kg" },
-    { value: "4x 1kg", label: "4x 1kg" }, { value: "5x 1kg", label: "5x 1kg" },
+    { value: "1 x 1kg", label: "1 x 1kg" }, { value: "2 x 1kg", label: "2 x 1kg" }, { value: "3 x 1kg", label: "3 x 1kg" },
+    { value: "4 x 1kg", label: "4 x 1kg" }, { value: "5 x 1kg", label: "5 x 1kg" },
 ];
 
 const standardQuantityOptions = [
     { value: "1", label: "1" }, { value: "2", label: "2" }, { value: "3", label: "3" },
     { value: "4", label: "4" }, { value: "5", label: "5" },
 ];
+// Modified curatedQuantityOptions for consistent spacing
 const curatedQuantityOptions = [
-    { value: "2", label: "2x 250g" }, { value: "4", label: "4x 250g" }, { value: "6", label: "6x 250g" },
+    { value: "2", label: "2 x 250g" }, { value: "4", label: "4 x 250g" }, { value: "6", label: "6 x 250g" },
 ];
 const curatedQuantityLabelMap = curatedQuantityOptions.reduce((acc, o) => { acc[o.value] = o.label; return acc; }, {});
 
@@ -54,7 +56,7 @@ const capsuleTasteProfileOptions = [
 ];
 
 const capsuleQuantityOptions = [
-    { value: "3", label: "3 x 10 capsules" },
+    { value: "3", label: "3 x 10 capsules" }, // Already has spaces, format is different but consistent
 ];
 const capsuleQuantityLabelMap = capsuleQuantityOptions.reduce((acc, o) => { acc[o.value] = o.label; return acc; }, {});
 
@@ -236,6 +238,7 @@ const MiddleContainer = ({
         : selectedCoffeeType === 'Masterpiece' ? masterpieceQuantityOptions
         : standardQuantityOptions;
 
+    // Modified getQuantityDisplayLabel for consistent spacing
     const getQuantityDisplayLabel = (value) => {
         if (!value) {
             if (selectedCoffeeType === 'Office') return "Select Size...";
@@ -245,9 +248,9 @@ const MiddleContainer = ({
         if (selectedMethod === 'Capsules') return capsuleQuantityLabelMap[value] || value;
         if (selectedCoffeeType === 'Curated') return curatedQuantityLabelMap[value] || value;
         if (selectedCoffeeType === 'Masterpiece') return masterpieceQuantityLabelMap[value] || value;
-        if (selectedCoffeeType === 'Low-Caf') return `${value}x 250g`;
-        if (selectedCoffeeType === 'Regional') return `${value}x 250g`;
-        if (selectedCoffeeType === 'Office') return value; 
+        if (selectedCoffeeType === 'Low-Caf') return `${value} x 250g`; // Added space
+        if (selectedCoffeeType === 'Regional') return `${value} x 250g`; // Added space
+        if (selectedCoffeeType === 'Office') return value; // Will use the value from officeSizeOptions (e.g., "1 x 1kg")
         if (selectedCoffeeType === 'Roasters Choice') return `${value} x 250g`;
         return value;
     };
@@ -409,7 +412,7 @@ const MiddleContainer = ({
                                     <DropdownMenu>
                                         <DropdownMenuTrigger asChild>
                                             <Button variant="outline" className='dropdown-trigger-button'>
-                                                {selectedSizeOption || "Select Size..."}
+                                                {selectedSizeOption || "Select Size..."} 
                                                 <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                                             </Button>
                                         </DropdownMenuTrigger>
@@ -417,7 +420,7 @@ const MiddleContainer = ({
                                             <DropdownMenuRadioGroup value={selectedSizeOption} onValueChange={onSizeOptionChange}>
                                                 {officeSizeOptions.map((option) => (
                                                     <DropdownMenuRadioItem key={option.value} value={option.value}>
-                                                        {option.label}
+                                                        {option.label} 
                                                     </DropdownMenuRadioItem>
                                                 ))}
                                             </DropdownMenuRadioGroup>
@@ -462,18 +465,19 @@ const MiddleContainer = ({
                                 </DropdownMenuTrigger>
                                 <DropdownMenuContent className='dropdown-content-panel'>
                                     <DropdownMenuRadioGroup value={finalSelectionDetail} onValueChange={onQuantityChange}>
+                                        {/* Modified rendering for Low-Caf and Regional for consistent spacing */}
                                         {currentQuantityOptions.map((option) => (
                                             <DropdownMenuRadioItem key={option.value} value={option.value}>
                                                {selectedMethod === 'Capsules'
                                                     ? option.label
                                                     : selectedCoffeeType === 'Curated'
-                                                        ? option.label
+                                                        ? option.label // Will use the updated label from curatedQuantityOptions
                                                         : selectedCoffeeType === 'Masterpiece'
                                                             ? option.label
                                                             : selectedCoffeeType === 'Low-Caf'
-                                                                ? `${option.label}x 250g`
+                                                                ? `${option.label} x 250g` // Added space
                                                                 : selectedCoffeeType === 'Regional'
-                                                                    ? `${option.label}x 250g`
+                                                                    ? `${option.label} x 250g` // Added space
                                                                     : selectedCoffeeType === 'Roasters Choice'
                                                                         ? `${option.label} x 250g`
                                                                         : `${option.label} ${parseInt(option.value) > 1 ? 'bags' : 'bag'} (250g each)`
@@ -528,7 +532,7 @@ const MiddleContainer = ({
                            {selectedMethod === 'Capsules' && selectedEdition && ` - Taste: ${selectedEdition}`}
                            {selectedMethod !== 'Capsules' && selectedCoffeeType && ` - ${selectedCoffeeType}`}
                            {selectedCoffeeType === 'Regional' && selectedRegion && ` - ${selectedRegion}`}
-                           {selectedCoffeeType === 'Office' && selectedSizeOption && ` - ${selectedSizeOption}`}
+                           {selectedCoffeeType === 'Office' && selectedSizeOption && ` - ${selectedSizeOption}`} {/* Will show "1 x 1kg" if selectedSizeOption is updated */}
                            {(selectedMethod === 'Capsules' || (selectedMethod !== 'Capsules' && selectedCoffeeType !== 'Office')) && finalSelectionDetail && ` - Qty: ${getQuantityDisplayLabel(finalSelectionDetail)}`}
                            {selectedFrequency && ` - Every ${selectedFrequency.replace(' (Recommended)', '')}`}
                        </div>
