@@ -1,69 +1,89 @@
-#root {
-  width: 100%;
+/* MODIFIED: More robust full height and background settings */
+html {
+  box-sizing: border-box;
   height: 100%;
-  margin: 0;
+  background-color: #1e1e1e; /* Your app's darkest background */
+}
+
+*, *:before, *:after {
+  box-sizing: inherit;
 }
 
 body {
+  margin: 0;
+  padding: 0;
   font-family: 'Raleway', sans-serif;
-  margin: 0; 
-  padding: 0; 
-  overflow-x: hidden; 
+  min-height: 100%; /* Use min-height to ensure it can grow */
+  background-color: #1e1e1e; /* Match html or set your primary app background */
+  color: #fff; /* Assuming default text is light */
+  overflow-x: hidden; /* Keep this as it was */
+  display: flex; /* Make body a flex container */
+  flex-direction: column; /* Allow #root to grow */
+}
+
+#root {
+  width: 100%;
+  min-height: 100vh; /* Ensure #root itself tries to fill viewport */
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1; /* Allow #root to take available space in body */
 }
 
 .app-container {
-  width: 100vw;
-  min-height: 100vh; 
-  height: auto; 
+  width: 100%; /* Changed from 100vw to prevent potential minor overflow issues */
   display: flex;
-  flex-direction: row; 
+  flex-direction: row; /* Desktop default */
+  flex-grow: 1; /* Make .app-container fill #root */
+  /* background-color: #1a1a1a; /* Optional: Define a base background for app-container itself */
 }
 
+/* Desktop styles for .function-container and .result-container */
 .function-container {
-  width: 50%; 
-  height: 100vh; 
+  width: 50%;
+  height: 100vh; /* Takes full viewport height on desktop side */
   background-color: #262626;
-  
-  box-sizing: border-box; 
-   overflow-y: auto; 
+  box-sizing: border-box;
+  overflow-y: auto;
+  display: flex; /* Added for consistency, can help with children if needed */
+  flex-direction: column;
 }
 
-.result-container {
+.result-container { /* Parent of RightContainer.jsx */
   width: 50%;
-  height: 100vh; 
+  height: 100vh; /* Takes full viewport height on desktop side */
   background-color: #1e1e1e;
   display: flex;
-  justify-content: center;
-  align-items: flex-start; 
- 
-  box-sizing: border-box; 
-  overflow-y: auto; 
+  justify-content: center;  /* Horizontal centering for its child */
+  align-items: center;     /* MODIFIED: Vertically center its child (.right-container) on desktop */
+  box-sizing: border-box;
+  overflow-y: auto; /* Allow scrolling if content overflows */
 }
 
 @media screen and (max-width: 720px) {
   .app-container {
-    flex-direction: column; /* Stack containers vertically */
-    min-height: auto; /* Remove min-height constraint in column view */
-    height: auto; /* Height adjusts to stacked children */
+    flex-direction: column;
+    /* min-height: 100vh; /* Ensures app-container still tries to fill screen */
+    /* height: auto; /* This is fine */
   }
 
   .function-container {
-    width: 100%; /* Take full width on mobile */
-    height: auto; /* Height adjusts to content */
-    min-height: 100vh; /* Make this container take AT LEAST full viewport height */
-    background-color: #262626; /* Keep original or set blue for testing */
-    /* Adjust padding/margin for mobile */
-    padding: 20px; /* Example padding */
-    box-sizing: border-box; 
+    width: 100%;
+    height: auto;
+    min-height: initial; /* Allows function container to shrink on mobile */
+    background-color: #262626;
+    padding: 20px;
+    box-sizing: border-box;
   }
 
   .result-container {
-    width: 100%; /* Take full width on mobile */
-    height: auto; /* Height adjusts to content */
-    min-height: 50vh; /* Give result container a minimum height so it's scrollable */
+    width: 100%;
+    height: auto;
+    min-height: initial;  /* Allows .result-container to shrink on mobile */
     background-color: #1e1e1e;
-    box-sizing: border-box; 
-    align-items: center; 
-    justify-content: flex-start; 
+    box-sizing: border-box;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start; /* Align RightContainer (its child) to the top on mobile */
   }
 }

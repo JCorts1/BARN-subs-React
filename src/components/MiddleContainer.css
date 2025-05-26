@@ -10,7 +10,7 @@
 .recipient-buttons-container {
   font-family: "Chalet Comprime", chalet, sans-serif;
   display: flex;
-  width: 80%; 
+  width: 80%;
   justify-content: center;
   border: 1px solid #A57C52;
   border-radius: 6px;
@@ -21,9 +21,9 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center; 
+  justify-content: center;
   color: #fff;
-  padding: 0.25rem 1rem; 
+  padding: 0.25rem 1rem;
   cursor: pointer;
   text-align: center;
   background-color: transparent;
@@ -31,21 +31,21 @@
 }
 
 .recipient-button h2 {
-  font-family: "Chalet Comprime", sans-serif; 
+  font-family: "Chalet Comprime", sans-serif;
   font-weight: 800;
-  font-size: 3rem; 
+  font-size: 3rem;
   text-transform: uppercase;
-  margin-top: 0; 
-  margin-bottom: 0; 
-  line-height: 1.1; 
+  margin-top: 0;
+  margin-bottom: 0;
+  line-height: 1.1;
 }
 
 .recipient-button p {
-  font-family: "Raleway", sans-serif; 
+  font-family: "Raleway", sans-serif;
   font-size: 1.6rem;
-  margin-top: 0.1em; 
-  margin-bottom: 0; 
-  line-height: 1.2; 
+  margin-top: 0.1em;
+  margin-bottom: 0;
+  line-height: 1.2;
 }
 
 .recipient-button.selected {
@@ -69,20 +69,20 @@
   align-items: center;
   justify-content: space-between;
   background-color: #4b4d4e;
-  padding: 1rem; 
+  padding: 1rem;
   border: 1px solid #555555;
   border-radius: 6px;
   gap: 1.5rem;
-  width: 95%;
-  margin-bottom: 1rem; 
+  width: 95%; /* This is for desktop, mobile overrides to 100% */
+  margin-bottom: 1rem;
   box-sizing: border-box;
 }
 
 .dropdown-label {
   font-family: "Chalet Comprime", chalet, sans-serif;
   text-transform: uppercase;
-  font-size: 2.5rem; 
-  padding-bottom: 1px; 
+  font-size: 2.5rem; /* Desktop font size */
+  padding-bottom: 1px;
   line-height: 1.3;
   color: #fff;
   font-weight: 600;
@@ -92,7 +92,7 @@
 }
 
 .final-selection {
-  display: none; 
+  display: none; /* Hidden by default, shown by JS logic presumably */
   margin-top: 1rem;
   padding: 0.75rem;
   border: 1px dashed #ccc;
@@ -143,15 +143,15 @@
   background-color: #161616;
   border: 1px solid #A67C52;
   color: #fff;
-  font-size: 1.4rem; 
+  font-size: 1.4rem;
   line-height: 1.6;
   border-radius: 6px;
 }
 
 .roasters-info-list li {
-  font-size: 1.6rem; 
+  font-size: 1.6rem;
   padding: 0.125rem 0.25rem;
-  line-height: 1.5; 
+  line-height: 1.5;
 }
 
 .roasters-info-list li span {
@@ -168,97 +168,106 @@
   border: 1px solid #A57C52;
   z-index: 50;
   border-radius: 0.375rem;
-  font-size: 1.6rem; 
+  font-size: 1.6rem;
 }
 
 /* Styles for Text Inside Dropdown Menu Items */
-.dropdown-content-panel [role="menuitemradio"] { 
+.dropdown-content-panel [role="menuitemradio"] {
   font-family: "Raleway", sans-serif;
-  font-size: 1.5rem; 
+  font-size: 1.5rem;
   line-height: 1.5;
 }
 
 /* --- Mobile Styles --- */
+/* These styles apply ONLY FOR PHONES (screen width <= 720px) */
 @media screen and (max-width: 720px) {
   .recipient-buttons-container {
     width: 100%;
   }
 
-  .middle-content-wrapper { 
-    justify-content: flex-start; /* Align content to the top */
-    height: auto;               
-    min-height: initial;  
-    padding-bottom: 2rem;   
+  .middle-content-wrapper {
+    justify-content: flex-start;
+    height: auto;
+    min-height: initial;
+    padding-bottom: 2rem; /* This padding is on the overall wrapper */
   }
 
   .coffee-type-container {
     width: 100%;
-    padding-left: 1rem;
-    padding-right: 1rem;
+    /* Tailwind p-3 gives 0.75rem L/R padding, pt-5 gives 1.25rem top.
+       Your CSS below overrides L/R. Top padding will be 1.25rem from pt-5. */
+    padding-left: 1rem;   /* Your specific mobile padding */
+    padding-right: 1rem;  /* Your specific mobile padding */
+    padding-bottom: 0;    /* MODIFIED: Set to 0 to remove bottom padding from Tailwind p-3, so grey area stops after content */
+    /* padding-top will be determined by Tailwind pt-5 in your JSX */
     box-sizing: border-box;
-    height: auto;      
-    min-height: initial; 
-    justify-content: flex-start; 
-    margin-bottom: 0; 
+    height: auto;
+    min-height: initial;
+    justify-content: flex-start;
+    margin-bottom: 0;
+    /* background-color is applied via Tailwind: bg-[#3a3c3d] */
   }
 
   .coffee-type-container .dropdown-row:last-child {
-    margin-bottom: 0; 
-  }
-  
-  .coffee-type-container .final-selection:last-child {
-    margin-bottom: 0; 
+    margin-bottom: 0;
   }
 
+  .coffee-type-container .final-selection:last-child {
+    margin-bottom: 0;
+  }
 
   .dropdown-row {
-    width: 100%;
-    flex-direction: column;  
-    align-items: flex-start; 
-    padding-top: 0.25rem;    
+    width: 100%; /* Overrides desktop 95% */
+    flex-direction: column;
+    align-items: flex-start;
+    padding-top: 0.25rem;
     padding-bottom: 0.75rem;
-    padding-left: 0.5rem; 
+    padding-left: 0.5rem;
     padding-right: 0.5rem;
-    gap: 0.4rem;           
+    gap: 0.4rem;
+    /* margin-bottom: 1rem; is inherited, but last-child rule above handles the very last one */
   }
 
   .dropdown-label {
-    display: block !important; 
-    margin-right: 0; 
-    margin-top: 4px; 
-    margin-bottom: 4px; 
-    text-align: left;       
-    width: 100%; 
-    max-width: 400px; 
-    font-size: 2.4rem;      
-    line-height: 1.2;       
+    display: block !important;
+    margin-right: 0;
+    margin-top: 4px;
+    margin-bottom: 4px;
+    text-align: left;
+    width: 100%;
+    max-width: 400px;
+    font-size: 2.4rem; /* Mobile specific font size */
+    line-height: 1.2;
   }
 
   .dropdown-trigger-button,
   .info-text-container {
-    width: 100%;
+    width: 100%; /* Overrides desktop fixed width */
     max-width: 400px;
-    flex-shrink: 1; 
-    margin-left: 0; 
-    margin-right: 0; 
-    margin-top: 0; 
-    margin-bottom: 0.5rem; 
+    flex-shrink: 1;
+    margin-left: 0;
+    margin-right: 0;
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+    /* height: 2.5rem; and font-size: 1.6rem; are inherited from desktop */
   }
   .info-text-container {
-    justify-content: flex-start; 
-    margin-top: 0.5rem; 
+    justify-content: flex-start;
+    margin-top: 0.5rem;
   }
   .roasters-info-list {
       width: 100%;
   }
   .roasters-info-list li {
-    font-size: 1.5rem; 
+    font-size: 1.5rem; /* Mobile specific font size */
   }
+
   .dropdown-content-panel {
      width: 80vw;
      max-width: 350px;
+     /* font-size: 1.6rem; is inherited for the panel itself */
   }
   .dropdown-content-panel [role="menuitemradio"] {
-    font-size: 1.4rem; 
+    font-size: 1.4rem; /* Mobile specific font size for items */
   }
 }

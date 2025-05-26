@@ -1,14 +1,16 @@
 /* --- General Right Container Styles --- */
 .right-container {
-  padding-top: 0;
-  padding-bottom: 2.5rem;
+  /* Desktop padding for summary view is handled by Tailwind (pt-8 pb-8) in JSX.
+     Desktop padding for intro view is implicitly 0 from JSX, content centered by flex.
+     Mobile padding is handled in the media query below. */
+  padding-bottom: 2.5rem; /* Fallback or additional desktop bottom padding if needed, mobile overrides */
 }
 
 .right-container .default-intro-content,
 .right-container .final-selection-display {
   font-size: 1.6rem;
   line-height: 1.6;
-  width: 100%; /* Ensure children fill the CSSTransition wrapper for layout */
+  width: 100%;
 }
 
 
@@ -17,9 +19,8 @@
   padding-bottom: 0.5rem;
 }
 
-/* Ensure the ul itself has the intended base font sizes for its children */
 .right-container .default-intro-content .intro-list {
-
+  /* No specific styles here currently */
 }
 
 
@@ -31,6 +32,9 @@
   color: #A67C52;
   text-transform: uppercase;
 }
+
+/* ... (rest of your existing styles like .subscription-description, .selection-span, etc. remain unchanged) ... */
+/* Abbreviating for this snippet, but they should all be here from your original file */
 
 .subscription-description .bg-\[\#3a3c3d\] {
   font-size: 1.6rem;
@@ -65,14 +69,12 @@
   }
 }
 
-/* Styles for the container of price and button */
 .cart-actions-container .price-and-button-group button {
   font-family: "Raleway", sans-serif;
   font-weight: bold;
   font-size: 1.6rem;
 }
 
-/* --- Animation Styles --- */
 .subscription-description > div:last-child {
   width: 100%;
   overflow: hidden;
@@ -97,10 +99,7 @@
   0% { transform: translateX(0%); }
   100% { transform: translateX(-200%); }
 }
-/* --- End Animation Styles --- */
 
-
-/* === Carousel Arrow Styling === */
 .right-container .CarouselPrevious,
 .right-container .CarouselNext {
   color: #A67C52 !important;
@@ -117,37 +116,51 @@
     fill: #A67C52 !important;
     stroke: #A67C52 !important;
 }
-/* === END Carousel Arrow Styling === */
 
-
-/* --- Transition Styles --- */
 .fade-content-enter {
   opacity: 0;
 }
 .fade-content-enter-active {
   opacity: 1;
-  transition: opacity 1000ms ease-in-out; /* Slower transition: 1 second */
+  transition: opacity 1000ms ease-in-out;
 }
 .fade-content-exit {
   opacity: 1;
 }
 .fade-content-exit-active {
   opacity: 0;
-  transition: opacity 1000ms ease-in-out; /* Slower transition: 1 second */
+  transition: opacity 1000ms ease-in-out;
 }
 
 
 /* --- Media Queries --- */
 @media screen and (max-width: 720px) {
   .right-container {
-    padding: 5px;
+    /* MODIFIED: Ensure it overrides Tailwind's md:h-full for mobile */
+    height: auto !important;
+    min-height: initial !important; /* Reset min-height */
+
+    /* MODIFIED: items-start is set in JSX for mobile default */
+    /* align-items: flex-start !important; /* Ensures top alignment if JSX classes don't take */
+
+    /* Set desired padding for mobile content area */
+    padding-top: 20px;    /* Example: Space from the very top */
+    padding-left: 15px;
+    padding-right: 15px;
+    padding-bottom: 20px; /* Example: Space at the bottom */
   }
 
-  /* On mobile, intro-list li will inherit font-size from <ul>'s text-xl (1.25rem) */
   .right-container .default-intro-content .intro-list li {
-    font-size: 1.8rem; /* If you need a specific mobile size different from text-xl */
+    font-size: 1.8rem;
   }
 
+  /* If DefaultIntroContent's logo container has mt-8 and you want it flush
+     with .right-container's padding-top on mobile: */
+  .right-container .default-intro-content > div:first-child { /* Targets the <div> with mt-8 in JSX for the logo */
+    margin-top: 0 !important;
+  }
+
+  /* ... (rest of your existing mobile styles for .final-selection-display, .CarouselItem img, etc.) ... */
   .final-selection-display h2.summary-init { font-size: 3rem; margin-top: 0px !important; }
   .right-container .CarouselItem img { width: 90%; margin-left: auto; margin-right: auto; }
   .words-animation { font-size: 1.8rem; }
