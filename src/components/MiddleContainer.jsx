@@ -12,16 +12,20 @@ import "./MiddleContainer.css"; // This CSS works in harmony with Tailwind
 
 // --- Data Constants ---
 
+// MODIFIED: "Curated" is now the first option in filterOptions
 const filterOptions = [
-    { value: "Roasters Choice", label: "Roasters Choice" },
     { value: "Curated", label: "Curated" },
+    { value: "Roasters Choice", label: "Roasters Choice" },
     { value: "Masterpiece", label: "Masterpiece" },
     { value: "Low-Caf", label: "Low-Caf" },
     { value: "Regional", label: "Regional" },
 ];
+
+// MODIFIED: "Curated" is now the first option in espressoOptions (if it's intended for Espresso too)
+// Or, if "Curated" is not an Espresso option, adjust accordingly. Assuming it is for now.
 const espressoOptions = [
-    { value: "Roasters Choice", label: "Roasters Choice" },
     { value: "Curated", label: "Curated" },
+    { value: "Roasters Choice", label: "Roasters Choice" },
     { value: "Masterpiece", label: "Masterpiece" },
     { value: "Low-Caf", label: "Low-Caf" },
     { value: "Office", label: "Office" },
@@ -30,8 +34,8 @@ const espressoOptions = [
 
 
 const officeSizeOptions = [
-    { value: "1x 1kg", label: "1 x 1kg" }, 
-    { value: "2x 1kg", label: "2 x 1kg" }, 
+    { value: "1x 1kg", label: "1 x 1kg" },
+    { value: "2x 1kg", label: "2 x 1kg" },
     { value: "3x 1kg", label: "3 x 1kg" },
     { value: "4x 1kg", label: "4 x 1kg" },
     { value: "5x 1kg", label: "5 x 1kg" },
@@ -59,7 +63,7 @@ const capsuleTasteProfileOptions = [
 ];
 
 const capsuleQuantityOptions = [
-    { value: "3", label: "3 x 10 capsules" }, // Already has spaces, format is different but consistent
+    { value: "3", label: "3 x 10 capsules" },
 ];
 const capsuleQuantityLabelMap = capsuleQuantityOptions.reduce((acc, o) => { acc[o.value] = o.label; return acc; }, {});
 
@@ -85,7 +89,7 @@ const MiddleContainer = ({
     onResetSelections, selectedEdition, onEditionChange,
 }) => {
 
-    const [showOptionsContainer, setShowOptionsContainer] = useState(null); // null: neither selected, true: PAYG, false: Upfront
+    const [showOptionsContainer, setShowOptionsContainer] = useState(true);
 
     // --- useEffect Hooks ---
     useEffect(() => {
@@ -95,7 +99,7 @@ const MiddleContainer = ({
         else if (selectedCoffeeType === 'Office') isReadyForFrequency = selectedSizeOption && !selectedFrequency;
         else isReadyForFrequency = finalSelectionDetail && !selectedFrequency;
 
-        if (!isReadyForFrequency || showOptionsContainer === false) return; // Don't set default if upfront payment is selected
+        if (!isReadyForFrequency || showOptionsContainer === false) return;
 
         const isMasterpiece = selectedCoffeeType === 'Masterpiece';
         if (isMasterpiece) return;
@@ -131,7 +135,7 @@ const MiddleContainer = ({
 
 
     useEffect(() => {
-        if (showOptionsContainer === false) return; 
+        if (showOptionsContainer === false) return;
 
         let resetToFrequency = null;
         let needsReset = false;
@@ -161,7 +165,7 @@ const MiddleContainer = ({
 
 
     useEffect(() => {
-        if (showOptionsContainer === false) return; 
+        if (showOptionsContainer === false) return;
 
         let isValidQty = true;
         let resetQty = false;
@@ -190,7 +194,7 @@ const MiddleContainer = ({
     const handleSelectSelf = () => {
         setShowOptionsContainer(true);
         if (typeof onResetSelections === 'function' && showOptionsContainer === false) {
-            onResetSelections(); 
+            onResetSelections();
         }
     };
 
@@ -241,7 +245,6 @@ const MiddleContainer = ({
         : selectedCoffeeType === 'Masterpiece' ? masterpieceQuantityOptions
         : standardQuantityOptions;
 
-    // Modified getQuantityDisplayLabel for consistent spacing
     const getQuantityDisplayLabel = (value) => {
         if (!value) {
             if (selectedCoffeeType === 'Office') return "Select Size...";
@@ -251,13 +254,14 @@ const MiddleContainer = ({
         if (selectedMethod === 'Capsules') return capsuleQuantityLabelMap[value] || value;
         if (selectedCoffeeType === 'Curated') return curatedQuantityLabelMap[value] || value;
         if (selectedCoffeeType === 'Masterpiece') return masterpieceQuantityLabelMap[value] || value;
-        if (selectedCoffeeType === 'Low-Caf') return `${value} x 250g`; 
-        if (selectedCoffeeType === 'Regional') return `${value} x 250g`; 
-        if (selectedCoffeeType === 'Office') return value; // Will use the value from officeSizeOptions (e.g., "1 x 1kg")
+        if (selectedCoffeeType === 'Low-Caf') return `${value} x 250g`;
+        if (selectedCoffeeType === 'Regional') return `${value} x 250g`;
+        if (selectedCoffeeType === 'Office') return value;
         if (selectedCoffeeType === 'Roasters Choice') return `${value} x 250g`;
         return value;
     };
 
+    const isSubscriptionStyleDisabled = !['Filter', 'Espresso'].includes(selectedMethod);
 
     // --- Component Render ---
     return (
@@ -329,13 +333,14 @@ const MiddleContainer = ({
                             </DropdownMenu>
                         </div>
                     )}
-                    {['Filter', 'Espresso'].includes(selectedMethod) && (
+
+                    {selectedMethod !== 'Capsules' && (
                         <div className='dropdown-row'>
                            <h3 className='dropdown-label'>Subscription Style</h3>
                            <DropdownMenu>
-                                <DropdownMenuTrigger asChild>
+                                <DropdownMenuTrigger asChild disabled={isSubscriptionStyleDisabled}>
                                     <Button variant="outline" className='dropdown-trigger-button'>
-                                        {selectedCoffeeType || "Select Type..."}
+                                        {isSubscriptionStyleDisabled && !selectedCoffeeType ? "Select Method first..." : (selectedCoffeeType || "Select Type...")}
                                         <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                                     </Button>
                                 </DropdownMenuTrigger>
@@ -415,7 +420,7 @@ const MiddleContainer = ({
                                     <DropdownMenu>
                                         <DropdownMenuTrigger asChild>
                                             <Button variant="outline" className='dropdown-trigger-button'>
-                                                {selectedSizeOption || "Select Size..."} 
+                                                {selectedSizeOption || "Select Size..."}
                                                 <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                                             </Button>
                                         </DropdownMenuTrigger>
@@ -423,7 +428,7 @@ const MiddleContainer = ({
                                             <DropdownMenuRadioGroup value={selectedSizeOption} onValueChange={onSizeOptionChange}>
                                                 {officeSizeOptions.map((option) => (
                                                     <DropdownMenuRadioItem key={option.value} value={option.value}>
-                                                        {option.label} 
+                                                        {option.label}
                                                     </DropdownMenuRadioItem>
                                                 ))}
                                             </DropdownMenuRadioGroup>
@@ -473,13 +478,13 @@ const MiddleContainer = ({
                                                {selectedMethod === 'Capsules'
                                                     ? option.label
                                                     : selectedCoffeeType === 'Curated'
-                                                        ? option.label // Will use the updated label from curatedQuantityOptions
+                                                        ? option.label
                                                         : selectedCoffeeType === 'Masterpiece'
                                                             ? option.label
                                                             : selectedCoffeeType === 'Low-Caf'
-                                                                ? `${option.label} x 250g` // Added space
+                                                                ? `${option.label} x 250g`
                                                                 : selectedCoffeeType === 'Regional'
-                                                                    ? `${option.label} x 250g` // Added space
+                                                                    ? `${option.label} x 250g`
                                                                     : selectedCoffeeType === 'Roasters Choice'
                                                                         ? `${option.label} x 250g`
                                                                         : `${option.label} ${parseInt(option.value) > 1 ? 'bags' : 'bag'} (250g each)`
@@ -534,7 +539,7 @@ const MiddleContainer = ({
                            {selectedMethod === 'Capsules' && selectedEdition && ` - Taste: ${selectedEdition}`}
                            {selectedMethod !== 'Capsules' && selectedCoffeeType && ` - ${selectedCoffeeType}`}
                            {selectedCoffeeType === 'Regional' && selectedRegion && ` - ${selectedRegion}`}
-                           {selectedCoffeeType === 'Office' && selectedSizeOption && ` - ${selectedSizeOption}`} {/* Will show "1 x 1kg" if selectedSizeOption is updated */}
+                           {selectedCoffeeType === 'Office' && selectedSizeOption && ` - ${selectedSizeOption}`}
                            {(selectedMethod === 'Capsules' || (selectedMethod !== 'Capsules' && selectedCoffeeType !== 'Office')) && finalSelectionDetail && ` - Qty: ${getQuantityDisplayLabel(finalSelectionDetail)}`}
                            {selectedFrequency && ` - Every ${selectedFrequency.replace(' (Recommended)', '')}`}
                        </div>
