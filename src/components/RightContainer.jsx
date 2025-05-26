@@ -142,6 +142,7 @@ const subscriptionDescriptions = {
         }
     }
 };
+
 const getVariantIdFromSelections = (method, type, region, sizeOption, edition, quantity) => {
   if (method === 'Capsules') {
       const qty = quantity ? parseInt(quantity) : 0;
@@ -162,10 +163,9 @@ const getVariantIdFromSelections = (method, type, region, sizeOption, edition, q
   if (type === 'Office') {
       if (sizeOption === "1x 1kg") return 43658532192523;
       if (sizeOption === "2x 1kg") return 43658532258059;
-      if (sizeOption === "3x 1kg" || sizeOption === "4x 1kg" || sizeOption === "5x 1kg") {
-        console.warn(`Office Variant ID for ${sizeOption} is not explicitly defined. Using 1x 1kg variant ID as fallback.`);
-        return 43658532192523;
-      }
+      if (sizeOption === "3x 1kg") return 55217513169271;
+      if (sizeOption === "4x 1kg") return 55217514217847;
+      if (sizeOption === "5x 1kg") return 55217517035895;
       console.warn("Office unsupported size for current Variant ID mapping:", sizeOption); return null;
   } if (type === 'Regional') {
       if (region === 'Center America') return 45972274381067; if (region === 'Ethiopia') return 45972211695883; if (region === 'Brazil') return 45969588617483;
@@ -173,6 +173,7 @@ const getVariantIdFromSelections = (method, type, region, sizeOption, edition, q
   } if (type === 'Low-Caf') return 45972282409227;
   console.warn("Fallback: Variant ID lookup failed.", { method, type, region, sizeOption, edition, quantity }); return null;
 };
+
 const sellingPlanMapping = {
   "1 Week": { planId: 710364201335 }, "2 Weeks": { planId: 710364234103 }, "3 Weeks": { planId: 710364266871 },
   "4 Weeks (Recommended)": { planId: 710364299639 }, "4 Weeks": { planId: 710364299639 },
@@ -256,11 +257,12 @@ const getPriceForSelection = (method, type, region, edition, sizeOption, quantit
             if (qty === 5) return "€75.00";
         }
     } else if (type === 'Office') {
-        if (sizeOption === "1x 1kg") return "€39.00";
-        if (sizeOption === "2x 1kg") return "€78.00";
-        if (sizeOption === "3x 1kg") return "€117.00";
-        if (sizeOption === "4x 1kg") return "€156.00";
-        if (sizeOption === "5x 1kg") return "€195.00";
+        // Updated Prices for Office Subscription
+        if (sizeOption === "1x 1kg") return "€44.00";
+        if (sizeOption === "2x 1kg") return "€80.00";
+        if (sizeOption === "3x 1kg") return "€132.00";
+        if (sizeOption === "4x 1kg") return "€176.00";
+        if (sizeOption === "5x 1kg") return "€202.50";
     }
 
     return "Select options for price";
