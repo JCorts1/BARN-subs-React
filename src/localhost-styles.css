@@ -28,7 +28,7 @@ html {
       Or, more directly, just set it to a smaller pixel value.
       This will make all your `rem` units calculate to smaller pixel values.
     */
-    font-size: 10px !important; /* Or try 12px, 14px etc. Use !important to ensure it applies for this test */
+    font-size: 9px !important; /* Or try 12px, 14px etc. Use !important to ensure it applies for this test */
     /* background-color: lightcoral !important; */ /* For debugging - see if html bg changes */
   }
   
