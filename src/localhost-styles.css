@@ -1,0 +1,74 @@
+/* src/localhost-styles.css */
+
+/*
+  STEP 1: (MANUAL STEP FOR YOU) - Trigger the Mobile Layout if needed.
+
+  Compare your target Shopify screenshot (Screenshot 2) to your app's mobile layout.
+  To see your app's mobile layout on localhost:
+  1. Open DevTools (F12).
+  2. Click the "Toggle device toolbar" icon (looks like a phone/tablet).
+  3. Select a device like "iPhone X" or set the dimensions manually to something
+     like width: 400px, height: 800px.
+
+  If THIS mobile view on localhost now matches the LAYOUT of your Shopify screenshot,
+  then the problem is that you need to develop in this device view.
+  The scaling below can then be used to fine-tune its overall size if it's still
+  not matching the perceived scale of the Shopify version.
+*/
+
+/*
+  STEP 2: Apply scaling and base font-size adjustments.
+  We will target #root now.
+*/
+
+html {
+    /*
+      Reduce the base font-size. Common practice is 62.5% to make 1rem = 10px,
+      assuming browser default is 16px. (16 * 0.625 = 10).
+      Or, more directly, just set it to a smaller pixel value.
+      This will make all your `rem` units calculate to smaller pixel values.
+    */
+    font-size: 10px !important; /* Or try 12px, 14px etc. Use !important to ensure it applies for this test */
+    /* background-color: lightcoral !important; */ /* For debugging - see if html bg changes */
+  }
+  
+  #root {
+    transform: scale(0.75); /* Adjust this scale value as needed: 0.7, 0.8, 0.65 etc. */
+    transform-origin: top left;
+  
+    /*
+      Visual Debugging for #root:
+      If #root is being scaled, this border should appear scaled.
+      The content inside it should also appear scaled.
+    */
+    border: 5px solid limegreen !important;
+    /* background-color: rgba(0, 255, 0, 0.1) !important; */ /* Light green tint */
+  
+    /*
+      If #root itself doesn't occupy the full viewport height after scaling,
+      and your content gets cut off, you might need to give #root a larger
+      effective height so that AFTER scaling, it's still tall enough.
+      This depends on its content and your app's structure.
+      The `app-container` inside it has min-height: 100vh.
+      If #root scales, then 100vh inside it will also be scaled relative to the
+      original viewport height.
+    */
+     /* width: 133.33%; */ /* (100 / 0.75) if you were scaling to 0.75 and needed it to fill original width */
+     /* height: 133.33%; */ /* (100 / 0.75) if you were scaling to 0.75 and needed it to fill original height */
+  }
+  
+  body {
+    /* Just to ensure no conflicting margins are pushing things around unexpectedly */
+    margin: 0 !important;
+    padding: 0 !important;
+    /* background-color: lightblue !important; */ /* For debugging - see if body bg changes */
+  }
+  
+  /*
+    Make sure your .app-container still behaves as expected within the scaled #root.
+    It has min-height: 100vh. If #root is scaled to 0.75, then this 100vh will effectively
+    be 75% of the viewport height.
+  */
+  .app-container {
+    /* border: 3px dashed orange !important; */
+  }
