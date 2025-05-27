@@ -13,53 +13,79 @@ body {
   margin: 0;
   padding: 0;
   font-family: 'Raleway', sans-serif;
-  min-height: 100%; /* Use min-height to ensure it can grow */
-  background-color: #1e1e1e; /* Match html or set your primary app background */
-  color: #fff; /* Assuming default text is light */
-  overflow-x: hidden; /* Keep this as it was */
-  display: flex; /* Make body a flex container */
-  flex-direction: column; /* Allow #root to grow */
+  min-height: 100%;
+  background-color: #1e1e1e;
+  color: #fff;
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
 #root {
   width: 100%;
-  min-height: 100vh; /* Ensure #root itself tries to fill viewport */
+  min-height: 100vh;
   margin: 0;
   display: flex;
   flex-direction: column;
-  flex-grow: 1; /* Allow #root to take available space in body */
+  flex-grow: 1;
 }
 
+/* --- Default Desktop Styles --- */
 .app-container {
-  width: 100%; /* Changed from 100vw to prevent potential minor overflow issues */
+  width: 100%;
   display: flex;
-  flex-direction: row; /* Desktop default */
-  flex-grow: 1; /* Make .app-container fill #root */
-  /* background-color: #1a1a1a; /* Optional: Define a base background for app-container itself */
+  flex-direction: row; /* Desktop default: side-by-side */
+  flex-grow: 1;
 }
 
-/* Desktop styles for .function-container and .result-container */
 .function-container {
   width: 50%;
-  height: 100vh; /* Takes full viewport height on desktop side */
+  height: 100vh;
   background-color: #262626;
   box-sizing: border-box;
   overflow-y: auto;
-  display: flex; /* Added for consistency, can help with children if needed */
+  display: flex;
   flex-direction: column;
 }
 
-.result-container { /* Parent of RightContainer.jsx */
+.result-container {
   width: 50%;
-  height: 100vh; /* Takes full viewport height on desktop side */
+  height: 100vh;
   background-color: #1e1e1e;
   display: flex;
-  justify-content: center;  /* Horizontal centering for its child */
-  align-items: center;     /* MODIFIED: Vertically center its child (.right-container) on desktop */
+  justify-content: center;
+  align-items: center; /* Vertically center content on desktop */
   box-sizing: border-box;
-  overflow-y: auto; /* Allow scrolling if content overflows */
+  overflow-y: auto;
 }
 
+/* --- NEW: iPad/iPad Pro Styles (Tablet Range) --- */
+@media screen and (min-width: 768px) and (max-width: 1279px) {
+  .app-container {
+    flex-direction: column; /* Stack containers on tablets */
+  }
+
+  .function-container {
+    width: 100%;
+    height: auto; /* Height based on content */
+    min-height: initial;
+    padding: 25px; /* Tablet-specific padding */
+    box-sizing: border-box;
+    overflow-y: visible; /* Page scrolls, not the panel */
+  }
+
+  .result-container {
+    width: 100%;
+    height: auto; /* Height based on content */
+    min-height: initial;
+    /* Padding for content inside .result-container will be handled by RightContainer.css */
+    box-sizing: border-box;
+    align-items: flex-start; /* Align content to top when stacked */
+    overflow-y: visible; /* Page scrolls */
+  }
+}
+
+/* --- Phone Styles (Your Original @media screen and (max-width: 720px) block) --- */
 @media screen and (max-width: 720px) {
   .app-container {
     flex-direction: column;
@@ -72,8 +98,9 @@ body {
     height: auto;
     min-height: initial; /* Allows function container to shrink on mobile */
     background-color: #262626;
-    padding: 20px;
+    padding: 20px; /* Your original phone padding */
     box-sizing: border-box;
+    overflow-y: visible; /* Ensure page scrolls, not panel */
   }
 
   .result-container {
@@ -85,5 +112,14 @@ body {
     display: flex;
     justify-content: center;
     align-items: flex-start; /* Align RightContainer (its child) to the top on mobile */
+    overflow-y: visible; /* Ensure page scrolls */
+  }
+}
+
+/* --- Very Small Phone Styles (Preserved if you had specific overrides) --- */
+/* Add your @media screen and (max-width: 480px) styles here if you had them in App.css, for example: */
+@media screen and (max-width: 480px) {
+  .function-container {
+    padding: 15px; /* Example: Even less padding for very small screens */
   }
 }
