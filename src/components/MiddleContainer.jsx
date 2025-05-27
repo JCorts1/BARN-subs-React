@@ -11,8 +11,6 @@ import { ChevronDown } from "lucide-react";
 import "./MiddleContainer.css"; // This CSS works in harmony with Tailwind
 
 // --- Data Constants ---
-
-// MODIFIED: "Curated" is now the first option in filterOptions
 const filterOptions = [
     { value: "Curated", label: "Curated" },
     { value: "Roasters Choice", label: "Roasters Choice" },
@@ -21,8 +19,6 @@ const filterOptions = [
     { value: "Regional", label: "Regional" },
 ];
 
-// MODIFIED: "Curated" is now the first option in espressoOptions (if it's intended for Espresso too)
-// Or, if "Curated" is not an Espresso option, adjust accordingly. Assuming it is for now.
 const espressoOptions = [
     { value: "Curated", label: "Curated" },
     { value: "Roasters Choice", label: "Roasters Choice" },
@@ -31,7 +27,6 @@ const espressoOptions = [
     { value: "Office", label: "Office" },
     { value: "Regional", label: "Regional" },
 ];
-
 
 const officeSizeOptions = [
     { value: "1x 1kg", label: "1 x 1kg" },
@@ -80,7 +75,6 @@ const allowedLowCafRegionalFrequencies = ["2 Weeks", "4 Weeks (Recommended)", "6
 const allowedOfficeFrequencies = ["2 Weeks", "4 Weeks (Recommended)"];
 const allowedCapsuleFrequencies = ["2 Weeks", "4 Weeks (Recommended)"];
 
-
 // --- Component ---
 const MiddleContainer = ({
     selectedMethod, selectedCoffeeType, selectedRegion, selectedSizeOption,
@@ -91,7 +85,7 @@ const MiddleContainer = ({
 
     const [showOptionsContainer, setShowOptionsContainer] = useState(true);
 
-    // --- useEffect Hooks ---
+    // --- useEffect Hooks (assumed unchanged from your original) ---
     useEffect(() => {
         if (typeof onFrequencyChange !== 'function') { return; }
         let isReadyForFrequency;
@@ -188,7 +182,6 @@ const MiddleContainer = ({
              }
         }
     }, [selectedCoffeeType, selectedMethod, finalSelectionDetail, onQuantityChange, showOptionsContainer]);
-
     // --- END useEffect ---
 
     const handleSelectSelf = () => {
@@ -207,7 +200,12 @@ const MiddleContainer = ({
     };
 
     const currentCoffeeTypeOptions = selectedMethod === 'Filter' ? filterOptions : espressoOptions;
+    // `isSubscriptionStyleDisabled` is used directly in the trigger, not for row visibility anymore
+    const isSubscriptionStyleDisabled = !['Filter', 'Espresso'].includes(selectedMethod);
 
+
+    // Conditions for enabling dropdown triggers / interactive content
+    const showCapsuleQuantityDropdown = selectedMethod === 'Capsules' && selectedEdition;
     const showGenericQuantityDropdown =
         selectedMethod !== 'Capsules' && selectedCoffeeType && selectedCoffeeType !== 'Office' &&
          (selectedCoffeeType === 'Roasters Choice' ||
@@ -216,17 +214,18 @@ const MiddleContainer = ({
           selectedCoffeeType === 'Low-Caf' ||
           (selectedCoffeeType === 'Regional' && selectedRegion)
          );
-    const showCapsuleQuantityDropdown = selectedMethod === 'Capsules' && selectedEdition;
-
 
     const officeIsReadyForFrequency = selectedCoffeeType === 'Office' && selectedSizeOption;
     const capsuleIsReadyForFrequency = selectedMethod === 'Capsules' && selectedEdition && finalSelectionDetail;
     const genericIsReadyForFrequency = finalSelectionDetail && selectedCoffeeType && !['Office'].includes(selectedCoffeeType) && selectedMethod !== 'Capsules';
     const showFrequencyStep = officeIsReadyForFrequency || capsuleIsReadyForFrequency || genericIsReadyForFrequency;
 
-    const showFrequencyDropdown = showFrequencyStep && (selectedMethod === 'Capsules' || selectedCoffeeType !== 'Masterpiece');
-    const showMasterpieceFrequencyInfo = showFrequencyStep && selectedMethod !== 'Capsules' && selectedCoffeeType === 'Masterpiece';
+    const quantityTriggerDisabled = !(
+        (selectedMethod === 'Capsules' && showCapsuleQuantityDropdown) ||
+        (selectedMethod && selectedMethod !== 'Capsules' && selectedCoffeeType !== 'Office' && showGenericQuantityDropdown)
+    );
 
+    const frequencyTriggerDisabled = !showFrequencyStep;
 
     const currentFrequencyOptions =
         selectedMethod === 'Capsules'
@@ -239,29 +238,86 @@ const MiddleContainer = ({
                         ? baseFrequencyOptions.filter(option => allowedLowCafRegionalFrequencies.includes(option.value))
                         : baseFrequencyOptions;
 
-    const currentQuantityOptions =
-        selectedMethod === 'Capsules' ? capsuleQuantityOptions
-        : selectedCoffeeType === 'Curated' ? curatedQuantityOptions
-        : selectedCoffeeType === 'Masterpiece' ? masterpieceQuantityOptions
-        : standardQuantityOptions;
+    // Determine current quantity options for the dropdown, used if quantity step is active
+    let activeQuantityOptions = standardQuantityOptions; // Default
+    if (selectedMethod === 'Capsules') {
+        activeQuantityOptions = capsuleQuantityOptions;
+    } else if (selectedCoffeeType === 'Curated') {
+        activeQuantityOptions = curatedQuantityOptions;
+    } else if (selectedCoffeeType === 'Masterpiece') {
+        activeQuantityOptions = masterpieceQuantityOptions;
+    }
+    // Standard options are used for Roaster's Choice, Low-Caf, Regional if not specified otherwise
 
-    const getQuantityDisplayLabel = (value) => {
-        if (!value) {
-            if (selectedCoffeeType === 'Office') return "Select Size...";
-            if (selectedMethod === 'Capsules') return "Select Quantity...";
-            return "Select Quantity...";
-        }
-        if (selectedMethod === 'Capsules') return capsuleQuantityLabelMap[value] || value;
-        if (selectedCoffeeType === 'Curated') return curatedQuantityLabelMap[value] || value;
-        if (selectedCoffeeType === 'Masterpiece') return masterpieceQuantityLabelMap[value] || value;
-        if (selectedCoffeeType === 'Low-Caf') return `${value} x 250g`;
-        if (selectedCoffeeType === 'Regional') return `${value} x 250g`;
-        if (selectedCoffeeType === 'Office') return value;
-        if (selectedCoffeeType === 'Roasters Choice') return `${value} x 250g`;
-        return value;
+    const getDynamicLabelForSecondStep = () => {
+        if (selectedMethod === 'Capsules') return "Taste Profile";
+        if (selectedMethod === 'Filter' || selectedMethod === 'Espresso') return "Subscription Style";
+        return "Style / Profile"; // Generic placeholder if method not yet selected
     };
 
-    const isSubscriptionStyleDisabled = !['Filter', 'Espresso'].includes(selectedMethod);
+    const getButtonTextForSecondStep = () => {
+        if (!selectedMethod) return "Select Method first...";
+        if (selectedMethod === 'Capsules') return selectedEdition || "Select Profile...";
+        // Filter or Espresso
+        if (isSubscriptionStyleDisabled) return "Select Method first..."; // Should not happen if selectedMethod is Filter/Espresso
+        return selectedCoffeeType || "Select Type...";
+    };
+    
+    const getQuantityDisplayLabelText = () => {
+        if (finalSelectionDetail) { // A quantity/size is actually selected
+            if (selectedMethod === 'Capsules') return capsuleQuantityLabelMap[finalSelectionDetail] || finalSelectionDetail;
+            if (selectedCoffeeType === 'Curated') return curatedQuantityLabelMap[finalSelectionDetail] || finalSelectionDetail;
+            if (selectedCoffeeType === 'Masterpiece') return masterpieceQuantityLabelMap[finalSelectionDetail] || finalSelectionDetail;
+            if (selectedCoffeeType === 'Office') return selectedSizeOption; // Office uses size option for its display
+            if (['Roasters Choice', 'Low-Caf', 'Regional'].includes(selectedCoffeeType)) return `${finalSelectionDetail} x 250g`;
+            return `${finalSelectionDetail} bag(s)`; // Fallback
+        }
+
+        // Placeholder logic
+        if (!selectedMethod) return "Select Method first...";
+        if (selectedMethod === 'Capsules') {
+            return selectedEdition ? "Select Quantity..." : "Select Profile first...";
+        }
+        // Filter/Espresso path
+        if (!selectedCoffeeType) return "Select Type first...";
+        if (selectedCoffeeType === 'Office') return selectedSizeOption || "Select Size..."; // Office size is its quantity
+        if (selectedCoffeeType === 'Regional' && !selectedRegion) return "Select Region first...";
+        
+        return "Select Quantity...";
+    };
+
+    const getFrequencyButtonText = () => {
+        if (selectedFrequency) return selectedFrequency.replace(' (Recommended)', '');
+        if (!selectedMethod) return "Select Method first...";
+        if (selectedMethod === 'Capsules' && !selectedEdition) return "Select Profile first...";
+        if (selectedMethod !== 'Capsules' && !selectedCoffeeType) return "Select Type first...";
+        if (selectedCoffeeType === 'Office' && !selectedSizeOption) return "Select Size first...";
+        if ( (selectedMethod === 'Capsules' && selectedEdition && !finalSelectionDetail) ||
+             (selectedMethod !== 'Capsules' && selectedCoffeeType && selectedCoffeeType !== 'Office' && !finalSelectionDetail) ) {
+            return "Select Quantity first...";
+        }
+        return "Select Frequency...";
+    };
+    
+    const renderQuantityDropdownItem = (option) => {
+        let label = option.label; // Default label from option object
+        if (selectedMethod === 'Capsules') {
+            // Label is already like "3 x 10 capsules"
+        } else if (selectedCoffeeType === 'Curated' || selectedCoffeeType === 'Masterpiece') {
+            // Labels are already like "2 x 250g" or "1 bag"
+        } else if (['Roasters Choice', 'Low-Caf', 'Regional'].includes(selectedCoffeeType)) {
+            label = `${option.label} x 250g`;
+        } else if (selectedCoffeeType) { // Fallback for other bean types if any
+            label = `${option.label} ${parseInt(option.value) > 1 ? 'bags' : 'bag'} (250g each)`;
+        }
+    
+        return (
+            <DropdownMenuRadioItem key={option.value} value={option.value}>
+                {label}
+            </DropdownMenuRadioItem>
+        );
+    };
+
 
     // --- Component Render ---
     return (
@@ -282,6 +338,7 @@ const MiddleContainer = ({
             {showOptionsContainer === true && (
                 <div className='coffee-type-container w-5/6 rounded-md p-3 pt-5 flex flex-col items-center gap-y-2 bg-[#3a3c3d] justify-center mt-5'>
 
+                    {/* Step 1: Method Row - Always Visible */}
                     <div className='dropdown-row'>
                        <h3 className='dropdown-label'>Method</h3>
                        <DropdownMenu>
@@ -301,27 +358,21 @@ const MiddleContainer = ({
                         </DropdownMenu>
                     </div>
 
-                    {selectedMethod === 'Capsules' && (
-                        <div className='dropdown-row' style={{ justifyContent: 'center' }} key="capsule-method-info">
-                            <div className='w-fit'>
-                                <ul className='text-white bg-[#161616] w-full rounded-sm border border-[#A67C52] roasters-info-list'>
-                                    <li className='w-full p-1 text-lg'><span className='text-[#A67C52]'>Receive our</span> Sustainable Capsules on repeat</li>
-                                </ul>
-                            </div>
-                        </div>
-                    )}
-
-                    {selectedMethod === 'Capsules' && (
-                        <div className='dropdown-row'>
-                           <h3 className='dropdown-label'>Taste Profile</h3>
-                           <DropdownMenu>
-                                <DropdownMenuTrigger asChild>
-                                    <Button variant="outline" className='dropdown-trigger-button'>
-                                        {selectedEdition || "Select Profile..."}
-                                        <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                                    </Button>
-                                </DropdownMenuTrigger>
-                                <DropdownMenuContent className='dropdown-content-panel'>
+                    {/* Step 2: Style / Profile Row - Always Visible */}
+                    <div className='dropdown-row'>
+                        <h3 className='dropdown-label'>{getDynamicLabelForSecondStep()}</h3>
+                        <DropdownMenu>
+                            <DropdownMenuTrigger
+                                asChild
+                                disabled={!selectedMethod || (selectedMethod !== 'Capsules' && isSubscriptionStyleDisabled)}
+                            >
+                                <Button variant="outline" className='dropdown-trigger-button'>
+                                    {getButtonTextForSecondStep()}
+                                    <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                                </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent className='dropdown-content-panel'>
+                                {selectedMethod === 'Capsules' && (
                                     <DropdownMenuRadioGroup value={selectedEdition} onValueChange={onEditionChange}>
                                         {capsuleTasteProfileOptions.map((option) => (
                                             <DropdownMenuRadioItem key={option.value} value={option.value}>
@@ -329,22 +380,8 @@ const MiddleContainer = ({
                                             </DropdownMenuRadioItem>
                                         ))}
                                     </DropdownMenuRadioGroup>
-                                </DropdownMenuContent>
-                            </DropdownMenu>
-                        </div>
-                    )}
-
-                    {selectedMethod !== 'Capsules' && (
-                        <div className='dropdown-row'>
-                           <h3 className='dropdown-label'>Subscription Style</h3>
-                           <DropdownMenu>
-                                <DropdownMenuTrigger asChild disabled={isSubscriptionStyleDisabled}>
-                                    <Button variant="outline" className='dropdown-trigger-button'>
-                                        {isSubscriptionStyleDisabled && !selectedCoffeeType ? "Select Method first..." : (selectedCoffeeType || "Select Type...")}
-                                        <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                                    </Button>
-                                </DropdownMenuTrigger>
-                                <DropdownMenuContent className='dropdown-content-panel'>
+                                )}
+                                {selectedMethod && selectedMethod !== 'Capsules' && !isSubscriptionStyleDisabled && (
                                     <DropdownMenuRadioGroup value={selectedCoffeeType} onValueChange={onCoffeeTypeChange}>
                                         {currentCoffeeTypeOptions.map((option) => (
                                             <DropdownMenuRadioItem key={option.value} value={option.value}>
@@ -352,158 +389,125 @@ const MiddleContainer = ({
                                             </DropdownMenuRadioItem>
                                         ))}
                                     </DropdownMenuRadioGroup>
-                                </DropdownMenuContent>
-                            </DropdownMenu>
-                        </div>
-                    )}
-
-                    {selectedMethod !== 'Capsules' && selectedCoffeeType && (
+                                )}
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+                    </div>
+                    
+                    {/* Type-Specific Info & Controls (Region/Office Size) - Conditionally Rendered AFTER type is known */}
+                    {selectedMethod && selectedMethod !== 'Capsules' && selectedCoffeeType && (
                         <>
                             {selectedCoffeeType === 'Roasters Choice' && (
                                 <div className='dropdown-row' style={{ justifyContent: 'center' }} key="rc-info">
-                                     <div className='w-fit'>
-                                        <ul className='text-white bg-[#161616] w-full rounded-sm border border-[#A67C52] roasters-info-list'>
-                                            <li className='w-full p-1 text-lg'><span className='text-[#A67C52]'>Every Month,</span> Our Roasters Pick a New Coffee for You</li>
-                                        </ul>
-                                    </div>
+                                    <div className='w-fit'><ul className='text-white bg-[#161616] w-full rounded-sm border border-[#A67C52] roasters-info-list'><li className='w-full p-1 text-lg'><span className='text-[#A67C52]'>Every Month,</span> Our Roasters Pick a New Coffee for You</li></ul></div>
                                 </div>
                             )}
                             {selectedCoffeeType === 'Curated' && (
-                                <div className='dropdown-row' style={{ justifyContent: 'center' }} key="curated-info">
-                                     <div className='w-fit'>
-                                        <ul className='text-white bg-[#161616] w-full rounded-sm border border-[#A67C52] roasters-info-list'>
-                                            <li className='w-full p-1 text-lg'><span className='text-[#A67C52]'>Every month,</span> Our Roasters pick two different coffees for you</li>
-                                        </ul>
-                                    </div>
-                                </div>
+                                 <div className='dropdown-row' style={{ justifyContent: 'center' }} key="curated-info">
+                                     <div className='w-fit'><ul className='text-white bg-[#161616] w-full rounded-sm border border-[#A67C52] roasters-info-list'><li className='w-full p-1 text-lg'><span className='text-[#A67C52]'>Every month,</span> Our Roasters pick two different coffees for you</li></ul></div>
+                                 </div>
                             )}
-                             {selectedCoffeeType === 'Masterpiece' && (
+                            {selectedCoffeeType === 'Masterpiece' && (
                                 <div className='dropdown-row' style={{ justifyContent: 'center' }} key="masterpiece-info">
-                                    <div className='w-fit'>
-                                        <ul className='text-white bg-[#161616] w-full rounded-sm border border-[#A67C52] roasters-info-list'>
-                                            <li className='w-full p-1 text-lg'><span className='text-[#A67C52]'>Every month,</span> We send you one bag of the most extraordinary coffee. Each bag contains 100 - 150g</li>
-                                        </ul>
-                                    </div>
+                                    <div className='w-fit'><ul className='text-white bg-[#161616] w-full rounded-sm border border-[#A67C52] roasters-info-list'><li className='w-full p-1 text-lg'><span className='text-[#A67C52]'>Every month,</span> We send you one bag of the most extraordinary coffee. Each bag contains 100 - 150g</li></ul></div>
                                 </div>
                             )}
                             {selectedCoffeeType === 'Low-Caf' && (
                                 <div className='dropdown-row' style={{ justifyContent: 'center' }} key="lowcaf-info">
-                                    <div className='w-fit'>
-                                        <ul className='text-white bg-[#161616] w-full rounded-sm border border-[#A67C52] roasters-info-list'>
-                                            <li className='w-full p-1 text-lg'><span className='text-[#A67C52]'>Receive our</span> low-caf varietal coffee on repeat</li>
-                                        </ul>
-                                    </div>
+                                    <div className='w-fit'><ul className='text-white bg-[#161616] w-full rounded-sm border border-[#A67C52] roasters-info-list'><li className='w-full p-1 text-lg'><span className='text-[#A67C52]'>Receive our</span> low-caf varietal coffee on repeat</li></ul></div>
                                 </div>
                             )}
                             {selectedCoffeeType === 'Regional' && (
-                                <div className='dropdown-row' style={{ justifyContent: 'center' }} key="regional-info">
-                                    <div className='w-fit'>
-                                        <ul className='text-white bg-[#161616] w-full rounded-sm border border-[#A67C52] roasters-info-list'>
-                                            <li className='w-full p-1 text-lg'><span className='text-[#A67C52]'>Pick your favourite region</span> and receive the same coffee on repeat</li>
-                                        </ul>
+                                <>
+                                    <div className='dropdown-row' style={{ justifyContent: 'center' }} key="regional-info">
+                                        <div className='w-fit'><ul className='text-white bg-[#161616] w-full rounded-sm border border-[#A67C52] roasters-info-list'><li className='w-full p-1 text-lg'><span className='text-[#A67C52]'>Pick your favourite region</span> and receive the same coffee on repeat</li></ul></div>
                                     </div>
-                                </div>
+                                    <div className='dropdown-row' key="regional-region">
+                                        <h3 className='dropdown-label'>Region</h3>
+                                        <DropdownMenu>
+                                            <DropdownMenuTrigger asChild><Button variant="outline" className='dropdown-trigger-button'>{selectedRegion || "Select Region..."}<ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" /></Button></DropdownMenuTrigger>
+                                            <DropdownMenuContent className='dropdown-content-panel'><DropdownMenuRadioGroup value={selectedRegion} onValueChange={onRegionChange}>{regionOptions.map((o) => (<DropdownMenuRadioItem key={o.value} value={o.value}>{o.label}</DropdownMenuRadioItem>))}</DropdownMenuRadioGroup></DropdownMenuContent>
+                                        </DropdownMenu>
+                                    </div>
+                                </>
                             )}
                             {selectedCoffeeType === 'Office' && (
-                                <div className='dropdown-row' style={{ justifyContent: 'center' }} key="office-info">
-                                    <div className='w-fit'>
-                                        <ul className='text-white bg-[#161616] w-full rounded-sm border border-[#A67C52] roasters-info-list'>
-                                            <li className='w-full p-1 text-lg'><span className='text-[#A67C52]'>Our Espresso works on all Office Machines:</span> Full Automat, Espresso, Filter</li>
-                                        </ul>
+                                <>
+                                    <div className='dropdown-row' style={{ justifyContent: 'center' }} key="office-info">
+                                        <div className='w-fit'><ul className='text-white bg-[#161616] w-full rounded-sm border border-[#A67C52] roasters-info-list'><li className='w-full p-1 text-lg'><span className='text-[#A67C52]'>Our Espresso works on all Office Machines:</span> Full Automat, Espresso, Filter</li></ul></div>
                                     </div>
-                                </div>
+                                    <div className='dropdown-row' key="office-size">
+                                        <h3 className='dropdown-label'>Size</h3>
+                                        <DropdownMenu>
+                                            <DropdownMenuTrigger asChild><Button variant="outline" className='dropdown-trigger-button'>{selectedSizeOption || "Select Size..."}<ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" /></Button></DropdownMenuTrigger>
+                                            <DropdownMenuContent className='dropdown-content-panel'><DropdownMenuRadioGroup value={selectedSizeOption} onValueChange={onSizeOptionChange}>{officeSizeOptions.map((o) => (<DropdownMenuRadioItem key={o.value} value={o.value}>{o.label}</DropdownMenuRadioItem>))}</DropdownMenuRadioGroup></DropdownMenuContent>
+                                        </DropdownMenu>
+                                    </div>
+                                </>
                             )}
-
-                            {selectedCoffeeType === 'Office' && (
-                                 <div className='dropdown-row' key="office-size">
-                                    <h3 className='dropdown-label'>Size</h3>
-                                    <DropdownMenu>
-                                        <DropdownMenuTrigger asChild>
-                                            <Button variant="outline" className='dropdown-trigger-button'>
-                                                {selectedSizeOption || "Select Size..."}
-                                                <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                                            </Button>
-                                        </DropdownMenuTrigger>
-                                        <DropdownMenuContent className='dropdown-content-panel'>
-                                            <DropdownMenuRadioGroup value={selectedSizeOption} onValueChange={onSizeOptionChange}>
-                                                {officeSizeOptions.map((option) => (
-                                                    <DropdownMenuRadioItem key={option.value} value={option.value}>
-                                                        {option.label}
-                                                    </DropdownMenuRadioItem>
-                                                ))}
-                                            </DropdownMenuRadioGroup>
-                                        </DropdownMenuContent>
-                                    </DropdownMenu>
-                                </div>
-                           )}
-                            {selectedCoffeeType === 'Regional' && (
-                                <div className='dropdown-row' key="regional-region">
-                                    <h3 className='dropdown-label'>Region</h3>
-                                    <DropdownMenu>
-                                        <DropdownMenuTrigger asChild>
-                                            <Button variant="outline" className='dropdown-trigger-button'>
-                                                {selectedRegion || "Select Region..."}
-                                                <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                                            </Button>
-                                        </DropdownMenuTrigger>
-                                        <DropdownMenuContent className='dropdown-content-panel'>
-                                            <DropdownMenuRadioGroup value={selectedRegion} onValueChange={onRegionChange}>
-                                                {regionOptions.map((option) => (
-                                                    <DropdownMenuRadioItem key={option.value} value={option.value}>
-                                                        {option.label}
-                                                    </DropdownMenuRadioItem>
-                                                ))}
-                                            </DropdownMenuRadioGroup>
-                                        </DropdownMenuContent>
-                                    </DropdownMenu>
-                                </div>
-                           )}
                         </>
                     )}
+                     {selectedMethod === 'Capsules' && selectedEdition && ( // Info for capsules after edition is selected
+                        <div className='dropdown-row' style={{ justifyContent: 'center' }} key="capsule-edition-info">
+                            <div className='w-fit'>
+                                <ul className='text-white bg-[#161616] w-full rounded-sm border border-[#A67C52] roasters-info-list'>
+                                    <li className='w-full p-1 text-lg'><span className='text-[#A67C52]'>Sustainable</span> Nespresso® Compatible Capsules</li>
+                                </ul>
+                            </div>
+                        </div>
+                    )}
 
-                    {(showCapsuleQuantityDropdown || showGenericQuantityDropdown) && (
+
+                    {/* Step 3: Quantity of Coffee Row - Always Visible (but content/state dynamic) */}
+                    {/* This row should not show if Office type is selected, as Office uses Size for quantity */}
+                    {selectedCoffeeType !== 'Office' && (
                         <div className='dropdown-row'>
                             <h3 className='dropdown-label'>Quantity of Coffee</h3>
                             <DropdownMenu>
-                                <DropdownMenuTrigger asChild>
+                                <DropdownMenuTrigger asChild disabled={quantityTriggerDisabled}>
                                     <Button variant="outline" className='dropdown-trigger-button'>
-                                        {getQuantityDisplayLabel(finalSelectionDetail)}
+                                        {getQuantityDisplayLabelText()}
                                         <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                                     </Button>
                                 </DropdownMenuTrigger>
                                 <DropdownMenuContent className='dropdown-content-panel'>
-                                    <DropdownMenuRadioGroup value={finalSelectionDetail} onValueChange={onQuantityChange}>
-                                        {currentQuantityOptions.map((option) => (
-                                            <DropdownMenuRadioItem key={option.value} value={option.value}>
-                                               {selectedMethod === 'Capsules'
-                                                    ? option.label
-                                                    : selectedCoffeeType === 'Curated'
-                                                        ? option.label
-                                                        : selectedCoffeeType === 'Masterpiece'
-                                                            ? option.label
-                                                            : selectedCoffeeType === 'Low-Caf'
-                                                                ? `${option.label} x 250g`
-                                                                : selectedCoffeeType === 'Regional'
-                                                                    ? `${option.label} x 250g`
-                                                                    : selectedCoffeeType === 'Roasters Choice'
-                                                                        ? `${option.label} x 250g`
-                                                                        : `${option.label} ${parseInt(option.value) > 1 ? 'bags' : 'bag'} (250g each)`
-                                                }
-                                            </DropdownMenuRadioItem>
-                                        ))}
-                                    </DropdownMenuRadioGroup>
+                                    {selectedMethod === 'Capsules' && showCapsuleQuantityDropdown && (
+                                        <DropdownMenuRadioGroup value={finalSelectionDetail} onValueChange={onQuantityChange}>
+                                            {activeQuantityOptions.map(option => renderQuantityDropdownItem(option))}
+                                        </DropdownMenuRadioGroup>
+                                    )}
+                                    {selectedMethod && selectedMethod !== 'Capsules' && showGenericQuantityDropdown && (
+                                        <DropdownMenuRadioGroup value={finalSelectionDetail} onValueChange={onQuantityChange}>
+                                            {activeQuantityOptions.map(option => renderQuantityDropdownItem(option, selectedCoffeeType, selectedMethod))}
+                                        </DropdownMenuRadioGroup>
+                                    )}
                                 </DropdownMenuContent>
                             </DropdownMenu>
                         </div>
                     )}
 
-                    {showFrequencyDropdown && (
-                        <div className='dropdown-row'>
-                            <h3 className='dropdown-label'>Frequency</h3>
+                    {/* Step 4: Frequency Row - Always Visible (but content/state dynamic) */}
+                    <div className='dropdown-row'>
+                        <h3 className='dropdown-label'>Frequency</h3>
+                        {selectedMethod !== 'Capsules' && selectedCoffeeType === 'Masterpiece' ? (
+                            // Masterpiece Frequency Info
+                            <div className='info-text-container flex items-center justify-center'>
+                                {showFrequencyStep ? (
+                                    <div className='static-text-value h-10 px-3 py-2 bg-[#161616] text-[#A67C52] font-bold rounded-md flex items-center w-full justify-center border-1 border-[#A67C52]'>
+                                         4 weeks
+                                    </div>
+                                ) : (
+                                    <Button variant="outline" className='dropdown-trigger-button w-full' style={{ justifyContent: 'center' }} disabled>
+                                        {getFrequencyButtonText()}
+                                    </Button>
+                                )}
+                            </div>
+                        ) : (
+                            // Standard Frequency Dropdown
                             <DropdownMenu>
-                                 <DropdownMenuTrigger asChild>
+                                 <DropdownMenuTrigger asChild disabled={frequencyTriggerDisabled}>
                                     <Button variant="outline" className='dropdown-trigger-button'>
-                                        {selectedFrequency || "Select Frequency..."}
+                                        {getFrequencyButtonText()}
                                         <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                                     </Button>
                                 </DropdownMenuTrigger>
@@ -517,33 +521,24 @@ const MiddleContainer = ({
                                     </DropdownMenuRadioGroup>
                                 </DropdownMenuContent>
                             </DropdownMenu>
-                           </div>
-                    )}
-                    {showMasterpieceFrequencyInfo && (
-                        <div className='dropdown-row masterpiece-frequency-info'>
-                            <h3 className='dropdown-label'>Frequency</h3>
-                            <div className='info-text-container flex items-center justify-center'>
-                                <div className='static-text-value h-10 px-3 py-2 bg-[#161616] text-[#A67C52] font-bold rounded-md flex items-center w-full justify-center border-1 border-[#A67C52]'>
-                                     4 weeks
-                                </div>
-                            </div>
-                        </div>
-                    )}
+                        )}
+                       </div>
 
-                   {((selectedCoffeeType === 'Office' && selectedSizeOption && selectedFrequency) ||
-                     (selectedMethod === 'Capsules' && selectedEdition && finalSelectionDetail && selectedFrequency) ||
-                     (finalSelectionDetail && selectedFrequency && selectedCoffeeType && selectedCoffeeType !== 'Office' && selectedMethod !== 'Capsules')
-                   ) && (
+                    {/* Final Selection Summary (Original logic) */}
+                    {((selectedCoffeeType === 'Office' && selectedSizeOption && selectedFrequency) ||
+                        (selectedMethod === 'Capsules' && selectedEdition && finalSelectionDetail && selectedFrequency) ||
+                        (finalSelectionDetail && selectedFrequency && selectedCoffeeType && selectedCoffeeType !== 'Office' && selectedMethod !== 'Capsules')
+                    ) && (
                        <div className="final-selection mt-4 p-3 border rounded-md bg-secondary text-secondary-foreground w-5/6 text-center">
                            Selected: {selectedMethod}
                            {selectedMethod === 'Capsules' && selectedEdition && ` - Taste: ${selectedEdition}`}
                            {selectedMethod !== 'Capsules' && selectedCoffeeType && ` - ${selectedCoffeeType}`}
                            {selectedCoffeeType === 'Regional' && selectedRegion && ` - ${selectedRegion}`}
                            {selectedCoffeeType === 'Office' && selectedSizeOption && ` - ${selectedSizeOption}`}
-                           {(selectedMethod === 'Capsules' || (selectedMethod !== 'Capsules' && selectedCoffeeType !== 'Office')) && finalSelectionDetail && ` - Qty: ${getQuantityDisplayLabel(finalSelectionDetail)}`}
+                           {(selectedMethod === 'Capsules' || (selectedMethod !== 'Capsules' && selectedCoffeeType !== 'Office')) && finalSelectionDetail && ` - Qty: ${getQuantityDisplayLabelText()}`}
                            {selectedFrequency && ` - Every ${selectedFrequency.replace(' (Recommended)', '')}`}
                        </div>
-                   )}
+                    )}
                 </div>
             )}
         </div>
