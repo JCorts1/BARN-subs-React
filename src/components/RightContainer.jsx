@@ -1,10 +1,3 @@
-// src/components/RightContainer.jsx
-// Uses Shopify Permalink for checkout, opening in a new tab.
-// Includes specific Selling Plan IDs and Variant IDs for various products including Office and Capsules.
-// Adds slower fade transitions, updated summary sentence formatting, and price display with new prices.
-// Updated subscription descriptions and logic to handle method-specific offerings.
-// Increased width of intro text container on desktop.
-// Corrected syntax error in permalink URL construction.
 
 import React, { useRef } from 'react';
 import { SwitchTransition, CSSTransition } from 'react-transition-group';
@@ -102,7 +95,7 @@ const subscriptionDescriptions = {
     },
     "Masterpiece": {
         description: "The rarest coffees on the planet: a showcase of innovation and extraordinary flavour. Scoring 90 points and up. Omni Roast.",
-        currentOffering: "Finca Sophia Natural Gesha, Panama 🇵🇦"
+        currentOffering: "Hacienda La Esmeralda Gesha, Panama 🇵🇦"
     },
     "Low-Caf": {
         description: "Our answer to decaf, without no compromise on flavour: unique coffees featuring naturally low levels of caffeine.",
