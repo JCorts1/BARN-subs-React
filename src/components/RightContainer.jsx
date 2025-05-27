@@ -80,14 +80,14 @@ const carouselImageData = {
 };
 const subscriptionDescriptions = {
     "Roasters Choice": {
-        description: "Our most popular Subscription. Seasonal coffee curated every month. The perfect way to explore stunning Single Origin flavour.",
+        description: "One seasonal coffees chosen every month by our team. Explore the variety of Single Origin flavour side by side.",
         currentOffering: {
             "Espresso": "🇷🇼Huye Mountain Washed, Rwanda: Milk Chocolate. Orange. Raisin.",
             "Filter": "🇷🇼Mahembe, Rwanda: Cherry. Black Tea. Sparkling."
         }
     },
     "Curated": {
-        description: "Two seasonal coffees chosen every month by our team. Explore the variety of Single Origin flavour side by side.",
+        description: "Our most popular Subscription. Two Seasonal coffees curated every month. The perfect way to explore stunning Single Origin flavour.",
         currentOffering: {
             "Espresso": "🇷🇼Huye Mountain Washed, Rwanda: Milk Chocolate. Orange. Raisin.\n🇷🇼Huye Mountain Natural, Rwanda: Malt. Morello Cherry. Juicy.",
             "Filter": "🇷🇼Mahembe, Rwanda: Cherry. Black Tea. Sparkling.\n🇨🇷La Bandera Forestal, Costa Rica: Mango. Pineapple. Fresh."
