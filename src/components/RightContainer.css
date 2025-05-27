@@ -1,56 +1,50 @@
-/* --- General Right Container Styles --- */
+/* --- General Right Container Styles (Desktop Defaults) --- */
 .right-container {
-  /* Desktop padding for summary view is handled by Tailwind (pt-8 pb-8) in JSX.
-     Desktop padding for intro view is implicitly 0 from JSX, content centered by flex.
-     Mobile padding is handled in the media query below. */
-  padding-bottom: 2.5rem; /* Fallback or additional desktop bottom padding if needed, mobile overrides */
+  padding-bottom: 2.5rem;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .right-container .default-intro-content,
 .right-container .final-selection-display {
-  font-size: 1.6rem;
+  font-size: 1.6rem; /* Base desktop font size */
   line-height: 1.6;
   width: 100%;
+  box-sizing: border-box;
 }
 
-
-/* --- Original and Scaled Styles --- */
 .intro-list li {
   padding-bottom: 0.5rem;
 }
 
-.right-container .default-intro-content .intro-list {
-  /* No specific styles here currently */
+/* Tailwind's sm: breakpoint specific styles for larger text from original */
+@media (min-width: 640px) {
+  .subscription-description .bg-\[\#3a3c3d\] {
+    /* font-size: 1.8rem; */ /* Was commented out, kept as is */
+  }
+  .subscription-description .whitespace-pre-wrap {
+    /* No specific override from original, desktop 1.4rem applies */
+  }
+  .summary-sentence {
+    /* No specific override from original, desktop 1.6rem applies */
+  }
 }
-
 
 .final-selection-display h2.summary-init {
   margin-bottom: 1rem;
   font-family: "Chalet Comprime", chalet, sans-serif;
   font-weight: 700;
-  font-size: 3rem;
+  font-size: 3rem; /* Desktop */
   color: #A67C52;
   text-transform: uppercase;
 }
 
-/* ... (rest of your existing styles like .subscription-description, .selection-span, etc. remain unchanged) ... */
-/* Abbreviating for this snippet, but they should all be here from your original file */
-
 .subscription-description .bg-\[\#3a3c3d\] {
-  font-size: 1.6rem;
+  font-size: 1.6rem; /* Desktop */
   line-height: 1.6;
 }
-@media (min-width: 640px) {
-  .subscription-description .bg-\[\#3a3c3d\] {
-    /* font-size: 1.8rem; */
-  }
-}
 .subscription-description .whitespace-pre-wrap {
-  font-size: 1.4rem;
-}
-@media (min-width: 640px) {
-  .subscription-description .whitespace-pre-wrap {
-  }
+  font-size: 1.4rem; /* Desktop */
 }
 
 .selection-span {
@@ -61,18 +55,14 @@
 }
 
 .summary-sentence {
-  font-size: 1.6rem;
+  font-size: 1.6rem; /* Desktop */
   line-height: 1.6;
-}
-@media (min-width: 640px) {
-  .summary-sentence {
-  }
 }
 
 .cart-actions-container .price-and-button-group button {
   font-family: "Raleway", sans-serif;
   font-weight: bold;
-  font-size: 1.6rem;
+  font-size: 1.6rem; /* Desktop */
 }
 
 .subscription-description > div:last-child {
@@ -90,7 +80,7 @@
   margin: 0;
   padding: 0;
   padding-left: 100%;
-  font-size: 2.24rem;
+  font-size: 2.24rem; /* Desktop */
   color: #A67C52;
   font-weight: 500;
 }
@@ -117,60 +107,142 @@
     stroke: #A67C52 !important;
 }
 
-.fade-content-enter {
-  opacity: 0;
-}
-.fade-content-enter-active {
-  opacity: 1;
-  transition: opacity 1000ms ease-in-out;
-}
-.fade-content-exit {
-  opacity: 1;
-}
-.fade-content-exit-active {
-  opacity: 0;
-  transition: opacity 1000ms ease-in-out;
-}
+.fade-content-enter { opacity: 0; }
+.fade-content-enter-active { opacity: 1; transition: opacity 1000ms ease-in-out; }
+.fade-content-exit { opacity: 1; }
+.fade-content-exit-active { opacity: 0; transition: opacity 1000ms ease-in-out; }
 
 
-/* --- Media Queries --- */
-@media screen and (max-width: 720px) {
+/* --- NEW: iPad/iPad Pro Styles (Tablet Range) --- */
+@media screen and (min-width: 768px) and (max-width: 1279px) {
   .right-container {
-    /* MODIFIED: Ensure it overrides Tailwind's md:h-full for mobile */
     height: auto !important;
-    min-height: initial !important; /* Reset min-height */
-
-    /* MODIFIED: items-start is set in JSX for mobile default */
-    /* align-items: flex-start !important; /* Ensures top alignment if JSX classes don't take */
-
-    /* Set desired padding for mobile content area */
-    padding-top: 20px;    /* Example: Space from the very top */
-    padding-left: 15px;
-    padding-right: 15px;
-    padding-bottom: 20px; /* Example: Space at the bottom */
+    min-height: initial !important;
+    padding: 30px 25px; /* Tablet-specific padding, more vertical space */
   }
 
   .right-container .default-intro-content .intro-list li {
-    font-size: 1.8rem;
+    font-size: 1.8rem; /* Tablet font size, slightly larger */
   }
-
-  /* If DefaultIntroContent's logo container has mt-8 and you want it flush
-     with .right-container's padding-top on mobile: */
-  .right-container .default-intro-content > div:first-child { /* Targets the <div> with mt-8 in JSX for the logo */
+  .right-container .default-intro-content > div:first-child { /* Logo container */
     margin-top: 0 !important;
   }
 
-  /* ... (rest of your existing mobile styles for .final-selection-display, .CarouselItem img, etc.) ... */
-  .final-selection-display h2.summary-init { font-size: 3rem; margin-top: 0px !important; }
-  .right-container .CarouselItem img { width: 90%; margin-left: auto; margin-right: auto; }
-  .words-animation { font-size: 1.8rem; }
-  .subscription-description .bg-\[\#3a3c3d\] { font-size: 1.5rem; font-family: "Raleway", sans-serif; }
+  .final-selection-display h2.summary-init {
+    font-size: 2.8rem; /* Tablet font size */
+    margin-top: 0 !important;
+  }
+  .right-container .CarouselItem img {
+    width: 100%; /* Can take full width of padded item or use max-width */
+    max-width: 500px; /* Example max for image on tablet */
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .words-animation {
+    font-size: 2rem; /* Tablet font size */
+  }
+  .subscription-description .bg-\[\#3a3c3d\] {
+    font-size: 1.6rem; /* Tablet font size, similar to desktop might be fine */
+  }
+  .subscription-description .whitespace-pre-wrap {
+    font-size: 1.4rem; /* Tablet font size */
+  }
+  .summary-sentence {
+    font-size: 1.6rem; /* Tablet font size */
+  }
+  .cart-actions-container .price-and-button-group button {
+    font-size: 1.6rem; /* Tablet font size */
+    /* width: auto; /* Button may not need to be full width */
+    /* padding-left: 2.5rem; padding-right: 2.5rem; /* Example */
+  }
+  .cart-actions-container .price-and-button-group {
+    /* flex-direction: row; /* Default desktop, usually fine for tablet */
+    /* justify-content: flex-end; /* Align to right on tablet */
+  }
+}
+
+/* --- Phone Styles (Your Original @media screen and (max-width: 720px) block) --- */
+@media screen and (max-width: 720px) {
+  .right-container {
+    height: auto !important;
+    min-height: initial !important;
+    padding-top: 20px;    /* Your original setting */
+    padding-left: 15px;   /* Your original setting */
+    padding-right: 15px;  /* Your original setting */
+    padding-bottom: 20px; /* Your original setting */
+  }
+
+  .right-container .default-intro-content .intro-list li {
+    font-size: 1.8rem; /* Your original setting */
+  }
+
+  .right-container .default-intro-content > div:first-child {
+    margin-top: 0 !important; /* Your original setting */
+  }
+
+  .final-selection-display h2.summary-init {
+    font-size: 3rem; /* Your original setting */
+    margin-top: 0px !important;
+  }
+  .right-container .CarouselItem img {
+    width: 90%; /* Your original setting */
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .words-animation {
+    font-size: 1.8rem; /* Your original setting */
+  }
+  .subscription-description .bg-\[\#3a3c3d\] {
+    font-size: 1.5rem; /* Your original setting */
+    font-family: "Raleway", sans-serif;
+  }
   .subscription-description .bg-\[\#3a3c3d\] p,
-  .subscription-description .bg-\[\#3a3c3d\] .whitespace-pre-wrap { font-family: "Raleway", sans-serif; }
-  .subscription-description .whitespace-pre-wrap { font-size: 1.3rem; }
-  .summary-sentence { font-size: 1.5rem; }
+  .subscription-description .bg-\[\#3a3c3d\] .whitespace-pre-wrap {
+    font-family: "Raleway", sans-serif;
+  }
+  .subscription-description .whitespace-pre-wrap {
+    font-size: 1.3rem; /* Your original setting */
+  }
+  .summary-sentence {
+    font-size: 1.5rem; /* Your original setting */
+  }
 
   .cart-actions-container .price-and-button-group button {
-    font-size: 1.5rem;
+    font-size: 1.5rem; /* Your original setting */
+    width: 100%; /* Make button full width on phones */
+    margin-top: 1rem; /* Space for stacking */
+  }
+  .cart-actions-container .price-and-button-group {
+    flex-direction: column; /* Stack price and button on phones */
+    align-items: center;
+  }
+   .cart-actions-container .price-display {
+    margin-bottom: 0.75rem; /* Space between price and button */
+  }
+}
+
+/* --- Very Small Phone Styles (Preserved from your original or earlier refinements) --- */
+@media screen and (max-width: 480px) {
+  .right-container {
+    padding-left: 10px;  /* Example from previous refinement */
+    padding-right: 10px; /* Example */
+  }
+  .final-selection-display h2.summary-init {
+    font-size: 2.4rem; /* Example from previous refinement */
+  }
+  .right-container .default-intro-content .intro-list li {
+    font-size: 1.6rem; /* Example */
+  }
+  .words-animation, .summary-sentence {
+    font-size: 1.4rem; /* Example */
+  }
+  .subscription-description .bg-\[\#3a3c3d\] {
+    font-size: 1.3rem; /* Example */
+  }
+  .subscription-description .whitespace-pre-wrap {
+    font-size: 1.2rem; /* Example */
+  }
+  .cart-actions-container .price-and-button-group button {
+    font-size: 1.3rem; /* Example */
   }
 }
