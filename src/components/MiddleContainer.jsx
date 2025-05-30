@@ -405,8 +405,8 @@ const MiddleContainer = ({
                             {selectedCoffeeType === 'Curated' && (
                                  <div className='dropdown-row' style={{ justifyContent: 'center' }} key="curated-info">
                                      <div className='w-fit'><ul className='text-white bg-[#161616] w-full rounded-sm border border-[#A67C52] roasters-info-list'>
-                                        <li className='w-full p-1 text-lg'><span className='text-[#A67C52]'>Every month,</span> Our Roasters pick two different coffees for you.</li>
-                                        <li>Use the code<span>ANNIVERSARY</span> for <strong>15% off</strong> — June 1 to 15!</li>
+                                        <li className='w-full p-1 text-lg'><span className='text-[#A67C52]'>Every month</span>, Our Roasters pick two different coffees for you.</li>
+                                        <li>Use the code <span>ANNIVERSARY</span> for <strong>15% off.</strong></li>
                                         </ul>
                                     </div>
                                  </div>
