@@ -89,8 +89,8 @@ const subscriptionDescriptions = {
     "Curated": {
         description: "Our most popular Subscription. Two Seasonal coffees curated every month. The perfect way to explore stunning Single Origin flavour.",
         currentOffering: {
-            "Espresso": "🇷🇼Huye Mountain Washed, Rwanda: Milk Chocolate. Orange. Raisin.\n🇷🇼Huye Mountain Natural, Rwanda: Malt. Morello Cherry. Juicy.",
-            "Filter": "🇷🇼Mahembe, Rwanda: Cherry. Black Tea. Sparkling.\n🇨🇷La Bandera Forestal, Costa Rica: Mango. Pineapple. Fresh."
+            "Espresso": "🇷🇼Huye Mountain Washed, Rwanda: Milk Chocolate. Orange. Raisin. 🇷🇼Huye Mountain Natural, Rwanda: Malt. Morello Cherry. Juicy.",
+            "Filter": "🇷🇼Mahembe, Rwanda: Cherry. Black Tea. Sparkling. 🇨🇷La Bandera Forestal, Costa Rica: Mango. Pineapple. Fresh."
         }
     },
     "Masterpiece": {
