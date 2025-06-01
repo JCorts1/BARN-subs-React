@@ -82,8 +82,8 @@ const subscriptionDescriptions = {
     "Roasters Choice": {
         description: "One seasonal coffees chosen every month by our team. Explore the variety of Single Origin flavour side by side.",
         currentOffering: {
-            "Espresso": "🇷🇼Huye Mountain Washed, Rwanda: Milk Chocolate. Orange. Raisin.",
-            "Filter": "🇷🇼Mahembe, Rwanda: Cherry. Black Tea. Sparkling."
+            "Espresso": "🇷🇼 Huye Mountain Washed, Rwanda: Milk Chocolate. Orange. Raisin.",
+            "Filter": "🇷🇼 Mahembe, Rwanda: Cherry. Black Tea. Sparkling."
         }
     },
     "Curated": {
@@ -95,7 +95,7 @@ const subscriptionDescriptions = {
     },
     "Masterpiece": {
         description: "The rarest coffees on the planet: a showcase of innovation and extraordinary flavour. Scoring 90 points and up. Omni Roast.",
-        currentOffering: "Hacienda La Esmeralda Gesha, Panama 🇵🇦"
+        currentOffering: "Our next Masterpiece will be dispatched at the Start of May. We are currently cupping to find the best coffee for you ☕️"
     },
     "Low-Caf": {
         description: "Our answer to decaf, without no compromise on flavour: unique coffees featuring naturally low levels of caffeine.",
