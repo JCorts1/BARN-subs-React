@@ -82,20 +82,20 @@ const subscriptionDescriptions = {
     "Roasters Choice": {
         description: "One seasonal coffees chosen every month by our team. Explore the variety of Single Origin flavour side by side.",
         currentOffering: {
-            "Espresso": "🇷🇼 Huye Mountain Washed, Rwanda: Milk Chocolate. Orange. Raisin.",
-            "Filter": "🇷🇼 Mahembe, Rwanda: Cherry. Black Tea. Sparkling."
+            "Espresso": "🇧🇷 Sundrop Peaberry, Brazil: Chocolate. Dried Apricot.",
+            "Filter": "🇷🇼 Gitwe, Rwanda: Cranberry. Black Tea."
         }
     },
     "Curated": {
         description: "Our most popular Subscription. Two Seasonal coffees curated every month. The perfect way to explore stunning Single Origin flavour.",
         currentOffering: {
-            "Espresso": "🇷🇼Huye Mountain Washed, Rwanda: Milk Chocolate. Orange. Raisin. 🇷🇼Huye Mountain Natural, Rwanda: Malt. Morello Cherry. Juicy.",
-            "Filter": "🇷🇼Mahembe, Rwanda: Cherry. Black Tea. Sparkling. 🇨🇷La Bandera Forestal, Costa Rica: Mango. Pineapple. Fresh."
+            "Espresso": "🇧🇷 Sundrop Peaberry, Brazil: Chocolate. Dried Apricot. & 🇧🇮 Bumba Hill, Burundi: Passion Fruit. Dark Chocolate.",
+            "Filter": "🇷🇼 Gitwe, Rwanda: Cranberry. Black Tea. & 🇧🇮 Bumba Hill, Burundi: Passion Fruit. Dark Chocolate."
         }
     },
     "Masterpiece": {
         description: "The rarest coffees on the planet: a showcase of innovation and extraordinary flavour. Scoring 90 points and up. Omni Roast.",
-        currentOffering: "Our next Masterpiece will be dispatched at the Start of May. We are currently cupping to find the best coffee for you ☕️"
+        currentOffering: "Our next Masterpiece will be dispatched at the Start of July. We are currently cupping to find the best coffee for you ☕️"
     },
     "Low-Caf": {
         description: "Our answer to decaf, without no compromise on flavour: unique coffees featuring naturally low levels of caffeine.",
@@ -103,7 +103,7 @@ const subscriptionDescriptions = {
     },
     "Office": {
         description: "For offices or households that love their espresso, with a little more volume each month. The coffee selection changes every month, allowing you to explore different regions and flavour!",
-        currentOffering: "🇪🇹 Spring Coffee, Ethiopia: Apricot Jam. Bergamot. Floral."
+        currentOffering: "🇧🇷 Sundrop Peaberry, Brasilien: Schokolade. Getrocknete Aprikose."
     },
     "Regional": {
         "Brazil": {
@@ -112,7 +112,7 @@ const subscriptionDescriptions = {
         },
         "Ethiopia": {
             description: "People love Ethiopian Coffees for their fruity sweetness and floral notes.",
-            currentOffering: "🇪🇹 Chelbesa, Ethiopia: Peach. Fudge. Jasmine."
+            currentOffering: "🇪🇹 Spring Coffee, Ethiopia: Apricot Jam. Bergamot. Floral."
         },
         "Center America": {
             description: "People love Central American Coffees for their exciting diversity and complex flavour.",
