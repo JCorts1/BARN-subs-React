@@ -112,7 +112,7 @@ const subscriptionDescriptions = {
         },
         "Ethiopia": {
             description: "People love Ethiopian Coffees for their fruity sweetness and floral notes.",
-            currentOffering: "🇪🇹 Spring Coffee, Ethiopia: Apricot Jam. Bergamot. Floral."
+            currentOffering: "🇪🇹 Springt Coffee, Ethiopia: Apricot Jam. Bergamot. Floral."
         },
         "Center America": {
             description: "People love Central American Coffees for their exciting diversity and complex flavour.",
