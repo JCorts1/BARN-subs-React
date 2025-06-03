@@ -25,7 +25,7 @@ export default defineConfig({
   // --- End of added define section ---
   build: {
     // --- Your existing build config ---
-    outDir: path.resolve(__dirname, '../../subscriptions-block-app/extensions/subscriptions-app/assets'),
+    outDir: path.resolve(__dirname, '../BARN-subs-shopify/extensions/subscriptions-app/assets'),
     emptyOutDir: true,
     lib: {
       entry: path.resolve(__dirname, 'src/main.jsx'),
