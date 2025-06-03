@@ -17,18 +17,19 @@
   padding-bottom: 0.5rem;
 }
 
-/* Tailwind's sm: breakpoint specific styles for larger text from original */
+/* Tailwind's sm: breakpoint specific styles for larger text from original 
 @media (min-width: 640px) {
   .subscription-description .bg-\[\#3a3c3d\] {
-    /* font-size: 1.8rem; */ /* Was commented out, kept as is */
+    font-size: 1.8rem; */ /* Was commented out, kept as is 
   }
   .subscription-description .whitespace-pre-wrap {
-    /* No specific override from original, desktop 1.4rem applies */
+     No specific override from original, desktop 1.4rem applies 
   }
   .summary-sentence {
-    /* No specific override from original, desktop 1.6rem applies */
+     No specific override from original, desktop 1.6rem applies 
   }
 }
+*/
 
 .final-selection-display h2.summary-init {
   margin-bottom: 1rem;
@@ -155,10 +156,12 @@
     /* width: auto; /* Button may not need to be full width */
     /* padding-left: 2.5rem; padding-right: 2.5rem; /* Example */
   }
+   /* 
   .cart-actions-container .price-and-button-group {
-    /* flex-direction: row; /* Default desktop, usually fine for tablet */
-    /* justify-content: flex-end; /* Align to right on tablet */
+    flex-direction: row; /* Default desktop, usually fine for tablet 
+    justify-content: flex-end; /* Align to right on tablet 
   }
+  */
 }
 
 /* --- Phone Styles (Your Original @media screen and (max-width: 720px) block) --- */
