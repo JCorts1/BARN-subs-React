@@ -1,42 +1,43 @@
-// BARN-subs-React/vite.config.js
-import { defineConfig } from 'vite';
-import react from '@vitejs/plugin-react';
-import tailwindcss from 'tailwindcss'; // You likely have this or similar
-import { resolve } from 'path'; // <--- ADD THIS LINE
+// vite.config.js (in Subscriptions-React folder)
 
-// ... rest of your config
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+import tailwindcss from '@tailwindcss/vite'
+import { resolve } from 'path';
+
 export default defineConfig({
   plugins: [
-    tailwindcss(), // Or your actual tailwindcss plugin usage
-    react(),
+    tailwindcss(),
+    react()
   ],
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, './src'),
+    },
+  },
+  // --- ADD THIS 'define' SECTION ---
+  // This replaces process.env.NODE_ENV in the build output
   define: {
     'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development'),
+    // Add other process.env variables here if your code uses them
+    // 'process.env.SOME_VAR': JSON.stringify(process.env.SOME_VAR || 'default')
   },
+  // --- End of added define section ---
   build: {
-    // Ensure this path is correct for your project structure
+    // --- Your existing build config ---
     outDir: resolve(__dirname, '../../BARN-subs-shopify/extensions/subscriptions-app/assets'),
     emptyOutDir: true,
     lib: {
-      entry: resolve(__dirname, 'src/main.jsx'),
+      entry: path.resolve(__dirname, 'src/main.jsx'),
       name: 'TheBarnSubscriptionSelector',
       formats: ['es'],
-      fileName: () => 'index.js',
+      fileName: () => 'index.js'
     },
     rollupOptions: {
-      output: {
-        assetFileNames: (assetInfo) => {
-          if (assetInfo.name && (assetInfo.name.endsWith('.css') || assetInfo.name.toLowerCase() === 'style.css')) {
-            return 'subscriptions-react.css';
-          }
-          return '[name].[ext]';
-        },
-      },
-    },
+       output: {
+         assetFileNames: `[name].[ext]`
+       }
+     }
+     // --- End of existing build config ---
   },
-  resolve: { // This is the Vite alias config section
-    alias: {
-      '@': resolve(__dirname, './src'),
-    },
-  },
-});
+})
