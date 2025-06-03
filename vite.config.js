@@ -3,7 +3,7 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
-import { resolve } from 'path';
+import path from "path"
 
 export default defineConfig({
   plugins: [
@@ -25,7 +25,7 @@ export default defineConfig({
   // --- End of added define section ---
   build: {
     // --- Your existing build config ---
-    outDir: resolve(__dirname, '../../BARN-subs-shopify/extensions/subscriptions-app/assets'),
+    outDir: path.resolve(__dirname, '../../subscriptions-block-app/extensions/subscriptions-app/assets'),
     emptyOutDir: true,
     lib: {
       entry: path.resolve(__dirname, 'src/main.jsx'),
